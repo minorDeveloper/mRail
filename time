@@ -1,0 +1,9 @@
+
+
+while true do
+	local currentTime = os.time()
+	
+	if currentTime >= 6.0 and currentTime <= 6.25 then
+		
+	end
+end

@@ -50,7 +50,7 @@ local function collectTrain(serviceID)
 		while dispenser.pushItems("back",i,1,1) == 1 do
 			info = sorter.analyze()
 			print("Amount: " .. info.amount)
-			if info.name == mRail.item_names["train"] then
+			if info.name == mRail.item_names["train"] or info.name == mRail.item_names["e_train"] then
 				print("Found train")
 				trainID = mRail.color_to_number(info.nbt.secondaryColor)
 				trainAway(trainID)

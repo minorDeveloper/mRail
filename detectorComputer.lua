@@ -32,7 +32,7 @@ print("Release Side: " .. config.releaseSide)
 while true do
 	eventType, param1, param2, param3, param4, param5, param6 = os.pullEvent()
 	print(eventType)
-	if eventType == "minecart" and param3 == mRail.item_names.train then
+	if eventType == "minecart" and (param3 == mRail.item_names.train or param3 == mRail.item_names.e_train) then
 		local side = param1
 		local trainID = 16 - tonumber(param5)
 		print("trainID: " .. tostring(trainID))

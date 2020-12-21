@@ -87,28 +87,59 @@ end
 
 
 local function updateDisplay()
+  monitor.setBackgroundColor(colors.green)
 	monitor.clear()
 	monitor.setCursorPos(1,1)
 	for i = 1, #oneWayState do
-		if oneWayState[i][5] == false then
+    monitor.setBackgroundColor(colors.black)
+    
+    if oneWayState[i][5] == false then
 			monitor.setBackgroundColor(colors.green)
 		elseif oneWayState[i][5] == true then
 			monitor.setBackgroundColor(colors.red)
 		end
-		monitor.setCursorPos(i,i)
-		monitor.write(blankString)
-		
+    
+    for j = 1, width do
+      monitor.setCursorPos(j,i)
+      monitor.write(" ")
+    end
+    
 		monitor.setCursorPos(1,i)
 		monitor.write(oneWayState[i][2])
+    
+    
 		
-		monitor.setCursorPos(25,i)
-		monitor.write(oneWayState[i][7])
+		monitor.setCursorPos(27,i)
+    local serviceID = oneWayState[i][7]
+    if serviceID == "" or serviceID == nil then
+      serviceID = "No Route"
+    end
+    if oneWayState[i][6] ~= 0 then
+      monitor.write(" ")
+      monitor.write(serviceID)
+      monitor.write(" ")
+    end
 	end
 	for i = #oneWayState + 1, height do
 		monitor.setCursorPos(1,i)
 		monitor.setBackgroundColor(colors.black)
 		monitor.write(blankString)
 	end
+	
+	if #requestList ~= 0 then
+		for i = 1, #requestList do
+			monitor.setBackgroundColor(colors.orange)
+			monitor.setCursorPos(40, requestList[i][1])
+      local serviceID = requestList[i][4]
+    if serviceID == "" or serviceID == nil then
+      serviceID = "No Route"
+    end
+      monitor.write(" ")
+			monitor.write(serviceID)
+      monitor.write(" ")
+		end
+	end	
+	
 end
 
 function determineBlockEntr(detectorID)
@@ -245,4 +276,3 @@ while true do
 	monitor.setCursorPos(1,1)
 	updateDisplay()
 end
-

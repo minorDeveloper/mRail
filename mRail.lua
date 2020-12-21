@@ -55,6 +55,7 @@ local num_to_col = {
 
 item_names = {
 	train = "Perpetuum Locomotive",
+	e_train = "Electric Locomotive",
 	cart = "Minecart",
 	anchor = "Admin Worldspike Cart"
 }
@@ -71,11 +72,14 @@ channels = {
 	timetable_updates = 15,
 	station_route_request = 16,
 	station_dispatch_channel = 17,
+	screen_update_channel = 18,
+	screen_platform_channel = 19,
+	request_dispatch_channel = 20,
 	error_channel = 999
 }
 
 station_name = {}
-for i = 1,50 do
+for i = 1,4 do
 	station_name[i] = ""
 end
 station_name[0] = "Unassigned"  
@@ -92,6 +96,29 @@ station_id = {
 	Ryan = 			{4, station_name[4]}
 }
 
+whatToDo = {
+	-- basic routes
+	--Name   	Hub										SJ				Barron		Ryan
+	{"", 		{{{13,3},{13,3}},						{{2},{2}},		{{2,7},{2,7}},			{}}},
+	{"Hub",		{{{7,11,6,10,5,9,4,8},{13,3}},			{{2},{1}},		{{1},{1}},			{}}},
+	{"SJ", 		{{{2},{2}},								{{9,10},{2}},	{{1},{1}},			{}}},
+	{"Barron", 	{{{12},{12}},							{{2},{1}},		{{3,4,5,6},{2,7}},			{}}},
+	{"Ryan", 	{{{1},{1}},								{{2},{1}},		{{1},{1}},			{}}},
+	-- complex routes
+	{"BR Expr", {{{1},{1}},								{{2},{2}},		{{3,4},{1}},		{}}},
+	{"BH Stop", {{{6,7,4,5},{3}},						{{2},{2}},		{{3,4},{1}},		{}}},
+	{"BR Stop", {{{6,7,4,5},{1}},						{{2},{2}},		{{3,4},{1}},		{}}},
+	{"BS Stop", {{{6,7,4,5},{2}},						{{9,10},{2}},	{{3,4},{1}},		{}}},
+	{"HR Expr", {{{4,6,7,5},{1}},						{{2},{2}},		{{2,7},{2,7}},			{}}},
+	{"HS Expr", {{{6,7,4,5},{2}},						{{9,10},{2}},	{{2,7},{2,7}},			{}}},
+	{"HB Stop", {{{11,10,9,8},{12}},					{{2},{2}},		{{6,5},{2,7}},		{}}},
+	{"SH Expr", {{{10,11,9,8},{13}},					{{5,6},{1}},	{{2,7},{2,7}},			{}}},
+	{"SB Stop", {{{10,11,9,8},{12}},					{{5,6},{1}},	{{6,5},{2,7}},			{}}},
+	{"RH Expr", {{{10,9,11,8},{13}},					{{2},{2}},		{{2,7},{2,7}},			{}}},
+	{"RB Stop", {{{9,10,8,11},{12}},					{{2},{2}},		{{6,5},{2,7}},			{}}},
+	{"RB Expr", {{{12},{12}},							{{2},{2}},		{{6,5},{2,7}},			{}}}
+}
+
 -- ALL COMPUTER ID's in here must be unique (aside from the depot)
 
 location_name = {}
@@ -99,6 +126,8 @@ for i = 1,100 do
 	location_name[i] = ""
 end
 location_name[0] = "Depot"
+
+--Hub Station
 
 location_name[2] = "HDE"
 location_name[3] = "HDW"
@@ -110,62 +139,121 @@ location_name[7] = "Hub P4"
 
 location_name[8] = "Hub West Dep"
 location_name[9] = "Hub West Arr"
-location_name[10]= "Hub Branch"
+location_name[10]= "Hub Branch Arr"
 
 location_name[11]= "Hub East Dep"
 location_name[12]= "Hub East Arr"
+
+-- North Mainline
 
 location_name[13]= "01 South Entr"
 location_name[14]= "01 South Exit"
 
 location_name[15]= "01 North Entr"
 location_name[16]= "01 North Exit"
-
 location_name[17]= "02 South Entr"
 location_name[18]= "02 South Exit"
 
 location_name[19]= "02 North Entr"
 location_name[20]= "02 North Exit"
-
 location_name[21]= "03 South Entr"
 location_name[22]= "03 South Exit"
 
 location_name[23]= "03 North Entr"
 location_name[24]= "03 North Exit"
-
 location_name[25]= "04 South Entr"
 location_name[26]= "04 South Exit"
 
 location_name[27]= "04 North Entr"
 location_name[28]= "04 North Exit"
-
 location_name[29]= "05 South Entr"
 location_name[30]= "05 South Exit"
 
 location_name[31]= "05 North Entr"
 location_name[32]= "05 North Exit"
-
 location_name[33]= "06 South Entr"
 location_name[34]= "06 South Exit"
 
 location_name[35]= "06 North Entr"
 location_name[36]= "06 North Exit"
-
 location_name[37]= "07 South Entr"
 location_name[38]= "07 South Exit"
 
 location_name[39]= "07 North Entr"
 location_name[40]= "07 North Exit"
-
 location_name[41]= "08 South Entr"
 location_name[42]= "08 South Exit"
 
 location_name[43]= "08 North Entr"
 location_name[44]= "08 North Exit"
 
-location_name[45]= "RDN"
 
+--SJ
+location_name[45] = "SJD"
 
+location_name[46] = "SJ P1"
+location_name[47] = "SJ P2"
+
+location_name[48]= "SJ Arr"
+location_name[49]= "SJ Dep"
+
+location_name[50]= "Hub Branch Dep"
+
+-- Branch West
+
+location_name[51]= "01 East Entr"
+location_name[52]= "01 East Exit"
+
+location_name[53]= "01 West Entr"
+location_name[54]= "01 West Exit"
+location_name[55]= "02 East Entr"
+location_name[56]= "02 East Exit"
+
+location_name[57]= "02 West Entr"
+location_name[58]= "02 West Exit"
+location_name[59]= "03 East Entr"
+location_name[60]= "03 East Exit"
+
+location_name[61]= "03 West Entr"
+location_name[62]= "03 West Exit"
+location_name[63]= "04 East Entr"
+location_name[64]= "04 East Exit"
+
+location_name[65]= "04 West Entr"
+location_name[66]= "04 West Exit"
+location_name[67]= "05 East Entr"
+location_name[68]= "05 East Exit"
+
+location_name[69]= "05 West Entr"
+location_name[70]= "05 West Exit"
+
+--Barron
+location_name[71] = "BDW"
+location_name[72] = "BDE"
+
+location_name[73] = "B P1"
+location_name[74] = "B P2"
+
+location_name[75] = "Barr East Arr"
+location_name[76] = "Barr East Dep"
+
+location_name[77] = "Barr West Arr"
+location_name[78] = "Barr West Dep"
+
+--Ryan
+location_name[79] = "RDS"
+location_name[80] = "RDN"
+
+location_name[81] = "R P1"
+location_name[82] = "R P2"
+location_name[83] = "R P3"
+location_name[84] = "R P4"
+
+location_name[85] = "Ryan South Arr"
+location_name[86] = "Ryan South Dep"
+
+location_name[87] = "Ryan North Arr"
+location_name[88] = "Ryan North Dep"
 
 location_id = {
 	depot = 			{0, location_name[0]},
@@ -201,6 +289,19 @@ function detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
 end
 
 -- Dispatch-Depot comms
+
+function request_dispatch(modem, recieverID, serviceID, trainID)
+	print("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+	local message = json.json.encode({
+		['recieverID'] = recieverID,
+		['serviceID'] = serviceID,
+		['trainID'] = trainID
+	})
+	print("Message transmitted")
+	print(message)
+	modem.transmit(channels.request_dispatch_channel,1,message)
+end
+
 
 function dispatch_train(modem, recieverID, serviceID, trainID)
 	print("Dispatching the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
@@ -302,9 +403,23 @@ function timetable_update(modem, timetable)
 	modem.transmit(channels.timetable_updates,1,message)
 end
 
+function screen_update(modem, stationID, arrivals, departures)
+	local message = json.json.encode({
+		['stationID'] = stationID,
+		['arrivals'] = arrivals,
+		['departures'] = departures
+		})
+	modem.transmit(channels.screen_update_channel,1,message)
+end
 
-
-
+function screen_platform_update(modem, stationID, serviceID, platform)
+	local message = json.json.encode({
+		['stationID'] = stationID,
+		['serviceID'] = serviceID,
+		['platform'] = platform
+		})
+	modem.transmit(channels.screen_platform_channel,1,message)
+end
 
 function raise_error(modem, errMessage, errorLevel)
 	local x = 0

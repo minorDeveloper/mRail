@@ -56,6 +56,15 @@ function dispatchTrain(trainID, serviceID)
 	end
 end
 
+function checkExitst(trainID)
+	if loco_chest.pushItems("bottom",trainID,1,1) == 1 then
+		dispenser.pushItems("right",1,1,trainID)
+		return true
+	else
+		dispenser.pushItems("right",1,1,trainID)
+		return false
+	end
+end
 
 
 -- Main program
@@ -95,8 +104,11 @@ while true do
 		if senderChannel == mRail.channels.dispatch_channel then
 			print("Dispatch has requested a release")
 		-- path A: dispatch requests a release
-			mRail.station_request_dispatch(modem, config.parent_station, decodedMessage.serviceID, decodedMessage.trainID, config.id)
-			mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
+			--TODO: NEED TO CHECK THAT THE TRAIN EXISTS
+			if checkExitst(decodedMessage.trainID) == true then
+				mRail.station_request_dispatch(modem, config.parent_station, decodedMessage.serviceID, decodedMessage.trainID, config.id)
+				mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
+			end
 		elseif senderChannel == mRail.channels.station_dispatch_confirm then
 			print("Station has authorised the release")
 		-- path B: parent station clears release
