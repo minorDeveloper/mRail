@@ -1,8 +1,11 @@
 -- mRail Detector Computer
 -- (C) 2020 Sam Lane
 
+-- TODO - Comment everything
+
 os.loadAPI("mRail.lua")
 
+-- TODO - Add support for multiple detectors and multiple release points
 
 -- Configuration
 local config = {}
@@ -39,6 +42,9 @@ while true do
 		local serviceID = param6
 		local detectorID = ""
 		local textMessage = ""
+    
+    -- TODO - Clean this up - remove if and have 1 and 2 correspond to a table with those things in
+    --      - maybe put it in mRail if that would be useful?
 		if side == "left" then
 			detectorID = config.ids[1]
 			textMessage = "Last seen at " .. mRail.location_name[config.ids[1]]
@@ -76,6 +82,7 @@ while true do
 		local message = param4
 		decodedMessage = {}
 		decodedMessage = json.json.decode(message)
+    -- TODO - Add support for multiple detectors here
 		if decodedMessage.detectorID == config.ids[1] or decodedMessage.detectorID == config.ids[2] then
 			if config.releaseSide ~= "null" then
 				redstone.setOutput(config.releaseSide, true)

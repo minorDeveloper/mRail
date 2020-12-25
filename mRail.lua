@@ -1,7 +1,11 @@
 -- mRail system API
 -- (C) 2020 Sam Lane
 
-
+-- TODO - Add functions for complete network control and ability to reset things
+--      - Stations
+--      - One-way Blocks
+--      - Train Tracking
+--      - Stop/Start Dispatch
 
 
 -- Local API Variables (for use here)
@@ -78,8 +82,11 @@ channels = {
 	error_channel = 999
 }
 
+
+-- TODO - Pull all this out into network config files!
+
 station_name = {}
-for i = 1,4 do
+for i = 1,5 do
 	station_name[i] = ""
 end
 station_name[0] = "Unassigned"  
@@ -87,36 +94,31 @@ station_name[1] = "Hub"
 station_name[2] = "SJ"
 station_name[3] = "Barron"
 station_name[4] = "Ryan"
+station_name[5] = "Among Us"
 
-station_id = {
-	unassigned = 	{0, station_name[0]},
-	hub = 			{1, station_name[1]},
-	SJ = 			{2, station_name[2]},
-	Barron = 		{3, station_name[3]},
-	Ryan = 			{4, station_name[4]}
-}
-
-whatToDo = {
+stationRouting = {
 	-- basic routes
-	--Name   	Hub										SJ				Barron		Ryan
-	{"", 		{{{13,3},{13,3}},						{{2},{2}},		{{2,7},{2,7}},			{}}},
-	{"Hub",		{{{7,11,6,10,5,9,4,8},{13,3}},			{{2},{1}},		{{1},{1}},			{}}},
-	{"SJ", 		{{{2},{2}},								{{9,10},{2}},	{{1},{1}},			{}}},
-	{"Barron", 	{{{12},{12}},							{{2},{1}},		{{3,4,5,6},{2,7}},			{}}},
-	{"Ryan", 	{{{1},{1}},								{{2},{1}},		{{1},{1}},			{}}},
+	--Name   	  Hub										          SJ				    Barron		          Ryan
+	{"", 		    {{{13,3},{13,3}},						    {{2},{2}},		{{2,7},{2,7}},			{{2,13},{2,13}}}},
+	{"Hub",		  {{{7,11,6,10,5,9,4,8},{13,3}},	{{2},{1}},		{{1},{1}},			    {{1},{1}}}},
+	{"SJ", 		  {{{2},{2}},								      {{9,10},{2}},	{{1},{1}},			    {{1},{1}}}},
+	{"Barron", 	{{{12},{12}},							      {{2},{1}},		{{3,4,5,6},{2,7}},	{{1},{1}}}},
+	{"Ryan", 	  {{{1},{1}},								      {{2},{1}},		{{1},{1}},			    {{5,6,7,8,9,10,11,12},{2,13}}}},
 	-- complex routes
-	{"BR Expr", {{{1},{1}},								{{2},{2}},		{{3,4},{1}},		{}}},
-	{"BH Stop", {{{6,7,4,5},{3}},						{{2},{2}},		{{3,4},{1}},		{}}},
-	{"BR Stop", {{{6,7,4,5},{1}},						{{2},{2}},		{{3,4},{1}},		{}}},
-	{"BS Stop", {{{6,7,4,5},{2}},						{{9,10},{2}},	{{3,4},{1}},		{}}},
-	{"HR Expr", {{{4,6,7,5},{1}},						{{2},{2}},		{{2,7},{2,7}},			{}}},
-	{"HS Expr", {{{6,7,4,5},{2}},						{{9,10},{2}},	{{2,7},{2,7}},			{}}},
-	{"HB Stop", {{{11,10,9,8},{12}},					{{2},{2}},		{{6,5},{2,7}},		{}}},
-	{"SH Expr", {{{10,11,9,8},{13}},					{{5,6},{1}},	{{2,7},{2,7}},			{}}},
-	{"SB Stop", {{{10,11,9,8},{12}},					{{5,6},{1}},	{{6,5},{2,7}},			{}}},
-	{"RH Expr", {{{10,9,11,8},{13}},					{{2},{2}},		{{2,7},{2,7}},			{}}},
-	{"RB Stop", {{{9,10,8,11},{12}},					{{2},{2}},		{{6,5},{2,7}},			{}}},
-	{"RB Expr", {{{12},{12}},							{{2},{2}},		{{6,5},{2,7}},			{}}}
+	{"BR Expr", {{{1},{1}},								      {{2},{2}},		{{3,4},{1}},		    {{10,9,11,12},{13}}}},
+	{"BH Stop", {{{6,4},{3}},							      {{2},{2}},		{{3,4},{1}},		    {{2,13},{2,13}}}},
+	{"BR Stop", {{{4,6,7,5},{1}},						    {{2},{2}},		{{3,4},{1}},		    {{10,9,11,12},{2,13}}}},
+	{"BS Stop", {{{6,7,4,5},{2}},						    {{9,10},{2}},	{{3,4},{1}},		    {{2,13},{2,13}}}},
+	{"HR Expr", {{{4,6,7,5},{1}},						    {{2},{2}},		{{2,7},{2,7}},			{{12,11},{2,13}}}},
+	{"HS Expr", {{{4,6,7,5},{2}},						    {{9,10},{2}},	{{2,7},{2,7}},			{{2,13},{2,13}}}},
+	{"HB Stop", {{{11,10},{12}},						    {{2},{2}},		{{6,5},{2,7}},		  {{2,13},{2,13}}}},
+	{"SH Expr", {{{10,9,11,8},{13}},					  {{5,6},{1}},	{{2,7},{2,7}},			{{2,13},{2,13}}}},
+	{"SB Stop", {{{9,11,10,8},{12}},					  {{5,6},{1}},	{{6,5},{2,7}},			{{2,13},{2,13}}}},
+	{"RH Expr", {{{9,10,11,8},{13}},					  {{2},{2}},		{{2,7},{2,7}},			{{5,6},{1}}}},
+	{"RB Stop", {{{9,11,8,10},{12}},					  {{2},{2}},		{{6,5},{2,7}},			{{8,7},{1}}}},
+	{"RB Expr", {{{12},{12}},							      {{2},{2}},		{{6,5},{2,7}},			{{5,6},{1}}}},
+  {"AmongUs", {{{12},{12}},							      {{2},{2}},		{{6,5},{2,7}},			{{8,7},{1}}}},
+	{"R Branch",{{{12},{12}},							      {{2},{2}},		{{6,5},{2,7}},			{{11,12,10,9},{2,13}}}},
 }
 
 -- ALL COMPUTER ID's in here must be unique (aside from the depot)
@@ -255,25 +257,16 @@ location_name[86] = "Ryan South Dep"
 location_name[87] = "Ryan North Arr"
 location_name[88] = "Ryan North Dep"
 
-location_id = {
-	depot = 			{0, location_name[0]},
-	hub_depot_east = 	{2, location_name[2]},
-	hub_depot_west = 	{3, location_name[3]},
-	hub_platform_1 = 	{4, location_name[4]},
-	hub_platform_2 =	{5, location_name[5]},
-	hub_platform_3 =	{6, location_name[6]},
-	hub_platform_4 = 	{7, location_name[7]},
-	hub_west_depart =   {8, location_name[8]},
-	hub_west_arrival =  {9, location_name[9]},
-	hub_west_branch =   {10, location_name[10]},
-	hub_east_depart =	{11, location_name[11]},
-	hub_east_arrival =  {12, location_name[12]},
-	oneway_01_south_entrance =  {13, location_name[13]},
-	oneway_01_south_exit =		{14, location_name[14]}
-}
+--Ryan South Branch
 
+location_name[89] = "Ryan S Branch Entr"
+location_name[90] = "Ryan S Branch Exit"
 
+location_name[91] = "Ryan W Branch Entr"
+location_name[92] = "Ryan W Branch Exit"
 
+location_name[93] = "Among Us Entr"
+location_name[94] = "Among Us Exit"
 	
 -- Broadcasts
 
@@ -287,6 +280,11 @@ function detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
 		})
 	modem.transmit(channels.detect_channel,1,message)
 end
+
+-- TODO - Add ability to request next station from dispatch
+-- TODO - Add ability to respond to next station request (broadcast to trainTracking)
+
+-- TODO - Comment all of these functions
 
 -- Dispatch-Depot comms
 

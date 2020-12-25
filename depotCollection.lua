@@ -3,6 +3,10 @@
 
 os.loadAPI("mRail.lua")
 
+-- TODO - Comment everything
+-- TODO - Add more error checking
+-- TODO - Add support for more train types
+
 
 -- Configuration
 local config = {}

@@ -1,6 +1,9 @@
 -- mRail Dispatch
 -- (C) 2020 Sam Lane
 
+-- TODO - Comment everything
+-- TODO - Move to new program system
+
 os.loadAPI("mRail.lua")
 
 
@@ -10,7 +13,8 @@ local config = {}
 config_name = ".config"
 
 
--- routename, depotID, {stationID, departure time (offset from 0)}
+-- TODO - Push this all out to config files
+-- routename, depotID, {stationID, departure time (offset from 0 (6am))}
 routes = {
 	{"HR Expr", 2, {{1,1.0},{4,10.0}}},
 	{"HB Stop", 3, {{1,1.0},{3,3.25}}},
@@ -255,6 +259,12 @@ end
 function updateDisplay()
   term.clear()
   
+  local sortedDepotAlarmIDs = depotAlarmIDs
+  local sortedStatAlarmIDs = statAlarmIDs
+  
+  table.sort(sortedDepotAlarmIDs, function(a,b) return a[5] < b[5] end)
+  table.sort(sortedStatAlarmIDs, function(a,b) return a[5] < b[5] end)
+  
   local xCol2 = 26
   	
   local w, h = term.getSize()
@@ -262,11 +272,11 @@ function updateDisplay()
 	term.setCursorPos(1,1)
   term.write("Depot releases:")
   
-  if #depotAlarmIDs ~= 0 then
-		for i = 1, math.min(#depotAlarmIDs,h - 1) do
+  if #sortedDepotAlarmIDs ~= 0 then
+		for i = 1, math.min(#sortedDepotAlarmIDs,h - 1) do
       term.setCursorPos(1, i + 1)
-      printColourAndRoute(depotAlarmIDs[i][3], depotAlarmIDs[i][4])
-      term.write(mRail.location_name[depotAlarmIDs[i][2]])
+      printColourAndRoute(sortedDepotAlarmIDs[i][3], sortedDepotAlarmIDs[i][4])
+      term.write(mRail.location_name[sortedDepotAlarmIDs[i][2]])
       --table.insert(depotAlarmIDs,{alarmID, serviceDepot, routes[serviceRoute][1], serviceTrain,depotTime})
       --    serviceID                       trainID                          depotID                      alarmID
 			--print(depotAlarmIDs[i][3] .. "   " .. depotAlarmIDs[i][4] .. "   " .. depotAlarmIDs[i][2] .. "   " .. depotAlarmIDs[i][1])
@@ -275,11 +285,11 @@ function updateDisplay()
   
   term.setCursorPos(xCol2,1)
   term.write("Station releases:")
-  if #statAlarmIDs ~= 0 then
-		for i = 1, math.min(#statAlarmIDs,h - 1) do
+  if #sortedStatAlarmIDs ~= 0 then
+		for i = 1, math.min(#sortedStatAlarmIDs,h - 1) do
       term.setCursorPos(xCol2, i + 1)
-      printColourAndRoute(statAlarmIDs[i][3], statAlarmIDs[i][4])
-      term.write(mRail.station_name[statAlarmIDs[i][2]])
+      printColourAndRoute(sortedStatAlarmIDs[i][3], sortedStatAlarmIDs[i][4])
+      term.write(mRail.station_name[sortedStatAlarmIDs[i][2]])
       --table.insert(statAlarmIDs,{alarmID,stationID,routes[serviceID][1],trainID,totalTime})
       --    serviceID                       trainID                          stationID                      alarmID
 			--print(statAlarmIDs[i][3] .. "   " .. statAlarmIDs[i][4] .. "   " .. statAlarmIDs[i][2] .. "   " .. statAlarmIDs[i][1])
@@ -294,6 +304,8 @@ mRail.loadConfig(modem,config_name,config)
 
 set_days_depot_alarms()
 set_days_station_alarms()
+
+-- TODO - Add support for telling the tracker the next station for a given train
 
 updateDisplays()
 while true do

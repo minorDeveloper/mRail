@@ -1,6 +1,9 @@
 -- mRail One-Way Controller
 -- (C) 2020 Sam Lane
 
+-- TODO - Comment the whole damn thing
+-- TODO - Convert to new program structure?
+
 os.loadAPI("mRail.lua")
 
 

@@ -3,6 +3,13 @@
 
 os.loadAPI("mRail.lua")
 
+
+
+-- TODO - Add support for more trains (not sure how yet!)
+
+-- TODO - Get next station information from dispatch (add channel to request this and recieve update)
+--      - Will need to go out mRail for this
+
 local numberTrains = 16
 
 local config = {}
@@ -47,6 +54,7 @@ local trainData = {
 }
 
 
+-- TODO - Comment
 local function saveData()
 	jsonEncoded = json.json.encode(trainData)
 		
@@ -56,6 +64,7 @@ local function saveData()
 	f.close()
 end
 
+-- TODO - Comment
 local function loadData()
 	if fs.exists(filename) then
 		print("Loading Data")
@@ -73,6 +82,7 @@ local function loadData()
 	end
 end
 
+-- TODO - Comment
 local function updateDisplay()
 	term.clear()
 	
@@ -128,18 +138,25 @@ end
 
 -- Main program
 
+-- TODO - Comment
+
 modem = peripheral.wrap("bottom")
 mRail.loadConfig(modem,config_name,config)
 
 display = peripheral.wrap("top")
 
 --Open modem to comms channels
+
+-- TODO - Check why we are opening two channels!
 modem.open(mRail.channels.detect_channel)
 modem.open(mRail.channels.location_update_channel)
 
 term.setCursorBlink(false)
 
 -- run initial display update
+
+
+-- TODO - Comment
 loadData()
 updateDisplay()
 
