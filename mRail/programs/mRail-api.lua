@@ -12,7 +12,7 @@
 local mRail = {}
 
 -- json = dofile("json.lua")
-os.loadAPI("json.lua")
+json = require("json.lua")
 
 
 
@@ -57,14 +57,14 @@ local num_to_col = {
 
 -- Global API Variables (for use in sub-programs)
 
-item_names = {
+mRail.item_names = {
 	train = "Perpetuum Locomotive",
 	e_train = "Electric Locomotive",
 	cart = "Minecart",
 	anchor = "Admin Worldspike Cart"
 }
 
-channels = {
+mRail.channels = {
 	detect_channel = 2,
 	train_info = 3,
 	location_update_channel = 4,
@@ -85,7 +85,7 @@ channels = {
 
 -- TODO - Pull all this out into network config files!
 
-station_name = {}
+mRail.station_name = {}
 for i = 1,5 do
 	station_name[i] = ""
 end
@@ -96,7 +96,7 @@ station_name[3] = "Barron"
 station_name[4] = "Ryan"
 station_name[5] = "Among Us"
 
-stationRouting = {
+mRail.stationRouting = {
 	-- basic routes
 	--Name   	  Hub										          SJ				    Barron		          Ryan
 	{"", 		    {{{13,3},{13,3}},						    {{2},{2}},		{{2,7},{2,7}},			{{2,13},{2,13}}}},
@@ -123,154 +123,154 @@ stationRouting = {
 
 -- ALL COMPUTER ID's in here must be unique (aside from the depot)
 
-location_name = {}
+mRail.location_name = {}
 for i = 1,100 do
 	location_name[i] = ""
 end
-location_name[0] = "Depot"
+mRail.location_name[0] = "Depot"
 
 --Hub Station
 
-location_name[2] = "HDE"
-location_name[3] = "HDW"
+mRail.location_name[2] = "HDE"
+mRail.location_name[3] = "HDW"
 
-location_name[4] = "Hub P1"
-location_name[5] = "Hub P2"
-location_name[6] = "Hub P3"
-location_name[7] = "Hub P4"
+mRail.location_name[4] = "Hub P1"
+mRail.location_name[5] = "Hub P2"
+mRail.location_name[6] = "Hub P3"
+mRail.location_name[7] = "Hub P4"
 
-location_name[8] = "Hub West Dep"
-location_name[9] = "Hub West Arr"
-location_name[10]= "Hub Branch Arr"
+mRail.location_name[8] = "Hub West Dep"
+mRail.location_name[9] = "Hub West Arr"
+mRail.location_name[10]= "Hub Branch Arr"
 
-location_name[11]= "Hub East Dep"
+mRail.location_name[11]= "Hub East Dep"
 location_name[12]= "Hub East Arr"
 
 -- North Mainline
 
-location_name[13]= "01 South Entr"
-location_name[14]= "01 South Exit"
+mRail.location_name[13]= "01 South Entr"
+mRail.location_name[14]= "01 South Exit"
 
-location_name[15]= "01 North Entr"
-location_name[16]= "01 North Exit"
-location_name[17]= "02 South Entr"
-location_name[18]= "02 South Exit"
+mRail.location_name[15]= "01 North Entr"
+mRail.location_name[16]= "01 North Exit"
+mRail.location_name[17]= "02 South Entr"
+mRail.location_name[18]= "02 South Exit"
 
-location_name[19]= "02 North Entr"
-location_name[20]= "02 North Exit"
-location_name[21]= "03 South Entr"
-location_name[22]= "03 South Exit"
+mRail.location_name[19]= "02 North Entr"
+mRail.location_name[20]= "02 North Exit"
+mRail.location_name[21]= "03 South Entr"
+mRail.location_name[22]= "03 South Exit"
 
-location_name[23]= "03 North Entr"
-location_name[24]= "03 North Exit"
-location_name[25]= "04 South Entr"
-location_name[26]= "04 South Exit"
+mRail.location_name[23]= "03 North Entr"
+mRail.location_name[24]= "03 North Exit"
+mRail.location_name[25]= "04 South Entr"
+mRail.location_name[26]= "04 South Exit"
 
-location_name[27]= "04 North Entr"
-location_name[28]= "04 North Exit"
-location_name[29]= "05 South Entr"
-location_name[30]= "05 South Exit"
+mRail.location_name[27]= "04 North Entr"
+mRail.location_name[28]= "04 North Exit"
+mRail.location_name[29]= "05 South Entr"
+mRail.location_name[30]= "05 South Exit"
 
-location_name[31]= "05 North Entr"
-location_name[32]= "05 North Exit"
-location_name[33]= "06 South Entr"
-location_name[34]= "06 South Exit"
+mRail.location_name[31]= "05 North Entr"
+mRail.location_name[32]= "05 North Exit"
+mRail.location_name[33]= "06 South Entr"
+mRail.location_name[34]= "06 South Exit"
 
-location_name[35]= "06 North Entr"
-location_name[36]= "06 North Exit"
-location_name[37]= "07 South Entr"
-location_name[38]= "07 South Exit"
+mRail.location_name[35]= "06 North Entr"
+mRail.location_name[36]= "06 North Exit"
+mRail.location_name[37]= "07 South Entr"
+mRail.location_name[38]= "07 South Exit"
 
-location_name[39]= "07 North Entr"
-location_name[40]= "07 North Exit"
-location_name[41]= "08 South Entr"
-location_name[42]= "08 South Exit"
+mRail.location_name[39]= "07 North Entr"
+mRail.location_name[40]= "07 North Exit"
+mRail.location_name[41]= "08 South Entr"
+mRail.location_name[42]= "08 South Exit"
 
-location_name[43]= "08 North Entr"
-location_name[44]= "08 North Exit"
+mRail.location_name[43]= "08 North Entr"
+mRail.location_name[44]= "08 North Exit"
 
 
 --SJ
-location_name[45] = "SJD"
+mRail.location_name[45] = "SJD"
 
-location_name[46] = "SJ P1"
-location_name[47] = "SJ P2"
+mRail.location_name[46] = "SJ P1"
+mRail.location_name[47] = "SJ P2"
 
-location_name[48]= "SJ Arr"
-location_name[49]= "SJ Dep"
+mRail.location_name[48]= "SJ Arr"
+mRail.location_name[49]= "SJ Dep"
 
-location_name[50]= "Hub Branch Dep"
+mRail.location_name[50]= "Hub Branch Dep"
 
 -- Branch West
 
-location_name[51]= "01 East Entr"
+mRail.location_name[51]= "01 East Entr"
 location_name[52]= "01 East Exit"
 
-location_name[53]= "01 West Entr"
-location_name[54]= "01 West Exit"
-location_name[55]= "02 East Entr"
-location_name[56]= "02 East Exit"
+mRail.location_name[53]= "01 West Entr"
+mRail.location_name[54]= "01 West Exit"
+mRail.location_name[55]= "02 East Entr"
+mRail.location_name[56]= "02 East Exit"
 
-location_name[57]= "02 West Entr"
-location_name[58]= "02 West Exit"
-location_name[59]= "03 East Entr"
-location_name[60]= "03 East Exit"
+mRail.location_name[57]= "02 West Entr"
+mRail.location_name[58]= "02 West Exit"
+mRail.location_name[59]= "03 East Entr"
+mRail.location_name[60]= "03 East Exit"
 
-location_name[61]= "03 West Entr"
-location_name[62]= "03 West Exit"
-location_name[63]= "04 East Entr"
-location_name[64]= "04 East Exit"
+mRail.location_name[61]= "03 West Entr"
+mRail.location_name[62]= "03 West Exit"
+mRail.location_name[63]= "04 East Entr"
+mRail.location_name[64]= "04 East Exit"
 
-location_name[65]= "04 West Entr"
-location_name[66]= "04 West Exit"
-location_name[67]= "05 East Entr"
-location_name[68]= "05 East Exit"
+mRail.location_name[65]= "04 West Entr"
+mRail.location_name[66]= "04 West Exit"
+mRail.location_name[67]= "05 East Entr"
+mRail.location_name[68]= "05 East Exit"
 
-location_name[69]= "05 West Entr"
-location_name[70]= "05 West Exit"
+mRail.location_name[69]= "05 West Entr"
+mRail.location_name[70]= "05 West Exit"
 
 --Barron
-location_name[71] = "BDW"
-location_name[72] = "BDE"
+mRail.location_name[71] = "BDW"
+mRail.location_name[72] = "BDE"
 
-location_name[73] = "B P1"
-location_name[74] = "B P2"
+mRail.location_name[73] = "B P1"
+mRail.location_name[74] = "B P2"
 
-location_name[75] = "Barr East Arr"
-location_name[76] = "Barr East Dep"
+mRail.location_name[75] = "Barr East Arr"
+mRail.location_name[76] = "Barr East Dep"
 
-location_name[77] = "Barr West Arr"
-location_name[78] = "Barr West Dep"
+mRail.location_name[77] = "Barr West Arr"
+mRail.location_name[78] = "Barr West Dep"
 
 --Ryan
-location_name[79] = "RDS"
-location_name[80] = "RDN"
+mRail.location_name[79] = "RDS"
+mRail.location_name[80] = "RDN"
 
-location_name[81] = "R P1"
-location_name[82] = "R P2"
-location_name[83] = "R P3"
-location_name[84] = "R P4"
+mRail.location_name[81] = "R P1"
+mRail.location_name[82] = "R P2"
+mRail.location_name[83] = "R P3"
+mRail.location_name[84] = "R P4"
 
-location_name[85] = "Ryan South Arr"
-location_name[86] = "Ryan South Dep"
+mRail.location_name[85] = "Ryan South Arr"
+mRail.location_name[86] = "Ryan South Dep"
 
-location_name[87] = "Ryan North Arr"
-location_name[88] = "Ryan North Dep"
+mRail.location_name[87] = "Ryan North Arr"
+mRail.location_name[88] = "Ryan North Dep"
 
 --Ryan South Branch
 
-location_name[89] = "Ryan S Branch Entr"
-location_name[90] = "Ryan S Branch Exit"
+mRail.location_name[89] = "Ryan S Branch Entr"
+mRail.location_name[90] = "Ryan S Branch Exit"
 
-location_name[91] = "Ryan W Branch Entr"
-location_name[92] = "Ryan W Branch Exit"
+mRail.location_name[91] = "Ryan W Branch Entr"
+mRail.location_name[92] = "Ryan W Branch Exit"
 
-location_name[93] = "Among Us Entr"
-location_name[94] = "Among Us Exit"
+mRail.location_name[93] = "Among Us Entr"
+mRail.location_name[94] = "Among Us Exit"
 	
 -- Broadcasts
 
-function detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
+function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
 	print("Notifying Tracker and Stations of detection")
 	local message = json.json.encode({
 		["detectorID"] = detectorID,
@@ -288,7 +288,7 @@ end
 
 -- Dispatch-Depot comms
 
-function request_dispatch(modem, recieverID, serviceID, trainID)
+function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
 	print("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.json.encode({
 		['recieverID'] = recieverID,
@@ -301,7 +301,7 @@ function request_dispatch(modem, recieverID, serviceID, trainID)
 end
 
 
-function dispatch_train(modem, recieverID, serviceID, trainID)
+function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
 	print("Dispatching the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.json.encode({
 		['recieverID'] = recieverID,
@@ -313,7 +313,7 @@ function dispatch_train(modem, recieverID, serviceID, trainID)
 	modem.transmit(channels.dispatch_channel,1,message)
 end
 
-function station_dispatch_train(modem, stationID, serviceID, trainID)
+function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
 	print("Dispatching the " .. number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.json.encode({
 		['stationID'] = stationID,
@@ -327,7 +327,7 @@ end
 
 -- Station-Depot Comms
 
-function station_request_dispatch(modem, stationID, serviceID, trainID, detectorID)
+function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, detectorID)
 	print("Requesting permission from station " .. stationID .. "to dispatch train")
 	local message = json.json.encode({
 		['stationID'] = stationID,
@@ -340,7 +340,7 @@ function station_request_dispatch(modem, stationID, serviceID, trainID, detector
 	modem.transmit(channels.station_dispatch_request,1,message)
 end
 
-function station_confirm_dispatch(modem, recieverID, serviceID, trainID)
+function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
 	print("Giving " .. recieverID .. " permission to dispatch train")
 	local message = json.json.encode({
 		['recieverID'] = recieverID,
@@ -352,7 +352,7 @@ function station_confirm_dispatch(modem, recieverID, serviceID, trainID)
 	modem.transmit(channels.station_dispatch_confirm,1,message)
 end
 
-function station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
+function mRail.station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
 	print("Requesting route")
 	local message = json.json.encode({
 		['stationID'] = stationID,
@@ -367,7 +367,7 @@ end
 
 -- Oneway-Detector Comms
 
-function oneway_request_dispatch(modem, detectorID, serviceID, trainID)
+function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	print("Requesting permission to dispatch train " .. trainID)
 	local message = json.json.encode({
 		['detectorID'] = detectorID,
@@ -379,7 +379,7 @@ function oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	modem.transmit(channels.oneway_dispatch_request,1,message)
 end
 
-function oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
+function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	print("Giving " .. detectorID .. " permission to release train")
 	local message = json.json.encode({
 		['detectorID'] = detectorID,
@@ -391,7 +391,7 @@ function oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	modem.transmit(channels.oneway_dispatch_confirm,1,message)
 end
 
-function timetable_update(modem, timetable)
+function mRail.timetable_update(modem, timetable)
 	print("Updating timetable for all stations")
 	local message = json.json.encode({
 		['timetable'] = timetable
@@ -401,7 +401,7 @@ function timetable_update(modem, timetable)
 	modem.transmit(channels.timetable_updates,1,message)
 end
 
-function screen_update(modem, stationID, arrivals, departures)
+function mRail.screen_update(modem, stationID, arrivals, departures)
 	local message = json.json.encode({
 		['stationID'] = stationID,
 		['arrivals'] = arrivals,
@@ -410,7 +410,7 @@ function screen_update(modem, stationID, arrivals, departures)
 	modem.transmit(channels.screen_update_channel,1,message)
 end
 
-function screen_platform_update(modem, stationID, serviceID, platform)
+function mRail.screen_platform_update(modem, stationID, serviceID, platform)
 	local message = json.json.encode({
 		['stationID'] = stationID,
 		['serviceID'] = serviceID,
@@ -419,7 +419,7 @@ function screen_platform_update(modem, stationID, serviceID, platform)
 	modem.transmit(channels.screen_platform_channel,1,message)
 end
 
-function raise_error(modem, errMessage, errorLevel)
+function mRail.raise_error(modem, errMessage, errorLevel)
 	local x = 0
 	local y = 0
 	local z = 0
@@ -438,7 +438,7 @@ end
 
 -- Files and configuration
 
-function executeFile(filename, ...)
+function mRail.executeFile(filename, ...)
   local ok, err = loadfile( filename )
   print( "Running "..filename )
   if ok then
@@ -448,16 +448,24 @@ function executeFile(filename, ...)
   end
 end
 
-function loadConfig(modem,file_name, config)
+function mRail.loadConfig(modem,file_name,config_var)
+  local returnVal = loadConfig(file_name,config_var)
+  
+  if returnVal == 1 then
+    raise_error(modem,"No configuration file",1)
+  end
+  return returnVal
+end
+
+function mRail.loadConfig(file_name,config_var)
 	if fs.exists(file_name) then
 		print("Loading config file...")
 		local _config = executeFile(file_name)
 		for k,v in pairs(_config) do
-			config[k] = v
+			config_var[k] = v
 		end
 	else
 		print("Error, no configuration file!.")
-		raise_error(modem,"No configuration file",1)
 		return 1
 	end
 end
@@ -465,10 +473,10 @@ end
 
 -- Conversions
 
-function color_to_number(color)
+function mRail.color_to_number(color)
 	return col_to_num[color]
 end
 
-function number_to_color(number)
+function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
