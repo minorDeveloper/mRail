@@ -76,9 +76,15 @@ end
 term.clear()
 writeASCII(logoASCII, term, 10, 2)
 
-read()
+-- TODO - Make this program use own code
+-- TODO - Add config file generation
+
+sleep(2)
+os.reboot()
 
 -- Download/get additional configs
+
+-- Pull additional configs from networked computer
 
 -- Delete unnecessary files
 

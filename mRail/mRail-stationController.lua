@@ -1,21 +1,20 @@
--- mRail Station Controller
--- (C) 2020 Sam Lane
+-- mRail System Program Base
+-- (C) 2020-21 Sam Lane
 
-os.loadAPI("mRail.lua")
+mRail = require("mRail-api")
+json = require("json")
 
--- Configuration
+-- Local Variables
 local config = {}
--- Default config values:
+local modem
 
--- TODO - Remove all this and put it in a config file
-config.stationID = 1
-config.controlType = "wireless"
+local signalController
+local switchController
+local releaseController
 
-config.signalControl = "digital_controller_box_1"
-config.switchControl = "digital_controller_box_0"
-config.releaseControl = "digital_controller_box_1"
-
-config_name = ".config"
+local stationRouting = {}
+local stationConfig = {}
+local systemRoutingData = {}
 
 -- state loaded, serviceID, trainID
 local currentLoadedStates = {}
@@ -24,112 +23,8 @@ local requestList = {}
 --sig req, sig state, swit req, swit state
 local currentState = {0,0,0,0}
 
-
 -- alarmID, serviceID, trainID
 local alarms = {}
-
-
--- TODO - Bump this out to a network configuration file maybe
--- first bit is for entries, second for dispatch
--- serviceName, {what each station should do with it}
-stationRouting = {
-	-- basic routes
-	--Name   	  Hub										          SJ				    Barron		          Ryan
-	{"", 		    {{{13,3},{13,3}},						    {{2},{2}},		{{2,7},{2,7}},			{{2,13},{2,13}}}},
-	{"Hub",		  {{{7,11,6,10,5,9,4,8},{13,3}},	{{2},{1}},		{{1},{1}},			    {{1},{1}}}},
-	{"SJ", 		  {{{2},{2}},								      {{9,10},{2}},	{{1},{1}},			    {{1},{1}}}},
-	{"Barron", 	{{{12},{12}},							      {{2},{1}},		{{3,4,5,6},{2,7}},	{{1},{1}}}},
-	{"Ryan", 	  {{{1},{1}},								      {{2},{1}},		{{1},{1}},			    {{5,6,7,8,9,10,11,12},{2,13}}}},
-	-- complex routes
-	{"BR Expr", {{{1},{1}},								      {{2},{2}},		{{3,4},{1}},		    {{10,9,11,12},{13}}}},
-	{"BH Stop", {{{6,4},{3}},							      {{2},{2}},		{{3,4},{1}},		    {{2,13},{2,13}}}},
-	{"BR Stop", {{{4,6,7,5},{1}},						    {{2},{2}},		{{3,4},{1}},		    {{10,9,11,12},{2,13}}}},
-	{"BS Stop", {{{6,7,4,5},{2}},						    {{9,10},{2}},	{{3,4},{1}},		    {{2,13},{2,13}}}},
-	{"HR Expr", {{{4,6,7,5},{1}},						    {{2},{2}},		{{2,7},{2,7}},			{{12,11},{2,13}}}},
-	{"HS Expr", {{{4,6,7,5},{2}},						    {{9,10},{2}},	{{2,7},{2,7}},			{{2,13},{2,13}}}},
-	{"HB Stop", {{{11,10},{12}},						    {{2},{2}},		{{6,5},{2,7}},		  {{2,13},{2,13}}}},
-	{"SH Expr", {{{10,9,11,8},{13}},					  {{5,6},{1}},	{{2,7},{2,7}},			{{2,13},{2,13}}}},
-	{"SB Stop", {{{9,11,10,8},{12}},					  {{5,6},{1}},	{{6,5},{2,7}},			{{2,13},{2,13}}}},
-	{"RH Expr", {{{9,10,11,8},{13}},					  {{2},{2}},		{{2,7},{2,7}},			{{5,6},{1}}}},
-	{"RB Stop", {{{9,11,8,10},{12}},					  {{2},{2}},		{{6,5},{2,7}},			{{8,7},{1}}}},
-	{"RB Expr", {{{12},{12}},							      {{2},{2}},		{{6,5},{2,7}},			{{5,6},{1}}}},
-  {"AmongUs", {{{12},{12}},							      {{2},{2}},		{{6,5},{2,7}},			{{8,7},{1}}}},
-	{"R Branch",{{{12},{12}},							      {{2},{2}},		{{6,5},{2,7}},			{{11,12,10,9},{2,13}}}},
-}
-
--- TODO - Bump all this out to config files
--- TODO - Make helper program for station design
-local entryPlatformStateMapping = {
-	{4,7},	--Platform 1 West
-	{5,8},	--Platform 2 West
-	{6,9},	--Platform 3 West
-	{7,10},	--Platform 4 West
-	{8,3},	--Platform 1 East
-	{9,4},	--Platform 2 East
-	{10,5},	--Platform 3 East
-	{11,6}	--Platform 4 East
-}
-
-local detectorEntranceIDMapping = {
-	 9, -- 01
-	10, -- 02
-	-1, -- 03
-	-1, -- 04
-	-1, -- 05
-	-1, -- 06
-	-1, -- 07
-	-1, -- 08
-	-1, -- 09
-	-1, -- 10
-	-1, -- 11
-	12, -- 12
-	-1, -- 13
-}
-	
-local detectorDepotIDMapping = {
-	-1, -- 01
-	-1, -- 02
-	 3, -- 03
-	-1, -- 04
-	-1, -- 05
-	-1, -- 06
-	-1, -- 07
-	-1, -- 08
-	-1, -- 09
-	-1, -- 10
-	-1, -- 11
-	-1, -- 12
-	 2, -- 13
-}
-	
-local detectorExitIDMapping = {
-	8,  -- 01
-	50, -- 02
-	0,  -- 03
-	4,  -- 04
-	5,  -- 05
-	6,  -- 06
-	7,  -- 07
-	4,  -- 08
-	5,  -- 09
-	6,  -- 10
-	7,  -- 11
-	11, -- 12
-	0,  -- 13
-}
-	
-local platformIDNameMapping = {
-	{4,"1"},
-	{5,"2"},
-	{6,"3"},
-	{7,"4"},
-	{8,"1"},
-	{9,"2"},
-	{10,"3"},
-	{11,"4"},
-}
-
-local systemRoutingData = {}
 
 -- Functions
 function string:split( inSplitPattern )
@@ -173,23 +68,6 @@ function loadStateTable()
 	for i=1,#lineData do
 		local splitLine = lineData[i]:split(",") 
 		systemRoutingData[#systemRoutingData + 1] = splitLine
-	end
-end
-
--- TODO - Comment function
-function loadPlatforms()
-	local lineData = {}
-	entryPlatformStateMapping = {}
-	local file = io.open("platforms.csv","r")
-	i = 1
-	for line in file:lines() do
-    lineData[i]=line
-    i=i+1
-	end
-
-	for i=1,#lineData do
-		local splitLine = lineData[i]:split(",")
-		entryPlatformStateMapping[#entryPlatformStateMapping + 1] = splitLine
 	end
 end
 
@@ -285,31 +163,7 @@ function checkNewCombo(stateA)
 	return false
 end
 
--- TODO - Comment
--- TODO - Think this can be made shorter/more elegant
-function updateState()
-	if #currentLoadedStates ~= 0 then
-		local signalState = 0
-		local signalReq = 0
-		local switchState = 0
-		local switchReq = 0
-		for i = 1, #currentLoadedStates do
-			signalState = bit.bor(signalState,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][6]))
-			signalReq = bit.bor(signalReq,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][5]))
-			
-			switchState = bit.bor(switchState,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][8]))
-			switchReq = bit.bor(switchReq,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][7]))
-		end
-		setOutputState(signalState,switchState)
-		currentState[1] = signalReq
-		currentState[2] = signalState
-		currentState[3] = switchReq
-		currentState[4] = switchState
-	else
-		setOutputState(0,0)
-		currentState = {0,0,0,0}
-	end
-end
+
 
 -- TODO - Comment
 function tryRemove(stateID)
@@ -403,9 +257,9 @@ function processRequests()
               mRail.station_confirm_dispatch(modem, requestList[i][4], requestList[i][2], requestList[i][3])
             end
             --check if it ended in a platform
-            for m = 1, #platformIDNameMapping do
-              if tonumber(routesToTry[k]) == tonumber(platformIDNameMapping[m][1]) then
-                local platformName = tostring(platformIDNameMapping[m][2])
+            for m = 1, #stationConfig.platformIDNameMapping do
+              if tonumber(routesToTry[k]) == tonumber(stationConfig.platformIDNameMapping[m][1]) then
+                local platformName = tostring(stationConfig.platformIDNameMapping[m][2])
                 local serviceID = tostring(requestList[i][2])
                 mRail.screen_platform_update(modem, config.stationID, serviceID, platformName)
               end
@@ -455,12 +309,38 @@ function printColourAndRoute(serviceID, trainID)
     term.write(" ")
 end
 
+-- TODO - Comment
+-- TODO - Think this can be made shorter/more elegant
+function updateState()
+	if #currentLoadedStates ~= 0 then
+		local signalState = 0
+		local signalReq = 0
+		local switchState = 0
+		local switchReq = 0
+		for i = 1, #currentLoadedStates do
+			signalState = bit.bor(signalState,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][6]))
+			signalReq = bit.bor(signalReq,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][5]))
+			
+			switchState = bit.bor(switchState,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][8]))
+			switchReq = bit.bor(switchReq,tonumber(systemRoutingData[currentLoadedStates[i][1]+1][7]))
+		end
+		setOutputState(signalState,switchState)
+		currentState[1] = signalReq
+		currentState[2] = signalState
+		currentState[3] = switchReq
+		currentState[4] = switchState
+	else
+		setOutputState(0,0)
+		currentState = {0,0,0,0}
+	end
+end
+
 -- TODO - Comment function
 -- TODO - Proper station display, so you can see what is going on!
 --      - Probably separate out to separate program where you can provide the system
-function updateDisplay()
-  term.clear()
-	term.setCursorPos(1,1)
+function updateDisplay(display)
+  display.clear()
+	display.setCursorPos(1,1)
   
   -- (currentLoadedStates,{stateID, serviceID, trainID})
   
@@ -468,52 +348,76 @@ function updateDisplay()
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
       printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3])
-			print(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
+			display.print(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
 		end
 	end
   
-  term.setCursorPos(1,8)
-	print("Current requests:")
+  display.setCursorPos(1,8)
+	display.print("Current requests:")
 	if #requestList ~= 0 then
 		for i = 1, #requestList do
       printColourAndRoute(requestList[i][2],requestList[i][3])
-			print(tostring(mRail.location_name[detectorEntranceIDMapping[requestList[i][1]]]))
+			display.print(tostring(mRail.location_name[stationConfig.detectorEntranceIDMapping[requestList[i][1]]]))
 		end
 	end
 	
-  term.setCursorPos(1,14)
-  print("Alarms:")
+  display.setCursorPos(1,14)
+  display.print("Alarms:")
 	if #alarms ~= 0 then
 		for i = 1, #alarms do
       printColourAndRoute(alarms[i][2], alarms[i][3])
-			print(tostring(alarms[i][1]))
+			display.print(tostring(alarms[i][1]))
 		end
 	end
 end
 
--- TODO - Comment function
--- Handles the request for a specific route
-function station_route_request(decodedMessage)
-  -- Message format:
-  -- modem, stationID, entryID, exitID, serviceID, trainID
+-- Program Stuff
+local program = {}
+
+-- Program Functions
+function program.setup(config_)
+  config = config_
+  -- Setup stuff
+  modem = peripheral.wrap(config.modemSide)
+  modem.open(mRail.channels.detect_channel)
+  modem.open(mRail.channels.station_route_request)
+  modem.open(mRail.channels.station_dispatch_request)
+  modem.open(mRail.channels.station_dispatch_channel)
   
-  -- Check if the message is for this station
-  if tonumber(decodedMessage.stationID) == tonumber(config.stationID) then
-    if tryRoute(tonumber(decodedMessage.entryID), tonumber(decodedMessage.exitID),decodedMessage.serviceID, decodedMessage.trainID) == false then
-    end
+  if config.controlType == "wireless" then
+    signalController = peripheral.wrap(config.signalControl)
+    switchController = peripheral.wrap(config.switchControl)
+    releaseController = peripheral.wrap(config.releaseControl)
   end
+  
+  loadStateTable()
+  
+  mRail.loadConfig("/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
+  
+  stationRouting = dofile("/network-configs/.station-routing-config")
+  
+  updateState()
+  updateDisplay(term)
 end
 
+function program.onLoop()
+	updateState()
+	updateDisplay()
+end
+
+
+-- Modem Messages
+
 -- TODO - Comment function
--- Handles the detection of a train at a detector
-function detect_channel(decodedMessage)
-  -- Message format:
+function program.detect_channel(decodedMessage)
+  -- Handle messages on the detection channel
+    -- Message format:
   -- modem, detectorID, serviceID, trainID, textMessage
 			
   -- Check if the detector corresponds to the an exit location
   for i = 1, #currentLoadedStates do
     local dectectorNumber = tonumber(systemRoutingData[currentLoadedStates[i][1]+1][4])
-    local exitDetectorID = detectorExitIDMapping[dectectorNumber]
+    local exitDetectorID = stationConfig.detectorExitIDMapping[dectectorNumber]
     if tonumber(decodedMessage.detectorID) == exitDetectorID and tonumber(decodedMessage.trainID) == tonumber(currentLoadedStates[i][3]) then
       print("Removing state")
       local stateBeingRemoved = currentLoadedStates[i][1]
@@ -525,8 +429,8 @@ function detect_channel(decodedMessage)
       tryRemove(stateBeingRemoved)
       if stateToAdd ~= 0 then
         --check if it's a platformID
-        for j = 1, #entryPlatformStateMapping do
-          local a = detectorExitIDMapping[entryPlatformStateMapping[j][1]]
+        for j = 1, #stationConfig.entryPlatformStateMapping do
+          local a = stationConfig.detectorExitIDMapping[stationConfig.entryPlatformStateMapping[j][1]]
           if a == tonumber(decodedMessage.detectorID) then
             -- then it's a platformID
             setDepartureAlarm(decodedMessage.serviceID, tonumber(decodedMessage.trainID))
@@ -541,8 +445,8 @@ function detect_channel(decodedMessage)
   end
   
   -- Check if the detector corresponds to the an entry location
-  for i = 1, #detectorEntranceIDMapping do
-    if detectorEntranceIDMapping[i] == tonumber(decodedMessage.detectorID) then
+  for i = 1, #stationConfig.detectorEntranceIDMapping do
+    if stationConfig.detectorEntranceIDMapping[i] == tonumber(decodedMessage.detectorID) then
       local entryID = i
       print("Entry ID: " .. entryID)
       logRequest(entryID, decodedMessage.serviceID, decodedMessage.trainID,0,1)
@@ -553,10 +457,24 @@ function detect_channel(decodedMessage)
 end
 
 -- TODO - Comment function
-function station_dispatch_request(decodedMessage)
+function program.station_route_request(decodedMessage)
+  -- Handle messages on the station route request channel
+  -- Message format:
+  -- modem, stationID, entryID, exitID, serviceID, trainID
+  
+  -- Check if the message is for this station
+  if tonumber(decodedMessage.stationID) == tonumber(config.stationID) then
+    if tryRoute(tonumber(decodedMessage.entryID), tonumber(decodedMessage.exitID),decodedMessage.serviceID, decodedMessage.trainID) == false then
+    end
+  end
+end
+
+-- TODO - Comment function
+function program.station_dispatch_request(decodedMessage)
+  -- Handle messages on the station dispatch request channel
   print("Dispatch from Depot requested")
-  for i = 1, #detectorDepotIDMapping do
-    if detectorDepotIDMapping[i] == tonumber(decodedMessage.detectorID) then
+  for i = 1, #stationConfig.detectorDepotIDMapping do
+    if stationConfig.detectorDepotIDMapping[i] == tonumber(decodedMessage.detectorID) then
       local entryID = i
       print("Entry ID: " .. entryID)
       logRequest(entryID, decodedMessage.serviceID, decodedMessage.trainID, decodedMessage.detectorID,1)
@@ -567,7 +485,8 @@ function station_dispatch_request(decodedMessage)
 end
 
 -- TODO - Comment function
-function station_dispatch_channel(decodedMessage)
+function program.station_dispatch_channel(decodedMessage)
+  -- Handle messages on the station dispatch channel
   print("Dispatch from Station requested")
   if tonumber(decodedMessage.stationID) == config.stationID then
     -- find where the train is
@@ -578,9 +497,9 @@ function station_dispatch_channel(decodedMessage)
       -- state, service, train
       -- check if the service ID matches
       if tostring(currentLoadedStates[i][2]) == tostring(decodedMessage.serviceID) then
-        for j = 1, #entryPlatformStateMapping do
-          if tonumber(currentLoadedStates[i][1]) == tonumber(entryPlatformStateMapping[j][2]) then
-            entryID = tonumber(entryPlatformStateMapping[j][1])
+        for j = 1, #stationConfig.entryPlatformStateMapping do
+          if tonumber(currentLoadedStates[i][1]) == tonumber(stationConfig.entryPlatformStateMapping[j][2]) then
+            entryID = tonumber(stationConfig.entryPlatformStateMapping[j][1])
           end
         end
         -- if so then check that the state corresponds to a platform
@@ -600,8 +519,9 @@ function station_dispatch_channel(decodedMessage)
   end
 end
 
+-- Alarms
 -- TODO - Comment function
-function handleAlarm(alarmID)
+function program.handleAlarm(alarmID)
   for i = 1, #alarms do
     if alarms[i][1] == alarmID then
       -- find where the train is
@@ -612,9 +532,9 @@ function handleAlarm(alarmID)
         -- state, service, train
         -- check if the service ID matches
         if tostring(currentLoadedStates[j][2]) == tostring(alarms[i][2]) then
-          for k = 1, #entryPlatformStateMapping do
-            if tonumber(currentLoadedStates[j][1]) == tonumber(entryPlatformStateMapping[k][2]) then
-              entryID = tonumber(entryPlatformStateMapping[k][1])
+          for k = 1, #stationConfig.entryPlatformStateMapping do
+            if tonumber(currentLoadedStates[j][1]) == tonumber(stationConfig.entryPlatformStateMapping[k][2]) then
+              entryID = tonumber(stationConfig.entryPlatformStateMapping[k][1])
             end
           end
           -- if so then check that the state corresponds to a platform
@@ -635,57 +555,4 @@ function handleAlarm(alarmID)
   end
 end
 
-handleMessages = {
-  [tostring(mRail.channels.station_route_request)]    = station_route_request,
-  [tostring(mRail.channels.detect_channel)]           = detect_channel,
-  [tostring(mRail.channels.station_dispatch_request)] = station_dispatch_request,
-  [tostring(mRail.channels.station_dispatch_channel)] = station_dispatch_channel,
-}
-
-
--- Initialize
-
--- TODO - split this all out into one mRail control program and then subprograms
-modem = peripheral.wrap("back")
-mRail.loadConfig(modem,config_name,config)
-
-if config.controlType == "wireless" then
-	signalController = peripheral.wrap(config.signalControl)
-	switchController = peripheral.wrap(config.switchControl)
-	releaseController = peripheral.wrap(config.releaseControl)
-end
-
--- Load all files
-loadStateTable()
-
--- Main Loop
-updateState()
-updateDisplay()
-
-
--- TODO - Rework how modems are open
-modem.open(mRail.channels.detect_channel)
-modem.open(mRail.channels.station_route_request)
-modem.open(mRail.channels.station_dispatch_request)
-modem.open(mRail.channels.station_dispatch_channel)
-
-
--- TODO - Comment
-while true do
-	event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
-	if event == "modem_message" then
-		local channel = tonumber(param2)
-		local decodedMessage = json.json.decode(param4)
-    local func = handleMessages[tostring(channel)](decodedMessage)
-    if (func) then
-        func()
-    end
-	elseif event == "alarm" then
-		handleAlarm(param1)
-	end
-	updateState()
-	updateDisplay()
-end
-
-
-
+return program

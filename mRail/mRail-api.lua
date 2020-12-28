@@ -14,7 +14,7 @@ json = require("json")
 
 
 
-local mRail.col_to_num = {
+local col_to_num = {
 	white = 1,
 	orange = 2,
 	magenta = 3,
@@ -33,7 +33,7 @@ local mRail.col_to_num = {
 	black = 16
 }
 	
-local mRail.num_to_col = {
+local num_to_col = {
 	"white",
 	"orange",
 	"magenta",
@@ -60,6 +60,14 @@ mRail.item_names = {
 	e_train = "Electric Locomotive",
 	cart = "Minecart",
 	anchor = "Admin Worldspike Cart"
+}
+
+mRail.programs = {
+  ["station"] = "mRail-stationController",
+}
+
+mRail.configs = {
+  ["station"] = ".station-config"
 }
 
 mRail.channels = {
@@ -460,6 +468,16 @@ function mRail.loadConfig(file_name,config_var)
 		print("Error, no configuration file!.")
 		return 1
 	end
+end
+
+-- TODO - Finish this!
+function mRail.checkConfig(config)
+  local targetConfigName = mRail.configs[config.programType]
+  local targetConfig = {}
+  mRail.loadConfig(targetConfigName, targetConfig)
+  
+  
+  return true
 end
 
 
