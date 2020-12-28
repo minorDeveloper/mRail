@@ -353,10 +353,10 @@ function updateDisplay(display)
 	display.setCursorPos(1,2)
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
+      display.setCursorPos(1, line)
       printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3])
 			display.write(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
       line = line + 1
-      display.setCursorPos(1, line)
 		end
 	end
   
@@ -366,10 +366,10 @@ function updateDisplay(display)
   line = 9
 	if #requestList ~= 0 then
 		for i = 1, #requestList do
+      display.setCursorPos(1, line)
       printColourAndRoute(requestList[i][2],requestList[i][3])
 			display.write(tostring(mRail.location_name[stationConfig.detectorEntranceIDMapping[requestList[i][1]]]))
       line = line + 1
-      display.setCursorPos(1, line)
 		end
 	end
 	
@@ -379,10 +379,10 @@ function updateDisplay(display)
   line = 15
 	if #alarms ~= 0 then
 		for i = 1, #alarms do
+      display.setCursorPos(1, line)
       printColourAndRoute(alarms[i][2], alarms[i][3])
 			display.write(tostring(alarms[i][1]))
       line = line + 1
-      display.setCursorPos(1, line)
 		end
 	end
 end
