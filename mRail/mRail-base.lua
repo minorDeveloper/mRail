@@ -11,12 +11,11 @@ config_name = ".global-config"
 
 
 -- Load mRail-api
-mRail = require("mRail/programs/mRail-api")
+mRail = require("mRail-api")
 
 -- Load config
 
 
 -- Load appropriate program
-mymathmodule = require("mymath")
 
 -- Main loop

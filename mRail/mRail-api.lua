@@ -8,15 +8,13 @@
 --      - Stop/Start Dispatch
 
 
--- Local API Variables (for use here)
 local mRail = {}
 
--- json = dofile("json.lua")
 json = require("json")
 
 
 
-local col_to_num = {
+local mRail.col_to_num = {
 	white = 1,
 	orange = 2,
 	magenta = 3,
@@ -35,7 +33,7 @@ local col_to_num = {
 	black = 16
 }
 	
-local num_to_col = {
+local mRail.num_to_col = {
 	"white",
 	"orange",
 	"magenta",
@@ -86,15 +84,12 @@ mRail.channels = {
 -- TODO - Pull all this out into network config files!
 
 mRail.station_name = {}
-for i = 1,5 do
-	station_name[i] = ""
-end
-station_name[0] = "Unassigned"  
-station_name[1] = "Hub"
-station_name[2] = "SJ"
-station_name[3] = "Barron"
-station_name[4] = "Ryan"
-station_name[5] = "Among Us"
+mRail.station_name[0] = "Unassigned"  
+mRail.station_name[1] = "Hub"
+mRail.station_name[2] = "SJ"
+mRail.station_name[3] = "Barron"
+mRail.station_name[4] = "Ryan"
+mRail.station_name[5] = "Among Us"
 
 mRail.stationRouting = {
 	-- basic routes
@@ -124,9 +119,6 @@ mRail.stationRouting = {
 -- ALL COMPUTER ID's in here must be unique (aside from the depot)
 
 mRail.location_name = {}
-for i = 1,100 do
-	location_name[i] = ""
-end
 mRail.location_name[0] = "Depot"
 
 --Hub Station
@@ -144,7 +136,7 @@ mRail.location_name[9] = "Hub West Arr"
 mRail.location_name[10]= "Hub Branch Arr"
 
 mRail.location_name[11]= "Hub East Dep"
-location_name[12]= "Hub East Arr"
+mRail.location_name[12]= "Hub East Arr"
 
 -- North Mainline
 
@@ -204,7 +196,7 @@ mRail.location_name[50]= "Hub Branch Dep"
 -- Branch West
 
 mRail.location_name[51]= "01 East Entr"
-location_name[52]= "01 East Exit"
+mRail.location_name[52]= "01 East Exit"
 
 mRail.location_name[53]= "01 West Entr"
 mRail.location_name[54]= "01 West Exit"
@@ -480,3 +472,5 @@ end
 function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
+
+return mRail
