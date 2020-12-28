@@ -342,32 +342,43 @@ end
 function updateDisplay(display)
   display.clear()
 	display.setCursorPos(1,1)
+  local line = 1
   
   -- (currentLoadedStates,{stateID, serviceID, trainID})
   
-	print("Current loaded states:")
+	display.write("Current loaded states:")
+  
+	display.setCursorPos(1,1)
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
       printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3])
-			display.print(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
+			display.write(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
 		end
 	end
   
   display.setCursorPos(1,8)
-	display.print("Current requests:")
+	display.write("Current requests:")
+  display.setCursorPos(1,9)
+  line = 9
 	if #requestList ~= 0 then
 		for i = 1, #requestList do
       printColourAndRoute(requestList[i][2],requestList[i][3])
-			display.print(tostring(mRail.location_name[stationConfig.detectorEntranceIDMapping[requestList[i][1]]]))
+			display.write(tostring(mRail.location_name[stationConfig.detectorEntranceIDMapping[requestList[i][1]]]))
+      line = line + 1
+      display.setCursor(1, line)
 		end
 	end
 	
   display.setCursorPos(1,14)
-  display.print("Alarms:")
+  display.write("Alarms:")
+  display.setCursorPos(1,15)
+  line = 15
 	if #alarms ~= 0 then
 		for i = 1, #alarms do
       printColourAndRoute(alarms[i][2], alarms[i][3])
-			display.print(tostring(alarms[i][1]))
+			display.write(tostring(alarms[i][1]))
+      line = line + 1
+      display.setCursor(1, line)
 		end
 	end
 end
@@ -408,7 +419,7 @@ end
 
 function program.onLoop()
 	updateState()
-	updateDisplay()
+	updateDisplay(term)
 end
 
 
