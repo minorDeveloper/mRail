@@ -6,7 +6,9 @@ json = require("json")
 
 -- Local Variables
 local config = {}
+
 local modem
+local monitor
 
 local signalController
 local switchController
@@ -59,7 +61,7 @@ end
 function loadStateTable()
 	local lineData = {}
   -- TODO make this better
-	local file = io.open("StateTable.csv","r")
+	local file = io.open("./mRail/network-configs/StateTable" .. config.stationID .. ".csv","r")
 	i = 1
 	for line in file:lines() do
     lineData[i]=line
@@ -342,17 +344,19 @@ end
 function updateDisplay(display)
   display.clear()
 	display.setCursorPos(1,1)
-  local line = 1
+  local line = 2
   
   -- (currentLoadedStates,{stateID, serviceID, trainID})
   
 	display.write("Current loaded states:")
-  
+
 	display.setCursorPos(1,1)
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
       printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3])
 			display.write(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
+      line = line + 1
+      display.setCursor(1, line)
 		end
 	end
   
@@ -406,20 +410,26 @@ function program.setup(config_)
   loadStateTable()
   
   print("STATION: Loading station config")
-  mRail.loadConfig("/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
+  mRail.loadConfig("./mRail/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
   print("STATION: Station config loaded")
   
   print("STATION: Loading routing config")
   stationRouting = dofile("./mRail/network-configs/.station-routing-config")
   print("STATION: Routing config loaded")
   
+  if config.monitor ~= nil then
+    monitor = peripheral.wrap(config.monitor)
+  else
+    monitor = term
+  end
+  
   updateState()
-  updateDisplay(term)
+  updateDisplay(monitor)
 end
 
 function program.onLoop()
 	updateState()
-	updateDisplay(term)
+	updateDisplay(monitor)
 end
 
 

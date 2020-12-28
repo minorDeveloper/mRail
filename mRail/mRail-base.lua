@@ -15,6 +15,7 @@ local configFilename = "./mRail/.config"
 
 -- Load mRail-api
 mRail = require("mRail-api")
+json = require("json")
 
 -- Load config
 print("BASE: Loading config file")
