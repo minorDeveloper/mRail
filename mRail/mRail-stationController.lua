@@ -232,7 +232,7 @@ end
 
 -- TODO - Comment
 function logRequest(entryID, serviceID, trainID, detectorID,entryOrDispatch)
-  local unique = checkUnique(requestList, 1, entryID) && checkUnique(requestList, 3, trainID)
+  local unique = checkUnique(requestList, 1, entryID) and checkUnique(requestList, 3, trainID)
 	if unique then
 		if serviceID == nil then
 			serviceID = ""
