@@ -93,12 +93,6 @@ mRail.channels = {
 
 
 
-local tempConfig
-print("API: Loading global config")
-mRail.loadConfig("./mRail/network-configs/.global-config",tempConfig)
-print("API: Global config loaded")
-mRail.station_name = tempConfig.stationName
-mRail.location_name = tempConfig.locationName
 
 -- Broadcasts
 
@@ -322,5 +316,14 @@ end
 function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
+
+-- Load stuff
+
+local tempConfig
+print("API: Loading global config")
+mRail.loadConfig("./mRail/network-configs/.global-config",tempConfig)
+print("API: Global config loaded")
+mRail.station_name = tempConfig.stationName
+mRail.location_name = tempConfig.locationName
 
 return mRail
