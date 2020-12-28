@@ -378,7 +378,7 @@ local program = {}
 -- Program Functions
 function program.setup(config_)
   config = config_
-  print("Program setup")
+  print("STATION: Program setup")
   -- Setup stuff
   modem = peripheral.wrap(config.modemSide)
   modem.open(mRail.channels.detect_channel)
@@ -394,10 +394,13 @@ function program.setup(config_)
   
   loadStateTable()
   
-  print("Loading station config")
+  print("STATION: Loading station config")
   mRail.loadConfig("/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
+  print("STATION: Station config loaded")
   
-  stationRouting = dofile("/network-configs/.station-routing-config")
+  print("STATION: Loading routing config")
+  stationRouting = dofile("./mRail/network-configs/.station-routing-config")
+  print("STATION: Routing config loaded")
   
   updateState()
   updateDisplay(term)
