@@ -74,7 +74,7 @@ for i = 1, #commandsToRun do
 end
 
 term.clear()
-openingScroll(term)
+openingScroll(term,3)
 writeASCII(logoASCII, term, 10, 2)
 
 -- TODO - Make this program use own code
