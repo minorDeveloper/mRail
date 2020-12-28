@@ -58,6 +58,7 @@ end
 -- TODO - Comment function
 function loadStateTable()
 	local lineData = {}
+  -- TODO make this better
 	local file = io.open("StateTable.csv","r")
 	i = 1
 	for line in file:lines() do
@@ -377,6 +378,7 @@ local program = {}
 -- Program Functions
 function program.setup(config_)
   config = config_
+  print("Program setup")
   -- Setup stuff
   modem = peripheral.wrap(config.modemSide)
   modem.open(mRail.channels.detect_channel)
@@ -392,6 +394,7 @@ function program.setup(config_)
   
   loadStateTable()
   
+  print("Loading station config")
   mRail.loadConfig("/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
   
   stationRouting = dofile("/network-configs/.station-routing-config")

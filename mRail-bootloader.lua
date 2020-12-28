@@ -47,12 +47,13 @@ local commandsToRun = {
 
 
 function openingScroll(mon, time)
-    for i = 51, (-1 * (string.len(trainASCII[1]))), -1 do 
-      mon.clear()
-      writeASCII(trainASCII, mon, i, 2)
-      writeASCII(trackASCII, mon, 1, #trainASCII + 2)
-      sleep(0.2)
-    end
+  
+  for i = 51, (-1 * (string.len(trainASCII[1]))), -1 do 
+    mon.clear()
+    writeASCII(trainASCII, mon, i, 2)
+    writeASCII(trackASCII, mon, 1, #trainASCII + 2)
+    sleep(time / (51 + string.len(trainASCII[1])))
+  end
 end
 
 
@@ -72,8 +73,8 @@ for i = 1, #commandsToRun do
   shell.run(commandsToRun[i])
 end
 
---openingScroll(term)
 term.clear()
+openingScroll(term)
 writeASCII(logoASCII, term, 10, 2)
 
 -- TODO - Make this program use own code

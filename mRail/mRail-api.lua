@@ -438,7 +438,7 @@ end
 
 -- Files and configuration
 
-function mRail.executeFile(filename, ...)
+local function executeFile(filename, ...)
   local ok, err = loadfile( filename )
   print( "Running "..filename )
   if ok then

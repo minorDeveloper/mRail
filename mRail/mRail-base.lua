@@ -4,10 +4,11 @@
 -- Base program where all mRail systems are launched from
 
 -- TODO - Comment all this
+-- TODO - Write/get a logging program - HIGH PRIORITY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 -- Configuration
 local config = {}
-local configFilename = ".config"
+local configFilename = "./mRail/.config"
 
 -- Functions:
 
@@ -16,11 +17,15 @@ local configFilename = ".config"
 mRail = require("mRail-api")
 
 -- Load config
+print("BASE: Loading config file")
 mRail.loadConfig(configFilename,config)
+print("Config file loaded")
 local configState = mRail.checkConfig(config)
 
 -- Load appropriate program
+print("BASE: Loading program")
 local program = require(mRail.programs[config.programType])
+print("BASE: Program loaded")
 
 handleMessages = {
   [tostring(mRail.channels.detect_channel)]           = program.detect_channel,
@@ -42,7 +47,9 @@ handleMessages = {
 }
 
 -- Main flow
+print("BASE: Setting up program")
 program.setup(config)
+print("BASE: Program setup")
 
 while true do
 	event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
