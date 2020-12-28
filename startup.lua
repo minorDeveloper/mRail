@@ -6,4 +6,4 @@
 -- If set then update
 
 -- Run mRail-base
-shell.run("/mRail/mRail-base.lua")
+shell.run("/mRail/mRail-base")

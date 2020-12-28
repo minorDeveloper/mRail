@@ -12,7 +12,7 @@
 local mRail = {}
 
 -- json = dofile("json.lua")
-json = require("json.lua")
+json = require("json")
 
 
 

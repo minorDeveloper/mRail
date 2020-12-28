@@ -11,7 +11,7 @@ config_name = ".global-config"
 
 
 -- Load mRail-api
-mRail = require("/programs/mRail-api.lua")
+mRail = require("mRail/programs/mRail-api")
 
 -- Load config
 
