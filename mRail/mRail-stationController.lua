@@ -350,13 +350,13 @@ function updateDisplay(display)
   
 	display.write("Current loaded states:")
 
-	display.setCursorPos(1,1)
+	display.setCursorPos(1,2)
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
       printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3])
 			display.write(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
       line = line + 1
-      display.setCursor(1, line)
+      display.setCursorPos(1, line)
 		end
 	end
   
@@ -369,7 +369,7 @@ function updateDisplay(display)
       printColourAndRoute(requestList[i][2],requestList[i][3])
 			display.write(tostring(mRail.location_name[stationConfig.detectorEntranceIDMapping[requestList[i][1]]]))
       line = line + 1
-      display.setCursor(1, line)
+      display.setCursorPos(1, line)
 		end
 	end
 	
@@ -382,7 +382,7 @@ function updateDisplay(display)
       printColourAndRoute(alarms[i][2], alarms[i][3])
 			display.write(tostring(alarms[i][1]))
       line = line + 1
-      display.setCursor(1, line)
+      display.setCursorPos(1, line)
 		end
 	end
 end

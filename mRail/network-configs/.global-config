@@ -1,0 +1,152 @@
+return {
+  stationName = {
+    "Unassigned",  
+    "Hub",
+    "SJ",
+    "Barron",
+    "Ryan",
+    "Among Us",
+  },
+  locationName = {
+    "Depot", --1
+
+    --Hub Station
+
+    "HDE", --2
+    "HDW", --3
+
+    "Hub P1", --4
+    "Hub P2", --5
+    "Hub P3", --6
+    "Hub P4", --7
+
+    "Hub West Dep", --8
+    "Hub West Arr", --9
+    "Hub Branch Arr", --10
+
+    "Hub East Dep", --11
+    "Hub East Arr", --12
+
+    -- North Mainline
+
+    "01 South Entr",
+    "01 South Exit",
+
+    "01 North Entr",
+    "01 North Exit",
+    "02 South Entr",
+    "02 South Exit",
+
+    "02 North Entr",
+    "02 North Exit",
+    "03 South Entr",
+    "03 South Exit",
+
+    "03 North Entr",
+    "03 North Exit",
+    "04 South Entr",
+    "04 South Exit",
+
+    "04 North Entr",
+    "04 North Exit", --28
+    "05 South Entr",
+    "05 South Exit",
+
+    "05 North Entr",
+    "05 North Exit",
+    "06 South Entr",
+    "06 South Exit",
+
+    "06 North Entr",
+    "06 North Exit",
+    "07 South Entr",
+    "07 South Exit",
+
+    "07 North Entr",
+    "07 North Exit",
+    "08 South Entr",
+    "08 South Exit",
+
+    "08 North Entr",
+    "08 North Exit",
+
+
+    --SJ
+    "SJD",
+
+    "SJ P1",
+    "SJ P2",
+
+    "SJ Arr",
+    "SJ Dep",
+
+    "Hub Branch Dep",
+
+    -- Branch West
+
+    "01 East Entr",
+    "01 East Exit",
+
+    "01 West Entr",
+    "01 West Exit",
+    "02 East Entr",
+    "02 East Exit",
+
+    "02 West Entr",
+    "02 West Exit",
+    "03 East Entr",
+    "03 East Exit",
+
+    "03 West Entr",
+    "03 West Exit",
+    "04 East Entr",
+    "04 East Exit",
+
+    "04 West Entr",
+    "04 West Exit",
+    "05 East Entr",
+    "05 East Exit",
+
+    "05 West Entr",
+    "05 West Exit",
+
+    --Barron
+    "BDW",
+    "BDE",
+
+    "B P1",
+    "B P2",
+
+    "Barr East Arr",
+    "Barr East Dep",
+
+    "Barr West Arr",
+    "Barr West Dep",
+
+    --Ryan
+    "RDS",
+    "RDN",
+
+    "R P1",
+    "R P2",
+    "R P3",
+    "R P4",
+
+    "Ryan South Arr",
+    "Ryan South Dep",
+
+    "Ryan North Arr",
+    "Ryan North Dep",
+
+    --Ryan South Branch
+
+    "Ryan S Branch Entr",
+    "Ryan S Branch Exit",
+
+    "Ryan W Branch Entr",
+    "Ryan W Branch Exit",
+
+    "Among Us Entr", --95
+    "Among Us Exit", --94
+    },
+}

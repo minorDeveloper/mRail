@@ -56,7 +56,7 @@ while true do
 	event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
 	if event == "modem_message" then
 		local channel = tonumber(param2)
-		local decodedMessage = json.json.decode(param4)
+		local decodedMessage = json.decode(param4)
     local func = handleMessages[tostring(channel)](decodedMessage)
     if (func) then
         func()
