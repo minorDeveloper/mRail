@@ -123,7 +123,7 @@ function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.request_dispatch_channel,1,message)
+	modem.transmit(mRail.channels.request_dispatch_channel,1,message)
 end
 
 
@@ -136,7 +136,7 @@ function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.dispatch_channel,1,message)
+	modem.transmit(mRail.channels.dispatch_channel,1,message)
 end
 
 function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
@@ -148,7 +148,7 @@ function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.station_dispatch_channel,1,message)
+	modem.transmit(mRail.channels.station_dispatch_channel,1,message)
 end
 
 -- Station-Depot Comms
@@ -163,7 +163,7 @@ function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, de
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.station_dispatch_request,1,message)
+	modem.transmit(mRail.channels.station_dispatch_request,1,message)
 end
 
 function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
@@ -175,7 +175,7 @@ function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.station_dispatch_confirm,1,message)
+	modem.transmit(mRail.channels.station_dispatch_confirm,1,message)
 end
 
 function mRail.station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
@@ -187,7 +187,7 @@ function mRail.station_request_route(modem, stationID, entryID, exitID, serviceI
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	modem.transmit(channels.station_route_request,1,message)
+	modem.transmit(mRail.channels.station_route_request,1,message)
 end
 
 
@@ -202,7 +202,7 @@ function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.oneway_dispatch_request,1,message)
+	modem.transmit(mRail.channels.oneway_dispatch_request,1,message)
 end
 
 function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
@@ -214,7 +214,7 @@ function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.oneway_dispatch_confirm,1,message)
+	modem.transmit(mRail.channels.oneway_dispatch_confirm,1,message)
 end
 
 function mRail.timetable_update(modem, timetable)
@@ -224,7 +224,7 @@ function mRail.timetable_update(modem, timetable)
 	})
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.timetable_updates,1,message)
+	modem.transmit(mRail.channels.timetable_updates,1,message)
 end
 
 function mRail.screen_update(modem, stationID, arrivals, departures)
@@ -233,7 +233,7 @@ function mRail.screen_update(modem, stationID, arrivals, departures)
 		['arrivals'] = arrivals,
 		['departures'] = departures
 		})
-	modem.transmit(channels.screen_update_channel,1,message)
+	modem.transmit(mRail.channels.screen_update_channel,1,message)
 end
 
 function mRail.screen_platform_update(modem, stationID, serviceID, platform)
@@ -242,7 +242,7 @@ function mRail.screen_platform_update(modem, stationID, serviceID, platform)
 		['serviceID'] = serviceID,
 		['platform'] = platform
 		})
-	modem.transmit(channels.screen_platform_channel,1,message)
+	modem.transmit(mRail.channels.screen_platform_channel,1,message)
 end
 
 function mRail.raise_error(modem, errMessage, errorLevel)
@@ -259,7 +259,7 @@ function mRail.raise_error(modem, errMessage, errorLevel)
 })
 	print("Message transmitted")
 	print(message)
-	modem.transmit(channels.error_channel,1,message)
+	modem.transmit(mRail.channels.error_channel,1,message)
 end
 
 -- Files and configuration
@@ -319,7 +319,7 @@ end
 
 -- Load stuff
 
-local tempConfig
+local tempConfig = {}
 print("API: Loading global config")
 mRail.loadConfig("./mRail/network-configs/.global-config",tempConfig)
 print("API: Global config loaded")
