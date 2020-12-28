@@ -297,19 +297,19 @@ function setDepartureAlarm(serviceID, trainID)
 end
 
 -- TODO - Comment function
-function printColourAndRoute(serviceID, trainID)
+function printColourAndRoute(serviceID, trainID, display)
   term.setBackgroundColor(math.pow(2,tonumber(trainID) - 1))
-    term.write("  ")
-    term.setBackgroundColor(32768)
-    term.write(" ")
+    display.write("  ")
+    display.setBackgroundColor(32768)
+    display.write(" ")
     if serviceID == nil or serviceID == "" then
       serviceID = "No Route"
     end
-    term.write(tostring(serviceID))
+    display.write(tostring(serviceID))
     for i = string.len(serviceID), 8 do
-      term.write(" ")
+      display.write(" ")
     end
-    term.write(" ")
+    display.write(" ")
 end
 
 -- TODO - Comment
@@ -354,7 +354,7 @@ function updateDisplay(display)
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
       display.setCursorPos(1, line)
-      printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3])
+      printColourAndRoute(currentLoadedStates[i][2],currentLoadedStates[i][3], display)
 			display.write(tostring(systemRoutingData[currentLoadedStates[i][1]+1][2]))
       line = line + 1
 		end
@@ -367,7 +367,7 @@ function updateDisplay(display)
 	if #requestList ~= 0 then
 		for i = 1, #requestList do
       display.setCursorPos(1, line)
-      printColourAndRoute(requestList[i][2],requestList[i][3])
+      printColourAndRoute(requestList[i][2],requestList[i][3], display)
 			display.write(tostring(mRail.location_name[stationConfig.detectorEntranceIDMapping[requestList[i][1]]]))
       line = line + 1
 		end
@@ -380,7 +380,7 @@ function updateDisplay(display)
 	if #alarms ~= 0 then
 		for i = 1, #alarms do
       display.setCursorPos(1, line)
-      printColourAndRoute(alarms[i][2], alarms[i][3])
+      printColourAndRoute(alarms[i][2], alarms[i][3], display)
 			display.write(tostring(alarms[i][1]))
       line = line + 1
 		end
