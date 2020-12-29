@@ -298,18 +298,18 @@ end
 
 -- TODO - Comment function
 function printColourAndRoute(serviceID, trainID, display)
-  term.setBackgroundColor(math.pow(2,tonumber(trainID) - 1))
-    display.write("  ")
-    display.setBackgroundColor(32768)
+  display.setBackgroundColor(math.pow(2,tonumber(trainID) - 1))
+  display.write("  ")
+  display.setBackgroundColor(32768)
+  display.write(" ")
+  if serviceID == nil or serviceID == "" then
+    serviceID = "No Route"
+  end
+  display.write(tostring(serviceID))
+  for i = string.len(serviceID), 8 do
     display.write(" ")
-    if serviceID == nil or serviceID == "" then
-      serviceID = "No Route"
-    end
-    display.write(tostring(serviceID))
-    for i = string.len(serviceID), 8 do
-      display.write(" ")
-    end
-    display.write(" ")
+  end
+  display.write(" ")
 end
 
 -- TODO - Comment
