@@ -6,11 +6,13 @@
 --      - One-way Blocks
 --      - Train Tracking
 --      - Stop/Start Dispatch
+-- TODO - Replace prints with logfile calls
 
 
 local mRail = {}
 
-json = require("json")
+json = require("./mRail/json")
+log = require("./mRail/log")
 
 
 
@@ -285,13 +287,13 @@ end
 
 function mRail.loadConfig(file_name,config_var)
 	if fs.exists(file_name) then
-		print("Loading config file...")
+		log.debug("Loading config file...")
 		local _config = executeFile(file_name)
 		for k,v in pairs(_config) do
 			config_var[k] = v
 		end
 	else
-		print("Error, no configuration file!.")
+		log.debug("Error, no configuration file!.")
 		return 1
 	end
 end
@@ -320,9 +322,9 @@ end
 -- Load stuff
 
 local tempConfig = {}
-print("API: Loading global config")
+log.info("Loading global config")
 mRail.loadConfig("./mRail/network-configs/.global-config",tempConfig)
-print("API: Global config loaded")
+log.info("Global config loaded")
 mRail.station_name = tempConfig.stationName
 mRail.location_name = tempConfig.locationName
 

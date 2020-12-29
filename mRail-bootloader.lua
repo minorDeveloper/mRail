@@ -34,6 +34,11 @@ local commandsToRun = {
     "rm startup.lua",
     "pastebin run p8PJVxC4",
     "github clone minorDeveloper/mRail",
+    "github clone rxi/log.lua",
+    "rm /log.lua/LICENSE",
+    "rm /log.lua/README.md",
+    "mv /log.lua/log.lua ./mRail/",
+    "rm log.lua",
     "rm /github.rom",
     "rm /github",
     "rm /mRail/LICENSE",
@@ -73,8 +78,14 @@ for i = 1, #commandsToRun do
   shell.run(commandsToRun[i])
 end
 
+-- Load APIs
+mRail = require("./mRail/mRail-api")
+json = require("./mRail/json")
+log = require("./mRail/log")
+log.info("APIs loaded sucessfully")
+
 term.clear()
-openingScroll(term,3)
+openingScroll(term,4)
 writeASCII(logoASCII, term, 10, 2)
 
 -- TODO - Make this program use own code

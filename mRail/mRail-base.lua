@@ -14,19 +14,20 @@ local configFilename = "./mRail/.config"
 
 
 -- Load mRail-api
-mRail = require("mRail-api")
-json = require("json")
+mRail = require("./mRail/mRail-api")
+json = require("./mRail/json")
+log = require("./mRail/log")
 
 -- Load config
-print("BASE: Loading config file")
+log.info("Loading config file")
 mRail.loadConfig(configFilename,config)
-print("Config file loaded")
+log.info("Config file loaded")
 local configState = mRail.checkConfig(config)
 
 -- Load appropriate program
-print("BASE: Loading program")
+log.info("Loading program")
 local program = require(mRail.programs[config.programType])
-print("BASE: Program loaded")
+log.info("Program loaded")
 
 handleMessages = {
   [tostring(mRail.channels.detect_channel)]           = program.detect_channel,
@@ -48,9 +49,9 @@ handleMessages = {
 }
 
 -- Main flow
-print("BASE: Setting up program")
+log.info("Setting up program")
 program.setup(config)
-print("BASE: Program setup")
+log.info("Program setup")
 
 while true do
 	event, param1, param2, param3, param4, param5, param6 = os.pullEvent()

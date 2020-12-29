@@ -1,8 +1,9 @@
 -- mRail System Program Base
 -- (C) 2020-21 Sam Lane
 
-mRail = require("mRail-api")
-json = require("json")
+mRail = require("./mRail/mRail-api")
+json = require("./mRail/json")
+log = require("./mRail/log")
 
 -- Local Variables
 local config = {}
