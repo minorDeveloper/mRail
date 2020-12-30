@@ -34,13 +34,6 @@ local commandsToRun = {
     "rm startup.lua",
     "pastebin run p8PJVxC4",
     "github clone minorDeveloper/mRail",
-    "github clone rxi/log.lua",
-    "rm /log.lua/LICENSE",
-    "rm /log.lua/README.md",
-    "mv /log.lua/log.lua ./mRail/",
-    "rm log.lua",
-    "rm /github.rom",
-    "rm /github",
     "rm /mRail/LICENSE",
     "rm /mRail/README.md",
     "rm /mRail/mRail-bootloader.lua",
@@ -48,6 +41,13 @@ local commandsToRun = {
     "rename /mRail temp",
     "copy /temp/mRail .",
     "rm temp",
+    "github clone rxi/log.lua",
+    "rm /log.lua/LICENSE",
+    "rm /log.lua/README.md",
+    "mv /log.lua/log.lua ./mRail/",
+    "rm log.lua",
+    "rm /github.rom",
+    "rm /github",
 }
 
 

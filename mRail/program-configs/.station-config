@@ -1,1 +1,20 @@
-return {programType = "station", controlType = {"wireless", "wired"}, }
+return {
+  {
+    programType    = {"^station$"}, 
+    modemSide      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+    controlType    = {"^wireless$"}, 
+    signalControl  = {"^digital_controller_box_%d+$", "^top$", "^bottom$"}, 
+    switchControl  = {"^digital_controller_box_%d+$", "^top$", "^bottom$"}, 
+    releaseControl = {"^digital_controller_box_%d+$", "^top$", "^bottom$"}, 
+    monitor        = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
+  },
+  {
+    programType    = {"^station$"}, 
+    modemSide      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+    controlType    = {"^wired$"}, 
+    signalControl  = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+    switchControl  = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+    releaseControl = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+    monitor        = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
+  },
+}
