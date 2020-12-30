@@ -395,7 +395,7 @@ local program = {}
 -- Program Functions
 function program.setup(config_)
   config = config_
-  print("STATION: Program setup")
+  log.info("Starting pogram setup")
   -- Setup stuff
   modem = peripheral.wrap(config.modemSide)
   modem.open(mRail.channels.detect_channel)
@@ -411,13 +411,13 @@ function program.setup(config_)
   
   loadStateTable()
   
-  print("STATION: Loading station config")
+  log.info("STATION: Loading station config")
   mRail.loadConfig("./mRail/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
-  print("STATION: Station config loaded")
+  log.debug("STATION: Station config loaded")
   
-  print("STATION: Loading routing config")
+  log.info("STATION: Loading routing config")
   stationRouting = dofile("./mRail/network-configs/.station-routing-config")
-  print("STATION: Routing config loaded")
+  log.debug("STATION: Routing config loaded")
   
   if config.monitor ~= nil then
     monitor = peripheral.wrap(config.monitor)
@@ -427,6 +427,7 @@ function program.setup(config_)
   
   updateState()
   updateDisplay(monitor)
+  log.info("Program setup complete")
 end
 
 function program.onLoop()

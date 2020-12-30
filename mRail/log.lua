@@ -72,7 +72,7 @@ for i, x in ipairs(modes) do
     --term.write(string.format("[%-6s%s]",
     --                   nameupper,
     --                   os.date("%H:%M:%S")))
-    term.write(string.format("[%-6s]",
+    term.write(string.format("[%-5s]",
                        nameupper))
     term.setTextColor(col)
     term.write(string.format(" %s: %s",
