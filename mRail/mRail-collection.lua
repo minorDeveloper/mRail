@@ -92,7 +92,11 @@ function program.setup(config_)
   cart_chest = peripheral.wrap(config.cart)
   dispenser = peripheral.wrap(config.dispenser)
   
-  monitor = peripheral.wrap(config.monitor)
+  if config.monitor == nil or config.monitor == "term" then
+    monitor = term
+  else
+    monitor = peripheral.wrap(config.monitor)
+  end
   monitor.clear()
   monitor.setCursorPos(1,1)
   log.info("Current Configuration")

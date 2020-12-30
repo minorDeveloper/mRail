@@ -417,10 +417,10 @@ function program.setup(config_)
   stationRouting = dofile("./mRail/network-configs/.station-routing-config")
   log.debug("STATION: Routing config loaded")
   
-  if config.monitor ~= nil then
-    monitor = peripheral.wrap(config.monitor)
-  else
+  if config.monitor == nil or config.monitor == "term" then
     monitor = term
+  else
+    monitor = peripheral.wrap(config.monitor)
   end
   
   updateState()
