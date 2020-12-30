@@ -303,20 +303,15 @@ function mRail.checkConfig(config)
   local targetConfigName = "./mRail/program-configs/" .. mRail.configs[config.programType]
   local targetConfig = {}
   mRail.loadConfig(targetConfigName, targetConfig)
-  
+
   for i = 1, #targetConfig do
     local validConfig = true
     for parameter, values in pairs(targetConfig[i]) do
-      print(parameter, " -- ", values)
-      
       -- Check that the value exists
       if config[parameter] ~= nil then
-        print("Parameter: " .. parameter .. " exists")
         -- Check that the key meets one of the requirements
         local oneMatches = false
         for j = 1, #values do
-          print(parameter .. " value: " .. config[parameter])
-          print("Possible answer: " .. values[j])
           if string.match(config[parameter],values[j]) ~= nil then
             oneMatches = true
             break

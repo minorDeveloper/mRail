@@ -1,0 +1,93 @@
+--
+-- log.lua
+--
+-- Copyright (c) 2016 rxi
+--
+-- This library is free software; you can redistribute it and/or modify it
+-- under the terms of the MIT license. See LICENSE for details.
+--
+
+local log = { _version = "0.1.0" }
+
+log.usecolor = true
+log.outfile = nil
+log.level = "trace"
+
+
+local modes = {
+  { name = "trace", color = "#3366CC", },
+  { name = "debug", color = "#4C99B2", },
+  { name = "info",  color = "#57A64E", },
+  { name = "warn",  color = "#DEDE6C", },
+  { name = "error", color = "#F2B233", },
+  { name = "fatal", color = "#CC4C4C", },
+}
+
+
+local levels = {}
+for i, v in ipairs(modes) do
+  levels[v.name] = i
+end
+
+
+local round = function(x, increment)
+  increment = increment or 1
+  x = x / increment
+  return (x > 0 and math.floor(x + .5) or math.ceil(x - .5)) * increment
+end
+
+
+local _tostring = tostring
+
+local tostring = function(...)
+  local t = {}
+  for i = 1, select('#', ...) do
+    local x = select(i, ...)
+    if type(x) == "number" then
+      x = round(x, .01)
+    end
+    t[#t + 1] = _tostring(x)
+  end
+  return table.concat(t, " ")
+end
+
+
+for i, x in ipairs(modes) do
+  local nameupper = x.name:upper()
+  log[x.name] = function(...)
+    
+    -- Return early if we're below the log level
+    if i < levels[log.level] then
+      return
+    end
+
+    local msg = tostring(...)
+    local info = debug.getinfo(2, "Sl")
+    local lineinfo = info.short_src .. ":" .. info.currentline
+
+    -- Output to console
+    local col = term.getTextColor()
+    term.setTextColor(x.color)
+    local x, y = term.getCursorPos()
+    term.write(string.format("[%-6s%s]",
+                        nameupper,
+                        os.date("%H:%M:%S")))
+    term.setTextColor(col)
+    term.write(string.format(" %s: %s",
+                        lineinfo,
+                        msg))
+    term.setCursorPos(1, y + 1)
+    -- Output to log file
+    if log.outfile then
+      local fp = io.open(log.outfile, "a")
+      local str = string.format("[%-6s%s] %s: %s\n",
+                                nameupper, os.date(), lineinfo, msg)
+      fp:write(str)
+      fp:close()
+    end
+
+  end
+end
+
+
+return log
