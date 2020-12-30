@@ -156,8 +156,8 @@ function checkNewCombo(stateA)
 	local switchStateB 		= currentState[4]
 	local switchRequiredB 	= currentState[3]
 	
-	print(currentState[1] .. " " .. currentState[2] .. " " .. currentState[3] .. " " .. currentState[4])
-	print(stateA)
+	log.debug(currentState[1] .. " " .. currentState[2] .. " " .. currentState[3] .. " " .. currentState[4])
+	log.trace(stateA)
 	
 	local validSwitching = bit.band(bit.band(switchRequiredA,switchRequiredB),bit.bxor(switchStateA,switchStateB))
 	local validSignalling =bit.band(bit.band(signalRequiredA,signalRequiredB),bit.bxor(signalStateA,signalStateB))
@@ -176,7 +176,7 @@ function tryRemove(stateID)
 		for i = 1, #currentLoadedStates do
 			if tonumber(currentLoadedStates[i][1]) == stateID then
 				table.remove(currentLoadedStates,i)
-				print("Removed the state")
+				log.debug("Removed the state")
 				return true
 			end
 		end
@@ -205,12 +205,12 @@ function tryAdd(stateID, serviceID, trainID)
     
 		if unique then 
 			table.insert(currentLoadedStates,{stateID, serviceID, trainID})
-			print("State added")
+			log.debug("State added")
 			return true
 		end
     return false
 	else
-		print("Requested state incompatible")
+		log.debug("Requested state incompatible")
 		if platformOccupation ~= 0 then
 			tryAdd(platformOccupation, serviceID, trainID)
 		end
@@ -223,8 +223,8 @@ end
 -- TODO - Comment
 function tryRoute(entranceID, exitID, serviceID, trainID)
 	local possibleRoutes = findRoutes(entranceID, exitID)
-	print("Routes found")
-	print(tostring(possibleRoutes))
+	log.debug("Routes found")
+	log.trace(tostring(possibleRoutes))
 	
   for i = 1, #possibleRoutes do
     if tryAdd(possibleRoutes[i], serviceID, trainID) == true then
@@ -252,11 +252,11 @@ function processRequests()
   -- TODO - Replace this with a do while loop, rather than be recursive
   for i = 1, #requestList do
     for j = 1, #stationRouting do
-      print(stationRouting[j][1])
+      log.trace(stationRouting[j][1])
       if tostring(requestList[i][2]) == stationRouting[j][1] then
         local routesToTry = stationRouting[j][2][tonumber(config.stationID)][tonumber(requestList[i][5])]
         for k = 1, #routesToTry do
-          print("Trying route from " .. requestList[i][1] .. " to " .. routesToTry[k])
+          log.debug("Trying route from " .. requestList[i][1] .. " to " .. routesToTry[k])
           if tryRoute(requestList[i][1], routesToTry[k], requestList[i][2], requestList[i][3]) == true then
             if tonumber(requestList[i][4]) ~= 0 then
               mRail.station_confirm_dispatch(modem, requestList[i][4], requestList[i][2], requestList[i][3])

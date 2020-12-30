@@ -99,7 +99,7 @@ mRail.channels = {
 -- Broadcasts
 
 function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
-	print("Notifying Tracker and Stations of detection")
+	log.info("Notifying Tracker and Stations of detection")
 	local message = json.encode({
 		["detectorID"] = detectorID,
 		["serviceID"] = serviceID,
@@ -117,71 +117,71 @@ end
 -- Dispatch-Depot comms
 
 function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
-	print("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+	log.info("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.encode({
 		['recieverID'] = recieverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.request_dispatch_channel,1,message)
 end
 
 
 function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
-	print("Dispatching the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+	log.info("Dispatching the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.encode({
 		['recieverID'] = recieverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.dispatch_channel,1,message)
 end
 
 function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
-	print("Dispatching the " .. number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
+	log.info("Dispatching the " .. number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.encode({
 		['stationID'] = stationID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.station_dispatch_channel,1,message)
 end
 
 -- Station-Depot Comms
 
 function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, detectorID)
-	print("Requesting permission from station " .. stationID .. "to dispatch train")
+	log.info("Requesting permission from station " .. stationID .. "to dispatch train")
 	local message = json.encode({
 		['stationID'] = stationID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID,
 		['detectorID'] = detectorID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.station_dispatch_request,1,message)
 end
 
 function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
-	print("Giving " .. recieverID .. " permission to dispatch train")
+	log.info("Giving " .. recieverID .. " permission to dispatch train")
 	local message = json.encode({
 		['recieverID'] = recieverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.station_dispatch_confirm,1,message)
 end
 
 function mRail.station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
-	print("Requesting route")
+	log.info("Requesting route")
 	local message = json.encode({
 		['stationID'] = stationID,
 		['entryID'] = entryID,
@@ -196,58 +196,65 @@ end
 -- Oneway-Detector Comms
 
 function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
-	print("Requesting permission to dispatch train " .. trainID)
+	log.info("Requesting permission to dispatch train " .. trainID)
 	local message = json.encode({
 		['detectorID'] = detectorID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.oneway_dispatch_request,1,message)
 end
 
 function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
-	print("Giving " .. detectorID .. " permission to release train")
+	log.info("Giving " .. detectorID .. " permission to release train")
 	local message = json.encode({
 		['detectorID'] = detectorID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.oneway_dispatch_confirm,1,message)
 end
 
 function mRail.timetable_update(modem, timetable)
-	print("Updating timetable for all stations")
+	log.info("Updating timetable for all stations")
 	local message = json.encode({
 		['timetable'] = timetable
 	})
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.timetable_updates,1,message)
 end
 
 function mRail.screen_update(modem, stationID, arrivals, departures)
+  log.info("Sending updates to screens")
 	local message = json.encode({
 		['stationID'] = stationID,
 		['arrivals'] = arrivals,
 		['departures'] = departures
-		})
+  })
+  log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.screen_update_channel,1,message)
 end
 
 function mRail.screen_platform_update(modem, stationID, serviceID, platform)
+  log.info("Updating platform allocation")
 	local message = json.encode({
 		['stationID'] = stationID,
 		['serviceID'] = serviceID,
 		['platform'] = platform
-		})
+  })
+  log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.screen_platform_channel,1,message)
 end
 
 function mRail.raise_error(modem, errMessage, errorLevel)
+  log.error(errMessage)
 	local x = 0
 	local y = 0
 	local z = 0
@@ -259,8 +266,8 @@ function mRail.raise_error(modem, errMessage, errorLevel)
 	['errMessage'] = errMessage,
 	['errorLevel'] = errorLevel
 })
-	print("Message transmitted")
-	print(message)
+	log.debug("Message transmitted")
+	log.trace(message)
 	modem.transmit(mRail.channels.error_channel,1,message)
 end
 
@@ -268,7 +275,7 @@ end
 
 local function executeFile(filename, ...)
   local ok, err = loadfile( filename )
-  print( "Running "..filename )
+  log.debug( "Running "..filename )
   if ok then
     return ok( ... )
   else
@@ -277,6 +284,7 @@ local function executeFile(filename, ...)
 end
 
 function mRail.loadConfig(modem,file_name,config_var)
+  log.info("Loadign config file")
   local returnVal = loadConfig(file_name,config_var)
   
   if returnVal == 1 then
@@ -298,7 +306,7 @@ function mRail.loadConfig(file_name,config_var)
 	end
 end
 
--- TODO - Finish this!
+-- TODO - Comment
 function mRail.checkConfig(config)
   local targetConfigName = "./mRail/program-configs/" .. mRail.configs[config.programType]
   local targetConfig = {}
@@ -325,7 +333,7 @@ function mRail.checkConfig(config)
       end
     end
     if validConfig then
-      log.error("VALID CONFIG")
+      log.debug("Config valid")
       return true
     end
   end
@@ -350,7 +358,7 @@ end
 local tempConfig = {}
 log.info("Loading global config")
 mRail.loadConfig("./mRail/network-configs/.global-config",tempConfig)
-log.info("Global config loaded")
+log.debug("Global config loaded")
 mRail.station_name = tempConfig.stationName
 mRail.location_name = tempConfig.locationName
 

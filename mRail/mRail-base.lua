@@ -22,13 +22,13 @@ log.usecolor = true
 -- Load config
 log.info("Loading config file")
 mRail.loadConfig(configFilename,config)
-log.info("Config file loaded")
+log.debug("Config file loaded")
 local configState = mRail.checkConfig(config)
 
 -- Load appropriate program
 log.info("Loading program")
 local program = require(mRail.programs[config.programType])
-log.info("Program loaded")
+log.debug("Program loaded")
 
 handleMessages = {
   [tostring(mRail.channels.detect_channel)]           = program.detect_channel,
