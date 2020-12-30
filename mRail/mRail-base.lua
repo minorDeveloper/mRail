@@ -59,7 +59,7 @@ while true do
     if (func) then
         func()
     end
-  elseif event == "minecart"
+  elseif event == "minecart" then
     program.handleMinecart(param6)
 	elseif event == "alarm" then
     -- Hand off to program to handle the alarm

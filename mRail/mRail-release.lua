@@ -11,6 +11,61 @@ log = require("./mRail/log")
 
 local config = {}
 
+local modem
+
+local loco_chest
+local cart_chest
+local dispenser
+local track
+
+function pushFirstItem(lowerSlot, upperSlot, destinationSlot)
+	local success = 0
+	local i = upperSlot
+	while success == 0 do
+		success = cart_chest.pushItems("bottom",i,1,destinationSlot)
+		log.debug("Slot " .. tostring(i) .. " " .. success)
+		i = i - 1
+		if i == lowerSlot then
+			success = true
+		end
+	end
+end
+
+function toDispenser(trainID)
+	if loco_chest.pushItems("bottom",trainID,1,1) == 1 then
+		pushFirstItem(1,18,2)
+		pushFirstItem(1,18,2)
+		pushFirstItem(19,27,3)
+		return true
+	else
+		mRail.raise_error(modem,"Train not in depot", 3)
+		return false
+	end
+end
+
+
+function dispatchTrain(trainID, serviceID)
+	if toDispenser(trainID) == true then
+		track.setDestination(serviceID)
+		-- release train
+		redstone.setOutput("bottom",true)
+		sleep(0.1)
+		redstone.setOutput("bottom",false)
+		return true
+	else
+		return false
+	end
+end
+
+function checkExitst(trainID)
+	if loco_chest.pushItems("bottom",trainID,1,1) == 1 then
+		dispenser.pushItems("right",1,1,trainID)
+		return true
+	else
+		dispenser.pushItems("right",1,1,trainID)
+		return false
+	end
+end
 
 -- From which all other programs are derived...
 local program = {}
@@ -18,6 +73,34 @@ local program = {}
 -- Program Functions
 function program.setup(config_)
   config = config_
+  
+  modem = peripheral.wrap(config.modemSide)
+
+  loco_chest = peripheral.wrap(config.loco)
+  cart_chest = peripheral.wrap(config.cart)
+  dispenser = peripheral.wrap(config.dispenser)
+  
+  track = peripheral.wrap(config.routingTrack)
+  
+  if config.monitor == nil or config.monitor == "term" then
+    monitor = term
+  else
+    monitor = peripheral.wrap(config.monitor)
+  end
+
+  --Open modem to comms channels
+  modem.open(mRail.channels.dispatch_channel)
+  modem.open(mRail.channels.station_dispatch_confirm)
+  
+  monitor.clear()
+	monitor.setCursorPos(1,1)
+	log.info("Current Configuration")
+	log.info("System ID: 	" .. config.id)
+	log.info("Name:		" .. config.name)
+	log.info("Modem Side:	" .. config.modemSide)
+	log.info("Track Name:	" .. config.routingTrack)
+	log.info("Parent ID:	" .. config.parentStation)
+	log.info("Parent Name: " .. mRail.station_name[tonumber(config.parentStation)])
 end
 
 function program.onLoop()
@@ -26,77 +109,29 @@ end
 
 
 -- Modem Messages
-function program.detect_channel(decodedMessage)
-  -- Handle messages on the detection channel
-end
-
-function program.train_info(decodedMessage)
-  -- Handle messages on the train info channel
-end
-
-function program.location_update_channel(decodedMessage)
-  -- Handle messages on the location update channel
-end
-
 function program.dispatch_channel(decodedMessage)
   -- Handle messages on the dispatch channel
+  if decodedMessage.recieverID == config.id then
+    log.info("Dispatch has requested a release")
+    -- path A: dispatch requests a release
+    --TODO: NEED TO CHECK THAT THE TRAIN EXISTS
+    if checkExitst(decodedMessage.trainID) == true then
+      mRail.station_request_dispatch(modem, config.parentStation, decodedMessage.serviceID, decodedMessage.trainID, config.id)
+      mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
+    end
+  end
 end
 
 function program.station_dispatch_confirm(decodedMessage)
   -- Handle messages on the station dispatch confirmation channel
+  if decodedMessage.recieverID == config.id then
+    log.info("Station has authorised the release")
+    -- path B: parent station clears release
+    if dispatchTrain(decodedMessage.trainID, tostring(decodedMessage.serviceID)) == true then
+      mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Dispatched from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parentStation)])
+    end
+  end
 end
 
-function program.station_route_request(decodedMessage)
-  -- Handle messages on the station route request channel
-end
-
-function program.station_dispatch_request(decodedMessage)
-  -- Handle messages on the station dispatch request channel
-end
-
-function program.oneway_dispatch_confirm(decodedMessage)
-  -- Handle messages on the oneway dispatch confirmation channel
-end
-
-function program.station_dispatch_request(decodedMessage)
-  -- Handle messages on the station dispatch request channel
-end
-
-function program.timetable_updates(decodedMessage)
-  -- Handle messages on the detection channel
-end
-
-function program.station_route_request(decodedMessage)
-  -- Handle messages on the station route request channel
-end
-
-function program.detect_channel(decodedMessage)
-  -- Handle messages on the detection channel
-end
-
-function program.station_dispatch_channel(decodedMessage)
-  -- Handle messages on the station dispatch channel
-end
-
-function program.screen_update_channel(decodedMessage)
-  -- Handle messages on the screen update channel
-end
-
-function program.screen_platform_channel(decodedMessage)
-  -- Handle messages on the screen platform channel
-end
-
-function program.request_dispatch_channel(decodedMessage)
-  -- Handle messages on the request dispatch channel
-end
-
-function program.error_channel(decodedMessage)
-  -- Handle messages on the error channel
-end
-
--- Alarms
-function program.handleAlarm(alarmID)
-  
-end
 
 return program
