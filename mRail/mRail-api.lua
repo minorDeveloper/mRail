@@ -300,7 +300,7 @@ end
 
 -- TODO - Finish this!
 function mRail.checkConfig(config)
-  local targetConfigName = mRail.configs[config.programType]
+  local targetConfigName = "./mRail/program-configs/" .. mRail.configs[config.programType]
   local targetConfig = {}
   mRail.loadConfig(targetConfigName, targetConfig)
   
@@ -310,6 +310,7 @@ function mRail.checkConfig(config)
     end
   end
   log.error("INVALID CONFIG")
+  read()
   return false
 end
 
