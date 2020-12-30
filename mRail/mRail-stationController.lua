@@ -58,11 +58,9 @@ function checkUnique(array, index, comparison)
   return unique
 end
 
--- TODO - generic loading functions
 -- TODO - Comment function
 function loadStateTable()
 	local lineData = {}
-  -- TODO make this better
 	local file = io.open("./mRail/network-configs/StateTable" .. config.stationID .. ".csv","r")
 	i = 1
 	for line in file:lines() do
@@ -449,13 +447,13 @@ function program.detect_channel(decodedMessage)
     local dectectorNumber = tonumber(systemRoutingData[currentLoadedStates[i][1]+1][4])
     local exitDetectorID = stationConfig.detectorExitIDMapping[dectectorNumber]
     if tonumber(decodedMessage.detectorID) == exitDetectorID and tonumber(decodedMessage.trainID) == tonumber(currentLoadedStates[i][3]) then
-      print("Removing state")
+      log.debug("Removing state")
       local stateBeingRemoved = currentLoadedStates[i][1]
       local stateToAdd = 0
       if systemRoutingData[stateBeingRemoved+1][10] ~= 0 then
         stateToAdd = tonumber(systemRoutingData[stateBeingRemoved+1][10])
       end
-      print("State to add: " .. stateToAdd)
+      log.trace("State to add: " .. stateToAdd)
       tryRemove(stateBeingRemoved)
       if stateToAdd ~= 0 then
         --check if it's a platformID
@@ -478,7 +476,7 @@ function program.detect_channel(decodedMessage)
   for i = 1, #stationConfig.detectorEntranceIDMapping do
     if stationConfig.detectorEntranceIDMapping[i] == tonumber(decodedMessage.detectorID) then
       local entryID = i
-      print("Entry ID: " .. entryID)
+      log.trace("Entry ID: " .. entryID)
       logRequest(entryID, decodedMessage.serviceID, decodedMessage.trainID,0,1)
       processRequests()
       break
@@ -502,11 +500,11 @@ end
 -- TODO - Comment function
 function program.station_dispatch_request(decodedMessage)
   -- Handle messages on the station dispatch request channel
-  print("Dispatch from Depot requested")
   for i = 1, #stationConfig.detectorDepotIDMapping do
     if stationConfig.detectorDepotIDMapping[i] == tonumber(decodedMessage.detectorID) then
       local entryID = i
-      print("Entry ID: " .. entryID)
+      log.info("Dispatch from Depot requested")
+      log.trace("Entry ID: " .. entryID)
       logRequest(entryID, decodedMessage.serviceID, decodedMessage.trainID, decodedMessage.detectorID,1)
       processRequests()
       break
@@ -517,8 +515,8 @@ end
 -- TODO - Comment function
 function program.station_dispatch_channel(decodedMessage)
   -- Handle messages on the station dispatch channel
-  print("Dispatch from Station requested")
   if tonumber(decodedMessage.stationID) == config.stationID then
+    log.info("Dispatch from Station requested")
     -- find where the train is
     local entryID = 0
     
@@ -574,10 +572,10 @@ function program.handleAlarm(alarmID)
       if entryID ~= 0 then
         logRequest(entryID, alarms[i][2], alarms[i][3], 0, 2)
         processRequests()
-        print("Request made")
+        log.debug("Request made")
         
       else
-        print("No Request Made")
+        log.debug("No Request Made")
       end
       table.remove(alarms,i)
       break
