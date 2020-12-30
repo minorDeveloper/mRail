@@ -3,18 +3,16 @@
 
 os.loadAPI("mRail.lua")
 
--- TODO - Comment everything
--- TODO - Add more error checking (i.e. if there are enough things available)
--- TODO - Add support for more train types
+
 
 -- Configuration
 local config = {}
 -- Default config values:
 config.id = 1
 config.name = "Release"
-config.modem_side = "top"
-config.track_name = "routing_track_2"
-config.parent_station = 1
+config.modemSide = "top"
+config.routingTrack = "routing_track_2"
+config.parentStation = 1
 
 config_name = ".config"
 
@@ -73,14 +71,14 @@ end
 -- Main program
 
 
-modem = peripheral.wrap(config.modem_side)
+modem = peripheral.wrap(config.modemSide)
 mRail.loadConfig(modem,config_name,config)
 
 loco_chest = peripheral.wrap("right")
 cart_chest = peripheral.wrap("left")
 dispenser = peripheral.wrap("bottom")
 
-track = peripheral.wrap(config.track_name)
+track = peripheral.wrap(config.routingTrack)
 
 --Open modem to comms channels
 modem.open(mRail.channels.dispatch_channel)
@@ -93,10 +91,10 @@ while true do
 	print("Current Configuration")
 	print("System ID: 	" .. config.id)
 	print("Name:		" .. config.name)
-	print("Modem Side:	" .. config.modem_side)
-	print("Track Name:	" .. config.track_name)
-	print("Parent ID:	" .. config.parent_station)
-	print("Parent Name: " .. mRail.station_name[tonumber(config.parent_station)])
+	print("Modem Side:	" .. config.modemSide)
+	print("Track Name:	" .. config.routingTrack)
+	print("Parent ID:	" .. config.parentStation)
+	print("Parent Name: " .. mRail.station_name[tonumber(config.parentStation)])
 	print("")
 	print("")
 	
@@ -109,14 +107,14 @@ while true do
 		-- path A: dispatch requests a release
 			--TODO: NEED TO CHECK THAT THE TRAIN EXISTS
 			if checkExitst(decodedMessage.trainID) == true then
-				mRail.station_request_dispatch(modem, config.parent_station, decodedMessage.serviceID, decodedMessage.trainID, config.id)
+				mRail.station_request_dispatch(modem, config.parentStation, decodedMessage.serviceID, decodedMessage.trainID, config.id)
 				mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
 			end
 		elseif senderChannel == mRail.channels.station_dispatch_confirm then
 			print("Station has authorised the release")
 		-- path B: parent station clears release
 			if dispatchTrain(decodedMessage.trainID, tostring(decodedMessage.serviceID)) == true then
-				mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Dispatched from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parent_station)])
+				mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Dispatched from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parentStation)])
 			end
 		end
 	end

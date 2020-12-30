@@ -6,7 +6,6 @@
 --      - One-way Blocks
 --      - Train Tracking
 --      - Stop/Start Dispatch
--- TODO - Replace prints with logfile calls
 
 
 local mRail = {}
@@ -54,24 +53,41 @@ local num_to_col = {
 	"black"
 }
 
-
--- Global API Variables (for use in sub-programs)
-
+-- mRail configuration settings
 mRail.item_names = {
-	train = "Perpetuum Locomotive",
+	train   = "Perpetuum Locomotive",
 	e_train = "Electric Locomotive",
-	cart = "Minecart",
-	anchor = "Admin Worldspike Cart"
+	cart    = "Minecart",
+	anchor  = "Admin Worldspike Cart"
 }
 
+-- Links config name alias to program name
 mRail.programs = {
-  ["station"] = "mRail-stationController",
+  ["depotCollect"] = "mRail-collection", 
+  ["depotRelease"] = "mRail-release",
+  ["detector"]     = "mRail-detector",
+  ["dispatch"]     = "mRail-dispatch",
+  ["oneway"]       = "mRail-onewayControl",
+  ["platform"]     = "mRail-platformDisplay",
+  ["station"]      = "mRail-stationController",
+  ["time"]         = "mRail-time",
+  ["tracker"]      = "mRail-tracker",
 }
 
+-- Links config name alias to program config structure
 mRail.configs = {
-  ["station"] = ".station-config"
+  ["depotCollect"] = ".collection-config", 
+  ["depotRelease"] = ".release-config",
+  ["detector"]     = ".detector-config",
+  ["dispatch"]     = ".dispatch-config",
+  ["oneway"]       = ".oneway-config",
+  ["platform"]     = ".platform-config",
+  ["station"]      = ".station-config"
+  ["time"]         = ".time-config",
+  ["tracker"]      = ".tracker-config",
 }
 
+-- Modem channels used by mRail
 mRail.channels = {
 	detect_channel = 2,
 	train_info = 3,
@@ -91,13 +107,7 @@ mRail.channels = {
 }
 
 
--- TODO - Pull all this out into network config files!
-
-
-
-
--- Broadcasts
-
+-- Broadcast the detection of a train at a given detector
 function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
 	log.info("Notifying Tracker and Stations of detection")
 	local message = json.encode({
@@ -113,8 +123,6 @@ end
 -- TODO - Add ability to respond to next station request (broadcast to trainTracking)
 
 -- TODO - Comment all of these functions
-
--- Dispatch-Depot comms
 
 function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
 	log.info("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
@@ -273,6 +281,7 @@ end
 
 -- Files and configuration
 
+-- Executes the given file
 local function executeFile(filename, ...)
   local ok, err = loadfile( filename )
   log.debug( "Running "..filename )
@@ -283,6 +292,7 @@ local function executeFile(filename, ...)
   end
 end
 
+-- Loads config file into variable (uses modem for error messages)
 function mRail.loadConfig(modem,file_name,config_var)
   log.info("Loadign config file")
   local returnVal = loadConfig(file_name,config_var)
@@ -293,6 +303,7 @@ function mRail.loadConfig(modem,file_name,config_var)
   return returnVal
 end
 
+-- Loads config file into variable
 function mRail.loadConfig(file_name,config_var)
 	if fs.exists(file_name) then
 		log.debug("Loading config file...")
@@ -311,40 +322,40 @@ function mRail.checkConfig(config)
   local targetConfigName = "./mRail/program-configs/" .. mRail.configs[config.programType]
   local targetConfig = {}
   mRail.loadConfig(targetConfigName, targetConfig)
-
   for i = 1, #targetConfig do
     local validConfig = true
     for parameter, values in pairs(targetConfig[i]) do
       -- Check that the value exists
-      if config[parameter] ~= nil then
+      if tostring(parameter) ~= "setupName" then
+        if config[parameter] ~= nil then
         -- Check that the key meets one of the requirements
-        local oneMatches = false
-        for j = 1, #values do
-          if string.match(config[parameter],values[j]) ~= nil then
-            oneMatches = true
-            break
+          local oneMatches = false
+          for j = 1, #values do
+            if string.match(tostring(config[parameter]),values[j]) ~= nil then
+              oneMatches = true
+              break
+            end
           end
-        end
-        if not oneMatches then
+          if not oneMatches then
+            validConfig = false
+          end
+        else
           validConfig = false
         end
-      else
-        validConfig = false
+      end
+      if validConfig then
+        log.debug("Config valid")
+        return true
       end
     end
-    if validConfig then
-      log.debug("Config valid")
-      return true
-    end
   end
-  log.error("INVALID CONFIG")
+  log.error("Invalid config")
   read()
   return false
 end
 
 
 -- Conversions
-
 function mRail.color_to_number(color)
 	return col_to_num[color]
 end
@@ -353,8 +364,7 @@ function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
 
--- Load stuff
-
+-- Load Global Config
 local tempConfig = {}
 log.info("Loading global config")
 mRail.loadConfig("./mRail/network-configs/.global-config",tempConfig)

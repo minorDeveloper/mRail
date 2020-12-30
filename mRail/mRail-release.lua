@@ -1,6 +1,10 @@
 -- mRail System Program Base
 -- (C) 2020-21 Sam Lane
 
+-- TODO - Comment everything
+-- TODO - Add more error checking (i.e. if there are enough things available)
+-- TODO - Add support for more train types
+
 mRail = require("./mRail/mRail-api")
 json = require("./mRail/json")
 log = require("./mRail/log")

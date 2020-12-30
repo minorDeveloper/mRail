@@ -41,11 +41,6 @@ local commandsToRun = {
     "rename /mRail temp",
     "copy /temp/mRail .",
     "rm temp",
-    --"github clone rxi/log.lua",
-    --"rm /log.lua/LICENSE",
-    --"rm /log.lua/README.md",
-    --"mv /log.lua/log.lua ./mRail/",
-    --"rm log.lua",
     "rm /github.rom",
     "rm /github",
 }
@@ -98,7 +93,6 @@ os.reboot()
 
 -- Pull additional configs from networked computer
 
--- Delete unnecessary files
 
 
 

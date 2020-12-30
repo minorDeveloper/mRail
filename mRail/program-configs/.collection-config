@@ -1,0 +1,14 @@
+return {
+  {
+    setupName   = "Train Collection",
+    programType = {"^depotCollect$"}, 
+    name = {"^*$"},
+    id = {"^%d+$"},
+    modemSide   = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
+    monitor     = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
+    sorter      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^interactiveSorter_%d+$"},
+    loco        = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^minecraft:ender chest_%d+$"},
+    cart        = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^minecraft:ender chest_%d+$"},
+    dispenser   = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^railcraft:manipulator_dispenser_cart_%d+$"},
+  },
+}
