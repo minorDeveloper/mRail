@@ -17,6 +17,7 @@ local configFilename = "./mRail/.config"
 mRail = require("./mRail/mRail-api")
 json = require("./mRail/json")
 log = require("./mRail/log")
+log.usecolor = true
 
 -- Load config
 log.info("Loading config file")

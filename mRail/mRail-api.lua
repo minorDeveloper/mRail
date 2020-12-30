@@ -13,7 +13,7 @@ local mRail = {}
 
 json = require("./mRail/json")
 log = require("./mRail/log")
-
+log.usecolor = true
 
 
 local col_to_num = {
@@ -304,8 +304,13 @@ function mRail.checkConfig(config)
   local targetConfig = {}
   mRail.loadConfig(targetConfigName, targetConfig)
   
-  
-  return true
+  for i = 1, #targetConfig do
+    for key, value in pairs(targetConfig[i]) do
+      print(key, " -- ", value)
+    end
+  end
+  log.error("INVALID CONFIG")
+  return false
 end
 
 

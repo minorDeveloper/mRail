@@ -4,6 +4,7 @@
 mRail = require("./mRail/mRail-api")
 json = require("./mRail/json")
 log = require("./mRail/log")
+log.usecolor = true
 
 -- Local Variables
 local config = {}
