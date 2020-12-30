@@ -73,7 +73,7 @@ for i, x in ipairs(modes) do
     --                   nameupper,
     --                   os.date("%H:%M:%S")))
     term.write(string.format("[%-6s]",
-                       nameupper)))
+                       nameupper))
     term.setTextColor(col)
     term.write(string.format(" %s: %s",
                         lineinfo,
