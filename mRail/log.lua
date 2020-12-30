@@ -63,7 +63,7 @@ for i, x in ipairs(modes) do
 
     local msg = tostring(...)
     local info = debug.getinfo(2, "Sl")
-    local lineinfo = string.sub(info.short_src, 0, string.len(info.short_src) - 4) .. ":" .. info.currentline
+    local lineinfo = string.sub(string.sub(info.short_src, 0, string.len(info.short_src) - 4),7) .. ":" .. info.currentline
 
     -- Output to console
     local col = term.getTextColor()
