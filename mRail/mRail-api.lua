@@ -116,7 +116,7 @@ function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMe
 		["trainID"] = trainID,
 		["textMessage"] = textMessage
 		})
-	modem.transmit(channels.detect_channel,1,message)
+	modem.transmit(mRail.channels.detect_channel,1,message)
 end
 
 -- TODO - Add ability to request next station from dispatch

@@ -95,4 +95,8 @@ function program.handleAlarm(alarmID)
   
 end
 
+function program.handleMinecart()
+  
+end
+
 return program

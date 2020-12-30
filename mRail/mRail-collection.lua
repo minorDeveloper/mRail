@@ -105,13 +105,15 @@ function program.setup(config_)
 	log.info("Modem Side:	" .. config.modemSide)
 end
 
-function program.onLoop()
-	log.info("Waiting for train")
-	event, side, loco, locoName, primary, secondary, destination = os.pullEvent("minecart")
+function program.handleMinecart(destination)
 	log.info("Service " .. destination .. " detected")
 	sleep(7)
 	log.debug("Collecting")
 	collectTrain(destination)
+end
+
+function program.onLoop()
+	
 end
 
 return program

@@ -75,10 +75,9 @@ for i, x in ipairs(modes) do
     term.write(string.format("[%-5s]",
                        nameupper))
     term.setTextColor(col)
-    term.write(string.format(" %s: %s",
+    print(string.format(" %s: %s",
                         lineinfo,
                         msg))
-    term.setCursorPos(1, y + 1)
     -- Output to log file
     if log.outfile then
       local fp = io.open(log.outfile, "a")

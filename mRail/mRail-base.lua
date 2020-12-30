@@ -59,6 +59,8 @@ while true do
     if (func) then
         func()
     end
+  elseif event == "minecart"
+    program.handleMinecart(param6)
 	elseif event == "alarm" then
     -- Hand off to program to handle the alarm
     log.trace("Alarm triggered")
