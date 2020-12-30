@@ -63,7 +63,7 @@ for i, x in ipairs(modes) do
 
     local msg = tostring(...)
     local info = debug.getinfo(2, "Sl")
-    local lineinfo = info.short_src .. ":" .. info.currentline
+    local lineinfo = string.split(info.short_src,".lua")[1] .. ":" .. info.currentline
 
     -- Output to console
     local col = term.getTextColor()
