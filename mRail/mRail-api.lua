@@ -315,9 +315,9 @@ function mRail.checkConfig(config)
         -- Check that the key meets one of the requirements
         local oneMatches = false
         for j = 1, #values do
-          print(parameter .. " value: " config[parameter])
+          print(parameter .. " value: " .. config[parameter])
           print("Possible answer: " .. values[j])
-          if values[j] == config[parameter] then
+          if string.match(config[parameter],values[j]) ~= nil then
             oneMatches = true
             break
           end
