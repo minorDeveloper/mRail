@@ -305,8 +305,30 @@ function mRail.checkConfig(config)
   mRail.loadConfig(targetConfigName, targetConfig)
   
   for i = 1, #targetConfig do
-    for key, value in pairs(targetConfig[i]) do
-      print(key, " -- ", value)
+    local validConfig = true
+    for parameter, values in pairs(targetConfig[i]) do
+      print(parameter, " -- ", values)
+      
+      -- Check that the value exists
+      if config[parameter] ~= nil then
+        -- Check that the key meets one of the requirements
+        local oneMatches = false
+        for j = 1, #values do
+          if values[j] == config[parameter] then
+            oneMatches = true
+            break
+          end
+        end
+        if not oneMatches then
+          validConfig = false
+        end
+      else
+        validConfig = false
+      end
+    end
+    if validConfig then
+      log.error("VALID CONFIG")
+      return true
     end
   end
   log.error("INVALID CONFIG")
