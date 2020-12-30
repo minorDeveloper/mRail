@@ -63,15 +63,17 @@ for i, x in ipairs(modes) do
 
     local msg = tostring(...)
     local info = debug.getinfo(2, "Sl")
-    local lineinfo = string.sep(info.short_src, 0, string.len(info.short_src) - 4) .. ":" .. info.currentline
+    local lineinfo = string.sub(info.short_src, 0, string.len(info.short_src) - 4) .. ":" .. info.currentline
 
     -- Output to console
     local col = term.getTextColor()
     term.setTextColor(x.color)
     local x, y = term.getCursorPos()
-    term.write(string.format("[%-6s%s]",
-                        nameupper,
-                        os.date("%H:%M:%S")))
+    --term.write(string.format("[%-6s%s]",
+    --                   nameupper,
+    --                   os.date("%H:%M:%S")))
+    term.write(string.format("[%-6s]",
+                       nameupper)))
     term.setTextColor(col)
     term.write(string.format(" %s: %s",
                         lineinfo,
