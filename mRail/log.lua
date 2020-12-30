@@ -15,12 +15,12 @@ log.level = "trace"
 
 
 local modes = {
-  { name = "trace", color = "#3366CC", },
-  { name = "debug", color = "#4C99B2", },
-  { name = "info",  color = "#57A64E", },
-  { name = "warn",  color = "#DEDE6C", },
-  { name = "error", color = "#F2B233", },
-  { name = "fatal", color = "#CC4C4C", },
+  { name = "trace", color = colors.blue, },
+  { name = "debug", color = colors.cyan, },
+  { name = "info",  color = colors.green, },
+  { name = "warn",  color = colors.yellow, },
+  { name = "error", color = colors.orange, },
+  { name = "fatal", color = colors.red, },
 }
 
 
