@@ -82,7 +82,7 @@ mRail.configs = {
   ["dispatch"]     = ".dispatch-config",
   ["oneway"]       = ".oneway-config",
   ["platform"]     = ".platform-config",
-  ["station"]      = ".station-config"
+  ["station"]      = ".station-config",
   ["time"]         = ".time-config",
   ["tracker"]      = ".tracker-config",
 }
