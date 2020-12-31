@@ -1,6 +1,5 @@
 return {
   stationName = {
-    "Unassigned",  
     "Hub",
     "SJ",
     "Barron",

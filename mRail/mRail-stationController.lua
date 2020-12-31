@@ -1,12 +1,12 @@
 -- mRail System Program Base
 -- (C) 2020-21 Sam Lane
 
+-- Load APIs
 mRail = require("./mRail/mRail-api")
 json = require("./mRail/json")
 log = require("./mRail/log")
-log.usecolor = true
 
--- Local Variables
+-- Program config
 local config = {}
 
 local modem
