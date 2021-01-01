@@ -4,5 +4,6 @@ return {
     programType  = {"^tracker$"}, 
     modemSide    = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
     monitor      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
+    numberTrains = {"^%d+$"},
   },
 }
