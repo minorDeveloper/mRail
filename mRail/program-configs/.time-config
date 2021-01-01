@@ -1,0 +1,8 @@
+return {
+  {
+    setupName    = "Reboot Computer",
+    programType  = {"^time$"}, 
+    modemSide    = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
+    outputSide   = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+  },
+}
