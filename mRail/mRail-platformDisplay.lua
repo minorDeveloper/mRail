@@ -1,29 +1,29 @@
--- mRail Platform Display
--- (C) 2020 Sam Lane
+-- mRail System Program Base
+-- (C) 2020-21 Sam Lane
 
-os.loadAPI("mRail.lua")
-
+-- TODO - Comment all
 -- TODO - Have Dispatch tell platform display what trains are currently in use
 -- TODO - Add the ability to request a train be dispatched to the parent station to go somewhere!
 
+-- Load APIs
+mRail = require("./mRail/mRail-api")
+json = require("./mRail/json")
+log = require("./mRail/log")
 
--- Configuration
 local config = {}
--- Default config values:
-config.stationID = 1
-config.screens = 2
-config.modem_side = "front"
-config_name = ".config"
 
---route name, expected platform
-routePlatformMapping = {}
-arrivals = {}
-departures = {}
+local mappingFile = "./mRail/program-state/platformMapping"
 
--- functions
+--Route name, Expected platform
+local routePlatformMapping = {}
 
+local arrivals = {}
+local departures = {}
 
--- TODO - Comment
+local departuresDisplay
+local arrivalsDisplay
+
+-- TODO - Make this more elegant
 function updateDisplay()
 	if config.screens == 1 then
 		singleDisplay()
@@ -34,8 +34,6 @@ end
 
 -- TODO - Comment
 function arrDepDisplay()
-	local departuresDisplay = peripheral.wrap("left")
-	local arrivalsDisplay = peripheral.wrap("right")
 	departuresDisplay.clear()
 	arrivalsDisplay.clear()
 	
@@ -130,11 +128,12 @@ end
 
 -- TODO - Comment
 function generateRoutePlatformMapping()
-	local stationRouting = mRail.stationRouting
-  for i = 1, #stationRouting do
-    local temp = {stationRouting[i][1],0}
+  for i = 1, #mRail.stationRouting do
+    local temp = {mRail.stationRouting[i][1],0}
     table.insert(routePlatformMapping,temp)
   end
+
+  mRail.loadData(mappingFile, routePlatformMapping)
 end
 
 -- TODO - Comment
@@ -152,41 +151,51 @@ function handleScreenUpdate(newArrivals, newDepartures)
 	departures = newDepartures
 end
 
+-- From which all other programs are derived...
+local program = {}
 
--- TODO - Comment
--- main program
+-- Program Functions
+function program.setup(config_)
+  config = config_
+  
+  modem = peripheral.wrap(config.modemSide)
+  arrivalsDisplay = peripheral.wrap(config.arrivalsDisp)
+  departuresDisplay = peripheral.wrap(config.departuresDisp)
+  
+  generateRoutePlatformMapping()
+  
+  -- Open modems
+  modem.open(mRail.channels.screen_update_channel)
+  modem.open(mRail.channels.screen_platform_channel)
+  
+  updateDisplay()
+end
 
-modem = peripheral.wrap(config.modem_side)
-
---generate list of routes and blank platform assignments
-generateRoutePlatformMapping()
-
-
--- TODO - Rewrite opening method
-modem.open(mRail.channels.screen_update_channel)
-modem.open(mRail.channels.screen_platform_channel)
-updateDisplay()
-
-while true do
-	--wait for an event
-	event, side, frequency, replyFrequency, message, distance = os.pullEvent("modem_message")
-	--process event
-	local decodedMessage = json.json.decode(message)
-	print("Frequency " .. frequency)
-	
--- TODO - Pull this all out like in stationController
-	if frequency == mRail.channels.screen_update_channel then
-		if decodedMessage.stationID == config.stationID then
-			print("Arr/dep update recieved")
-			handleScreenUpdate(decodedMessage.arrivals, decodedMessage.departures)
-		end
-	elseif frequency == mRail.channels.screen_platform_channel then
-		if decodedMessage.stationID == config.stationID then
-			print("Platform update recieved")
-			handlePlatformUpdate(decodedMessage.serviceID, decodedMessage.platform)
-		end
-	end
-	
-	--update display
+function program.onLoop()
 	updateDisplay()
 end
+
+-- Modem Messages
+function program.screen_update_channel(decodedMessage)
+  -- Handle messages on the screen update channel
+  if decodedMessage.stationID == config.stationID then
+    print("Arr/dep update recieved")
+    handleScreenUpdate(decodedMessage.arrivals, decodedMessage.departures)
+  end
+  mRail.saveData(mappingFile, routePlatformMapping)
+end
+
+function program.screen_platform_channel(decodedMessage)
+  -- Handle messages on the screen platform channel
+  if decodedMessage.stationID == config.stationID then
+    print("Platform update recieved")
+    handlePlatformUpdate(decodedMessage.serviceID, decodedMessage.platform)
+  end
+  mRail.saveData(mappingFile, routePlatformMapping)
+end
+
+function program.handleRedstone()
+  
+end
+
+return program

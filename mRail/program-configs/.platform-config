@@ -1,0 +1,12 @@
+return {
+  {
+    setupName    = "Platform Display",
+    programType  = {"^platform$"}, 
+    modemSide    = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
+    monitor      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
+    stationID    = {"^%d+$"},
+    screens      = {"^%d+$"},
+    arrivalsDisp = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"},
+    departuresDisp= {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"},
+  },
+}
