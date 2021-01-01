@@ -4,5 +4,6 @@ return {
     programType  = {"^time$"}, 
     modemSide    = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
     outputSide   = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
+    playerDetector = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, 
   },
 }
