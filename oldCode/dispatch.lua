@@ -1,8 +1,8 @@
 -- mRail Dispatch
 -- (C) 2020 Sam Lane
 
--- TODO - Comment everything
--- TODO - Move to new program system
+-- TODO - Comment all
+-- TODO - Add support for variable sized displays
 
 os.loadAPI("mRail.lua")
 
@@ -13,7 +13,6 @@ local config = {}
 config_name = ".config"
 
 
--- TODO - Push this all out to config files
 -- routename, depotID, {stationID, departure time (offset from 0 (6am))}
 routes = {
 	{"HR Expr", 2, {{1,1.0},{4,10.0}}},
@@ -262,6 +261,8 @@ function updateDisplay()
   local sortedDepotAlarmIDs = depotAlarmIDs
   local sortedStatAlarmIDs = statAlarmIDs
   
+  -- Sort alarms by their time rather than ID
+  -- Allows for them to be displated to the user in a meaningful manner
   table.sort(sortedDepotAlarmIDs, function(a,b) return a[5] < b[5] end)
   table.sort(sortedStatAlarmIDs, function(a,b) return a[5] < b[5] end)
   
@@ -277,12 +278,9 @@ function updateDisplay()
       term.setCursorPos(1, i + 1)
       printColourAndRoute(sortedDepotAlarmIDs[i][3], sortedDepotAlarmIDs[i][4])
       term.write(mRail.location_name[sortedDepotAlarmIDs[i][2]])
-      --table.insert(depotAlarmIDs,{alarmID, serviceDepot, routes[serviceRoute][1], serviceTrain,depotTime})
-      --    serviceID                       trainID                          depotID                      alarmID
-			--print(depotAlarmIDs[i][3] .. "   " .. depotAlarmIDs[i][4] .. "   " .. depotAlarmIDs[i][2] .. "   " .. depotAlarmIDs[i][1])
 		end
 	end
-  
+  -- TODO - These should be in a single function
   term.setCursorPos(xCol2,1)
   term.write("Station releases:")
   if #sortedStatAlarmIDs ~= 0 then
@@ -290,9 +288,6 @@ function updateDisplay()
       term.setCursorPos(xCol2, i + 1)
       printColourAndRoute(sortedStatAlarmIDs[i][3], sortedStatAlarmIDs[i][4])
       term.write(mRail.station_name[sortedStatAlarmIDs[i][2]])
-      --table.insert(statAlarmIDs,{alarmID,stationID,routes[serviceID][1],trainID,totalTime})
-      --    serviceID                       trainID                          stationID                      alarmID
-			--print(statAlarmIDs[i][3] .. "   " .. statAlarmIDs[i][4] .. "   " .. statAlarmIDs[i][2] .. "   " .. statAlarmIDs[i][1])
 		end
 	end
   
@@ -304,8 +299,6 @@ mRail.loadConfig(modem,config_name,config)
 
 set_days_depot_alarms()
 set_days_station_alarms()
-
--- TODO - Add support for telling the tracker the next station for a given train
 
 updateDisplays()
 while true do

@@ -50,6 +50,7 @@ log.info("Program setup")
 while true do
   -- Wait for event
 	event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
+  --event,  = os.pullEvent("minecart")
 	if event == "modem_message" then
     log.trace("Modem message recieved")
 		local channel = tonumber(param2)
@@ -60,11 +61,13 @@ while true do
         func()
     end
   elseif event == "minecart" then
-    program.handleMinecart(param6)
+    program.handleMinecart(param1, param2, param3, param4, param5, param6)
 	elseif event == "alarm" then
     -- Hand off to program to handle the alarm
     log.trace("Alarm triggered")
 		program.handleAlarm(param1)
+  elseif event == "redstone" then
+    program.handleRedstone()
 	end
   program.onLoop()
 end

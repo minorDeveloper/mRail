@@ -95,7 +95,11 @@ function program.handleAlarm(alarmID)
   
 end
 
-function program.handleMinecart()
+function program.handleMinecart(side, loco, locoName, primary, secondary, destination)
+  
+end
+
+function program.handleRedstone()
   
 end
 

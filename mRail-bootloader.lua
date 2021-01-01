@@ -43,6 +43,7 @@ local commandsToRun = {
     "rm temp",
     "rm /github.rom",
     "rm /github",
+    "mkdir ./mRail/program-state/",
 }
 
 

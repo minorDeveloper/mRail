@@ -59,6 +59,7 @@ function checkUnique(array, index, comparison)
 end
 
 -- TODO - Comment function
+-- TODO - Push this out to the API
 function loadStateTable()
 	local lineData = {}
 	local file = io.open("./mRail/network-configs/StateTable" .. config.stationID .. ".csv","r")
@@ -581,6 +582,10 @@ function program.handleAlarm(alarmID)
       break
     end
   end
+end
+
+function program.handleRedstone()
+  
 end
 
 return program

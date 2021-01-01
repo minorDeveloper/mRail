@@ -155,5 +155,8 @@ function program.station_dispatch_confirm(decodedMessage)
   end
 end
 
+function program.handleRedstone()
+  
+end
 
 return program

@@ -281,6 +281,36 @@ end
 
 -- Files and configuration
 
+-- TODO - Comment
+-- TODO - Push file loading out to the API
+function mRail.saveData(filename, data)
+	jsonEncoded = json.json.encode(data)
+		
+	local f = fs.open(filename, "w")
+	f.write(jsonEncoded)
+	
+	f.close()
+end
+
+-- TODO - Comment
+-- TODO - Push file loading out to the API
+function mRail.loadData(filename, data)
+	if fs.exists(filename) then
+		print("Loading Data")
+		local f = fs.open(filename, "r")
+		local fileContents = f.readAll()
+		print("File contents")
+		print(fileContents)
+		local jsonDecoded = json.json.decode(fileContents)
+		print("jsonDecoded")
+		print(jsonDecoded)
+		data = jsonDecoded
+	else
+		print("File not present - saving")
+		saveData(filename, data)
+	end
+end
+
 -- Executes the given file
 local function executeFile(filename, ...)
   local ok, err = loadfile( filename )

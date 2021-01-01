@@ -132,13 +132,17 @@ function program.setup(config_)
 	log.info("Modem Side:	" .. config.modemSide)
 end
 
-function program.handleMinecart(destination)
+function program.handleMinecart(side, loco, locoName, primary, secondary, destination)
   -- When a train is detected wait 7 seconds for the rest to be loaded into the dispenser
 	log.info("Service " .. destination .. " detected")
 	sleep(7)
 	log.debug("Collecting")
   -- then collect the train
 	collectTrain(destination)
+end
+
+function program.handleRedstone()
+  
 end
 
 function program.onLoop()
