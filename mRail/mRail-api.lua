@@ -348,6 +348,7 @@ function mRail.loadConfig(file_name,config_var)
 end
 
 -- TODO - Comment
+-- TODO - Make this more readable
 function mRail.checkConfig(config)
   local targetConfigName = "./mRail/program-configs/" .. mRail.configs[config.programType]
   local targetConfig = {}
@@ -360,10 +361,15 @@ function mRail.checkConfig(config)
         if config[parameter] ~= nil then
         -- Check that the key meets one of the requirements
           local oneMatches = false
-          for j = 1, #values do
-            if string.match(tostring(config[parameter]),values[j]) ~= nil then
-              oneMatches = true
-              break
+          local possibleValues = values[1]
+          for j = 1, #possibleValues do
+            if type(config[parameter]) == "table" then
+              -- TODO - Figure out this bit
+            else
+              if string.match(tostring(config[parameter]),possibleValues[j]) ~= nil then
+                oneMatches = true
+                break
+              end
             end
           end
           if not oneMatches then

@@ -50,7 +50,6 @@ log.info("Program setup")
 while true do
   -- Wait for event
 	event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
-  --event,  = os.pullEvent("minecart")
 	if event == "modem_message" then
     log.trace("Modem message recieved")
 		local channel = tonumber(param2)

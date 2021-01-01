@@ -1,14 +1,14 @@
 return {
   {
     setupName   = "Train Collection",
-    programType = {"^depotCollect$"}, 
-    name = {"^*$"},
-    id = {"^%d+$"},
-    modemSide   = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
-    monitor     = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
-    sorter      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^interactiveSorter_%d+$"},
-    loco        = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^minecraft:ender chest_%d+$"},
-    cart        = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^minecraft:ender chest_%d+$"},
-    dispenser   = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^railcraft:manipulator_dispenser_cart_%d+$"},
+    programType = {{"^depotCollect$"}, "Program type"}, 
+    name        = {{"^*$"}, "Name of collection depot"},
+    id          = {{"^%d+$"}, "ID of collection Depot (usually 0)"},
+    modemSide   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
+    monitor     = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},
+    sorter      = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^interactiveSorter_%d+$"}, "Interactive sorter side"},
+    loco        = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^minecraft:ender chest_%d+$"}, "Locomotive chest side"},
+    cart        = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^minecraft:ender chest_%d+$"}, "Carts chest side"},
+    dispenser   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^railcraft:manipulator_dispenser_cart_%d+$"}, "Dispenser side"},
   },
 }

@@ -6,6 +6,7 @@
 os.loadAPI("mRail.lua")
 
 -- TODO - Add support for multiple detectors and multiple release points
+-- TODO - swap ids with detectorIDLeft and detectorIDRight
 
 -- Configuration
 local config = {}

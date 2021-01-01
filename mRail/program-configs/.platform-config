@@ -1,12 +1,12 @@
 return {
   {
-    setupName    = "Platform Display",
-    programType  = {"^platform$"}, 
-    modemSide    = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, 
-    monitor      = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"},
-    stationID    = {"^%d+$"},
-    screens      = {"^%d+$"},
-    arrivalsDisp = {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"},
-    departuresDisp= {"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"},
+    setupName      = "Platform Display",
+    programType    = {{"^platform$"}, "Program type"}, 
+    modemSide      = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
+    monitor        = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},
+    stationID      = {{"^%d+$"}, "Station ID number"},
+    screens        = {{"^%d+$"}, "Number of screens"},
+    arrivalsDisp   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, "Side of arrivals board"},
+    departuresDisp = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, "Side of departures board"},
   },
 }

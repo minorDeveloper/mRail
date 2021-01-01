@@ -62,9 +62,10 @@ for i, x in ipairs(modes) do
     end
 
     local msg = tostring(...)
-    local info = debug.getinfo(2, "Sl")
-    local lineinfo = string.sub(string.sub(info.short_src, 0, string.len(info.short_src) - 4),7) .. ":" .. info.currentline
-
+    --local info = debug.getinfo(2, "Sl")
+    --local lineinfo = string.sub(string.sub(info.short_src, 0, string.len(info.short_src) - 4),7) .. ":" .. info.currentline
+    local lineinfo = ""
+    -- TODO REMOVE THIS
     -- Output to console
     local col = term.getTextColor()
     term.setTextColor(x.color)
