@@ -365,6 +365,7 @@ function mRail.saveConfig(filename, config_var)
   f.writeLine("return {")
   for params, vals in pairs(config_var) do
     line = "  " .. tostring(params) .. " = " .. tostring(vals) .. ","
+    f.writeLine(line)
   end
 	f.writeLine("}")
 	f.close()
