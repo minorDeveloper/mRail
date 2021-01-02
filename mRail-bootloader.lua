@@ -102,7 +102,19 @@ function generateConfig()
   print("")
   print("Looping through parameters in the configTemplate") 
   
-  -- TODO the 1 is VERY PLACEHOLDER!!! --------\*/----------
+  local configID = 1
+  
+  if #configTemplate > 1 then
+    logoAndCursor()
+    for i = 1, #configTemplate do
+      local configName = configTemplate[i].setupName
+      print(i .. ": " .. configName)
+    end
+    
+    print("Enter chosen config number")
+    configID = tonumber(read())
+  end
+  
   for parameter, values in pairs(configTemplate[1]) do
     print("Loaded parameter " .. tostring(parameter))
     if tostring(parameter) == "setupName" or tostring(parameter) == "programType" then
@@ -113,7 +125,14 @@ function generateConfig()
         print(tostring(values[2]) .. ": (choose from the following)")
         local options = values[1]
         for i = 1, #options do
-          print(options[i])
+          local optionString = string.sub(options[i],2,-2)
+          if optionString == "%w+" then
+            optionString = "Any string"
+          elseif optionString == "%d+" then
+            optionString = "Any number"
+          end
+          optionString = string.gsub(optionString, "%%d(+)$", "#")
+          print(optionString)
         end
         local configVal = read()
         
