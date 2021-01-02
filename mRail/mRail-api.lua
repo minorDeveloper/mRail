@@ -359,8 +359,15 @@ function mRail.loadConfig(file_name,config_var)
 	end
 end
 
-function mRail.saveConfig(file_name, config_var)
-  -- TODO - write this!!!
+function mRail.saveConfig(filename, config_var)
+  local f = fs.open(filename, "w")
+  
+  f.writeLine("return {")
+  for params, vals in pairs(config_var) do
+    line = "  " .. tostring(params) .. " = " .. tostring(vals) .. ","
+  end
+	f.writeLine("}")
+	f.close()
 end
 
 -- TODO - Comment

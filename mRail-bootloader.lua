@@ -144,7 +144,7 @@ end
 -- Download programs
 
 for i = 1, #commandsToRun do
-  --shell.run(commandsToRun[i])
+  shell.run(commandsToRun[i])
 end
 
 -- Load APIs

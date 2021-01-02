@@ -2,7 +2,7 @@ return {
   {
     setupName   = "Train Collection",
     programType = {{"^depotCollect$"}, "Program type"}, 
-    name        = {{"^*$"}, "Name of collection depot"},
+    name        = {{"^%a+$"}, "Name of collection depot"},
     id          = {{"^%d+$"}, "ID of collection Depot (usually 0)"},
     modemSide   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
     monitor     = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},

@@ -1,7 +1,7 @@
 return {
   {
     setupName     = "Train Release",
-    name          = {{"^*$"}, "Release depot name"},
+    name          = {{"^%a+$"}, "Release depot name"},
     id            = {{"^%d+$"}, "Release depot ID"},
     programType   = {{"^depotRelease$"}, "Program type"}, 
     modemSide     = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
