@@ -359,6 +359,10 @@ function mRail.loadConfig(file_name,config_var)
 	end
 end
 
+function mRail.saveConfig(file_name, config_var)
+  -- TODO - write this!!!
+end
+
 -- TODO - Comment
 -- TODO - Make this more readable
 function mRail.checkConfig(config)

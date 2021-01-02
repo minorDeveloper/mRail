@@ -84,6 +84,7 @@ function generateConfig()
     for parameter, values in pairs(mRail.aliases) do
       print(tostring(parameter) .. " : " .. tostring(values))
     end
+    print("")
     local programType = read()
     if mRail.configs[programType] ~= nil then
       config.programType = programType
@@ -91,15 +92,26 @@ function generateConfig()
     end
   until (success)
   
+  logoAndCursor()
+  print("")
+  print("Program chosen successfully")
+  print("Loading config: " .. "./mRail/program-configs/" .. mRail.configs[config.programType])
+  read()
   mRail.loadConfig("./mRail/program-configs/" .. mRail.configs[config.programType],configTemplate)
   
-  for parameter, values in pairs(configTemplate) do
-    if tostring(parameter) ~= setupName or tostring(parameter) ~= programType then
+  logoAndCursor()
+  print("")
+  print("Looping through parameters in the configTemplate") 
+  
+  -- TODO the 1 is VERY PLACEHOLDER!!! --------\*/----------
+  for parameter, values in pairs(configTemplate[1]) do
+    print("Loaded parameter " .. tostring(parameter))
+    if tostring(parameter) == "setupName" or tostring(parameter) == "programType" then
     else
       local success = false
       repeat
         logoAndCursor()
-        print(values[2] .. ": (choose from the following)")
+        print(tostring(values[2]) .. ": (choose from the following)")
         local options = values[1]
         for i = 1, #options do
           print(options[i])
@@ -109,6 +121,8 @@ function generateConfig()
         -- Now check this matches with an option given
         for i = 1, #options do
           if string.match(tostring(configVal),options[i]) ~= nil then
+            log.debug("We have been successful!")
+            config[parameter] = tostring(configVal)
             success = true
             break
           end
@@ -116,8 +130,11 @@ function generateConfig()
       until (success)
     end
   end
-  
+  logoAndCursor()
   mRail.checkConfig(config)
+  log.info("Config generated correctly")
+  -- TODO - save config
+  log.debug("Saving user generated configuration file")
 end
 
 -- START OF PROGRAM
@@ -125,8 +142,9 @@ end
 -- make or read config file
 
 -- Download programs
+
 for i = 1, #commandsToRun do
-  shell.run(commandsToRun[i])
+  --shell.run(commandsToRun[i])
 end
 
 -- Load APIs
