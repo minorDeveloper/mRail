@@ -99,6 +99,8 @@ mRail.aliases = {
   ["tracker"]      = "Train Tracker",
 }
 
+mRail.configLoc    = "./mRail/program-state/.config"
+
 -- Modem channels used by mRail
 mRail.channels = {
 	detect_channel = 2,
@@ -364,7 +366,7 @@ function mRail.saveConfig(filename, config_var)
   
   f.writeLine("return {")
   for params, vals in pairs(config_var) do
-    line = "  " .. tostring(params) .. " = " .. tostring(vals) .. ","
+    line = "  " .. tostring(params) .. " = \"" .. tostring(vals) .. "\","
     f.writeLine(line)
   end
 	f.writeLine("}")

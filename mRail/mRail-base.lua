@@ -5,7 +5,6 @@
 
 -- Configuration
 local config = {}
-local configFilename = "./mRail/program-state/.config"
 
 -- Load APIs
 mRail = require("./mRail/mRail-api")
@@ -14,7 +13,7 @@ log = require("./mRail/log")
 
 -- Load config
 log.info("Loading config file")
-mRail.loadConfig(configFilename,config)
+mRail.loadConfig(mRail.configLoc,config)
 log.debug("Config file loaded")
 local configState = mRail.checkConfig(config)
 
