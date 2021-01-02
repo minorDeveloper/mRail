@@ -57,12 +57,67 @@ function openingScroll(mon, time)
   end
 end
 
+function logoAndCursor()
+  term.clear()
+  term.setCursorPos(1,1)
+  writeASCII(logoASCII, term, 10, 2)
+  writeASCII(trackASCII, term, 1, #trainASCII + 2)
+  term.setCursorPos(1,8)
+end
+
 
 function writeASCII(ascii, mon, x, y)
   for i = 1, #ascii do
     mon.setCursorPos(x, y + (i - 1))
     mon.write(ascii[i])
   end
+end
+
+function generateConfig()
+  local config = {}
+  local configTemplate = {}
+  
+  local success = false
+  repeat
+    logoAndCursor()
+    print("Enter the desired program type")
+    for parameter, values in pairs(mRail.aliases) do
+      print(tostring(parameter) .. " : " .. tostring(values))
+    end
+    local programType = read()
+    if mRail.configs[programType] ~= nil then
+      config.programType = programType
+      success = true
+    end
+  until (success)
+  
+  mRail.loadConfig("./mRail/program-configs/" .. mRail.configs[config.programType],configTemplate)
+  
+  for parameter, values in pairs(configTemplate) do
+    if tostring(parameter) ~= setupName or tostring(parameter) ~= programType then
+    else
+      local success = false
+      repeat
+        logoAndCursor()
+        print(values[2] .. ": (choose from the following)")
+        local options = values[1]
+        for i = 1, #options do
+          print(options[i])
+        end
+        local configVal = read()
+        
+        -- Now check this matches with an option given
+        for i = 1, #options do
+          if string.match(tostring(configVal),options[i]) ~= nil then
+            success = true
+            break
+          end
+        end
+      until (success)
+    end
+  end
+  
+  mRail.checkConfig(config)
 end
 
 -- START OF PROGRAM
@@ -88,14 +143,16 @@ writeASCII(logoASCII, term, 10, 2)
 -- TODO - Add config file generation
 
 sleep(2)
-os.reboot()
+-- Write config file!
 
--- Download/get additional configs
+-- Download/get additional configs (as dictated by config file type)
+generateConfig()
 
 -- Pull additional configs from networked computer
+--pullConfigs()
 
 
 
-
+os.reboot()
 
 

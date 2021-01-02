@@ -87,6 +87,18 @@ mRail.configs = {
   ["tracker"]      = ".tracker-config",
 }
 
+mRail.aliases = {
+  ["depotCollect"] = "Train Collection Depot", 
+  ["depotRelease"] = "Train Release Depot",
+  ["detector"]     = "Locomotive Detector",
+  ["dispatch"]     = "Dispatch Computer",
+  ["oneway"]       = "One-way Controller",
+  ["platform"]     = "Platform Display",
+  ["station"]      = "Station Controller",
+  ["time"]         = "System Reboot Computer",
+  ["tracker"]      = "Train Tracker",
+}
+
 -- Modem channels used by mRail
 mRail.channels = {
 	detect_channel = 2,
