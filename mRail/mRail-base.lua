@@ -5,7 +5,7 @@
 
 -- Configuration
 local config = {}
-local configFilename = "./mRail/.config"
+local configFilename = "./mRail/program-state/.config"
 
 -- Load APIs
 mRail = require("./mRail/mRail-api")

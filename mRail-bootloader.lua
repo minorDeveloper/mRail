@@ -135,6 +135,7 @@ function generateConfig()
   log.info("Config generated correctly")
   -- TODO - save config
   log.debug("Saving user generated configuration file")
+  mRail.saveConfig("./mRail/program-state/.config", config)
 end
 
 -- START OF PROGRAM
