@@ -1,4 +1,4 @@
--- mRail system API
+-- mRail system Bootloader
 -- (C) 2020-21 Sam Lane
 
 -- This bootloader program will guide the user through
@@ -73,46 +73,73 @@ function writeASCII(ascii, mon, x, y)
   end
 end
 
+function selectFromVals(listOfOptionPairs, infoString, doCentre, getInt)
+  local listOfOptionArray = {}
+  
+  local i = 1
+  for param, vals in pairs(listOfOptionPairs) do
+    listOfOptionArray[i] = {param, vals}
+    i = i + 1
+  end
+  
+  local currentlySelectedInt = 1
+  local success = false
+  repeat
+    -- Print stuff
+    logoAndCursor()
+    print(infoString)
+    print("")
+    for i = 1, #listOfOptionArray do
+      local onSelected = (i == currentlySelectedInt)
+      local sideString = (onSelected and " -- " or "    ")
+      local mainText = sideString .. listOfOptionArray[i][2] .. sideString
+      local padding = ""
+      local w, h = term.getSize()
+      if doCentre then
+        for i = 1, math.floor((w - #mainText)/2) do
+          padding = padding .. " "
+        end
+      end
+      print(padding .. mainText)
+    end
+    -- Wait for keypress
+    local event, key, isHeld = os.pullEvent("key")
+    if key == keys.up and currentlySelectedInt > 1 then
+      currentlySelectedInt = currentlySelectedInt - 1
+    elseif key == keys.down and currentlySelectedInt < #listOfOptionArray then
+      currentlySelectedInt = currentlySelectedInt + 1
+    elseif key == keys.enter then
+      success = true
+    end
+  until(success)
+  if getInt then
+    return currentlySelectedInt
+  end
+  return listOfOptionArray[currentlySelectedInt][1]
+end
+
 function generateConfig()
   local config = {}
   local configTemplate = {}
   
   local success = false
   repeat
-    logoAndCursor()
-    print("Enter the desired program type")
-    for parameter, values in pairs(mRail.aliases) do
-      print(tostring(parameter) .. " : " .. tostring(values))
-    end
-    print("")
-    local programType = read()
+    local programType = selectFromVals(mRail.aliases, "Enter the desired program type", true, false)
     if mRail.configs[programType] ~= nil then
       config.programType = programType
       success = true
     end
   until (success)
   
-  logoAndCursor()
-  print("")
-  print("Program chosen successfully")
-  print("Loading config: " .. "./mRail/program-configs/" .. mRail.configs[config.programType])
   mRail.loadConfig("./mRail/program-configs/" .. mRail.configs[config.programType],configTemplate)
   
-  logoAndCursor()
-  print("")
-  print("Looping through parameters in the configTemplate") 
-  
   local configID = 1
-  
   if #configTemplate > 1 then
-    logoAndCursor()
+    local tempArray = {}
     for i = 1, #configTemplate do
-      local configName = configTemplate[i].setupName
-      print(i .. ": " .. configName)
+      tempArray[i] = configTemplate[i].setupName
     end
-    
-    print("Enter chosen config number")
-    configID = tonumber(read())
+    configID = selectFromVals(tempArray, "Choose program config", true, true)
   end
   
   for parameter, values in pairs(configTemplate[1]) do
@@ -121,9 +148,9 @@ function generateConfig()
     else
       local success = false
       repeat
-        logoAndCursor()
-        print(tostring(values[2]) .. ": (choose from the following)")
         local options = values[1]
+        local configVal = ""
+        local optionStrings = {}
         for i = 1, #options do
           local optionString = string.sub(options[i],2,-2)
           if optionString == "%w+" then
@@ -132,9 +159,30 @@ function generateConfig()
             optionString = "Any number"
           end
           optionString = string.gsub(optionString, "%%d(+)$", "#")
-          print(optionString)
+          optionStrings[i] = optionString
         end
-        local configVal = read()
+
+        if #options > 1 then
+          configVal = optionStrings[tonumber(selectFromVals(optionStrings, tostring(values[2]) .. ":", true, false))]
+        else
+          configVal = optionStrings[1]
+        end
+        
+        logoAndCursor()
+        local lineString = tostring(values[2]) .. ": (enter "
+        if configVal == "Any number" then
+          lineString = lineString .. " number)"
+          print(lineString)
+          configVal = tonumber(read())
+        elseif configVal == "Any string" then
+          lineString = lineString .. " string)"
+          print(lineString)
+          configVal = tonumber(read())
+        elseif string.find(configVal, "#") ~= nil then
+          lineString = lineString .. " number)"
+          print(lineString)
+          configVal = string.gsub(configVal, "#", read())
+        end
         
         -- Now check this matches with an option given
         for i = 1, #options do
