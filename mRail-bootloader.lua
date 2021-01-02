@@ -96,7 +96,6 @@ function generateConfig()
   print("")
   print("Program chosen successfully")
   print("Loading config: " .. "./mRail/program-configs/" .. mRail.configs[config.programType])
-  read()
   mRail.loadConfig("./mRail/program-configs/" .. mRail.configs[config.programType],configTemplate)
   
   logoAndCursor()
