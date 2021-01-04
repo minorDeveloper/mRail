@@ -1,74 +1,28 @@
 -- mRail Dispatch
--- (C) 2020 Sam Lane
+-- (C) 2020-21 Sam Lane
 
 -- TODO - Comment all
+-- TODO - Add logging
 -- TODO - Add support for variable sized displays
 
-os.loadAPI("mRail.lua")
+-- Load APIs
+mRail = require("./mRail/mRail-api")
+json = require("./mRail/json")
+log = require("./mRail/log")
 
-
--- Configuration
 local config = {}
--- Default config values:
-config_name = ".config"
 
-
--- routename, depotID, {stationID, departure time (offset from 0 (6am))}
-routes = {
-	{"HR Expr", 2, {{1,1.0},{4,10.0}}},
-	{"HB Stop", 3, {{1,1.0},{3,3.25}}},
-	{"HS Expr", 2, {{1,1.0},{2,6.5}}},
-	{"SH Expr", 45,{{2,1.0},{1,6.5}}},
-	{"SB Stop", 45,{{2,1.0},{1,6.75},{3,9.5}}},
-	{"BH Stop", 72,{{3,1.0},{1,3.25}}},
-	{"BS Stop", 72,{{3,1.0},{1,3.5},{2,8.45}}},
-	{"BR Stop", 72,{{3,1.0},{1,3.5},{4,12.60}}},
-	
-	{"RH Expr", 80,{{4,1.0},{1,10.0}}},
-	{"RB Stop", 79,{{4,1.0},{1,10.0},{3,12.5}}},
-	{"RB Expr", 80,{{4,1.0},{3,12.20}}},
-	{"AmongUs", 79,{{4,1.0},{5,3.0}}},
-	{"R Branch",999,{{5,0.0},{4,2.0}}},
-}
-
--- route ID, assigned train, start time
-timetabledServices = {
-	{8,1,6.5},
-	{1,2,7.5},
-	{2,3,7.5},
-	{2,3,14.5},
-	{3,4,9.0},
-	{5,5,6.5},
-	{11,6,6.5},
-	{9,7,9.0},
-	{6,8,7.5},
-	{6,8,14.5},
-	{7,9,8.5},
-	{4,10,10.0},
-	
-	{12,15,6.75},
-	{12,15,13.25},
-	{12,14,9.25},
---	{12,14,16.25},
-	
-	
-	{13,15,10.1},
-	{13,15,16.25},
-	{13,14,12.73},
-	{13,14,19.25},
---	{10,11,12.0},
---	
---	{9,13,19.0},
---	{1,14,20.75},
---	{7,15,19.0},
---	{5,12,20.0}
-}
-
+local tempConfig = {}
+mRail.loadConfig("./mRail/network-configs/.timetable-config",tempConfig)
+routes = tempConfig.routes
+timetabledServices = tempConfig.timetabledServices
 
 --alarmID, recieverID, serviceID, trainID
 depotAlarmIDs = {}
 statAlarmIDs = {}
 
+local modem
+local monitor
 
 
 function set_days_depot_alarms()
@@ -95,10 +49,6 @@ function set_days_station_alarms()
 			local serviceID = timetabledServices[i][1]
 			local trainID = timetabledServices[i][2]
 			local startTime = timetabledServices[i][3]
-			--print("Service ID " .. serviceID)
-			--print("TrainID  " .. trainID)
-			--print("Start Time " .. startTime)
-			--print("i " .. i)
 			
 			if #routes[serviceID][3] ~= 0 then
 				for j = 1, #routes[serviceID][3] do
@@ -117,37 +67,6 @@ function set_days_station_alarms()
 		end
 	end
 end
-
-
-function processAlarm(alarmID)
-	if #depotAlarmIDs ~= 0 then
-		for i = 1, #depotAlarmIDs do
-			if depotAlarmIDs[i][1] == alarmID then
-				dispatch_from_depot(depotAlarmIDs[i][2],depotAlarmIDs[i][3],depotAlarmIDs[i][4])
-				table.remove(depotAlarmIDs,i)
-				break
-			end
-		end
-	end
-	
-	if #statAlarmIDs ~= 0 then
-		for i = 1, #statAlarmIDs do
-			if statAlarmIDs[i][1] == alarmID then
-				dispatch_from_station(statAlarmIDs[i][2],statAlarmIDs[i][3],statAlarmIDs[i][4])
-				table.remove(statAlarmIDs,i)
-				break
-			end
-		end
-	end
-	updateDisplays()
-end
-
-
--- routename, depotID, {stationID, departure time (offset from 0)}
---routes
-
--- route ID, assigned train, start time
---timetabledServices
 
 function updateDisplays()
 	--take alarms and generate info for each display
@@ -240,23 +159,23 @@ end
 
 function printColourAndRoute(serviceID, trainID)
   if trainID ~= 0 then
-    term.setBackgroundColor(math.pow(2,tonumber(trainID) - 1))
+    monitor.setBackgroundColor(math.pow(2,tonumber(trainID) - 1))
   end
-  term.write("  ")
-  term.setBackgroundColor(32768)
-  term.write(" ")
+  monitor.write("  ")
+  monitor.setBackgroundColor(32768)
+  monitor.write(" ")
   if serviceID == nil or serviceID == "" then
     serviceID = "No Route"
   end
-  term.write(tostring(serviceID))
+  monitor.write(tostring(serviceID))
   for i = string.len(serviceID), 8 do
-    term.write(" ")
+    monitor.write(" ")
   end
-  term.write(" ")
+  monitor.write(" ")
 end
 
 function updateDisplay()
-  term.clear()
+  monitor.clear()
   
   local sortedDepotAlarmIDs = depotAlarmIDs
   local sortedStatAlarmIDs = statAlarmIDs
@@ -268,68 +187,103 @@ function updateDisplay()
   
   local xCol2 = 26
   	
-  local w, h = term.getSize()
+  local w, h = monitor.getSize()
   
-	term.setCursorPos(1,1)
-  term.write("Depot releases:")
+	monitor.setCursorPos(1,1)
+  monitor.write("Depot releases:")
   
   if #sortedDepotAlarmIDs ~= 0 then
 		for i = 1, math.min(#sortedDepotAlarmIDs,h - 1) do
-      term.setCursorPos(1, i + 1)
+      monitor.setCursorPos(1, i + 1)
       printColourAndRoute(sortedDepotAlarmIDs[i][3], sortedDepotAlarmIDs[i][4])
-      term.write(mRail.location_name[sortedDepotAlarmIDs[i][2]])
+      monitor.write(mRail.location_name[sortedDepotAlarmIDs[i][2]])
 		end
 	end
   -- TODO - These should be in a single function
-  term.setCursorPos(xCol2,1)
-  term.write("Station releases:")
+  monitor.setCursorPos(xCol2,1)
+  monitor.write("Station releases:")
   if #sortedStatAlarmIDs ~= 0 then
 		for i = 1, math.min(#sortedStatAlarmIDs,h - 1) do
-      term.setCursorPos(xCol2, i + 1)
+      monitor.setCursorPos(xCol2, i + 1)
       printColourAndRoute(sortedStatAlarmIDs[i][3], sortedStatAlarmIDs[i][4])
-      term.write(mRail.station_name[sortedStatAlarmIDs[i][2]])
+      monitor.write(mRail.station_name[sortedStatAlarmIDs[i][2]])
 		end
 	end
   
 end
 
-modem = peripheral.wrap("back")
-modem.open(mRail.channels.request_dispatch_channel)
-mRail.loadConfig(modem,config_name,config)
 
-set_days_depot_alarms()
-set_days_station_alarms()
+-- From which all other programs are derived...
+local program = {}
 
-updateDisplays()
-while true do
-	updateDisplay()
-	
-	ev, p1, p2, p3, p4, p5, p6 = os.pullEvent()
-	if ev == "alarm" then
-		processAlarm(p1)
-	elseif ev == "redstone" then
-		if redstone.getInput("bottom") == true then
-			os.reboot()
-		end
-	elseif ev == "modem_message" then
-		-- Check if it was a request for dispatch_from_depot
-		if tonumber(p2) == mRail.channels.request_dispatch_channel then
-			-- dispatch the train
-			local decodedMessage = json.json.decode(p4)
-			mRail.dispatch_train(modem, decodedMessage.recieverID, decodedMessage.serviceID, decodedMessage.trainID)
-			-- add the train to list of non-timetabledServices
-			local serviceID = decodedMessage.serviceID
-			local serviceID_number = 0
-			for i = 1, #routes do
-				if routes[i][1] == serviceID then
-					serviceID_number = i
-				end
-			end
-			if serviceID_number > 0 then
-				table.insert(timetabledServices, {serviceID_number, decodedMessage.trainID, os.time()})
-			end
-		end
-		
-	end
+-- Program Functions
+function program.setup(config_)
+  config = config_
+  
+  modem = peripheral.wrap(config.modemSide)
+  modem.open(mRail.channels.request_dispatch_channel)
+  
+  if config.monitor == nil or config.monitor == "term" then
+    monitor = term
+  else
+    monitor = peripheral.wrap(config.monitor)
+  end
+
+  set_days_depot_alarms()
+  set_days_station_alarms()
+
+  updateDisplays()
+end
+
+function program.onLoop()
 	updateDisplays()
 end
+
+-- Modem Messages
+function program.request_dispatch_channel(decodedMessage)
+  -- Handle messages on the request dispatch channel
+  -- dispatch the train
+  mRail.dispatch_train(modem, decodedMessage.recieverID, decodedMessage.serviceID, decodedMessage.trainID)
+  -- add the train to list of non-timetabledServices
+  local serviceID = decodedMessage.serviceID
+  local serviceID_number = 0
+  for i = 1, #routes do
+    if routes[i][1] == serviceID then
+      serviceID_number = i
+    end
+  end
+  if serviceID_number > 0 then
+    table.insert(timetabledServices, {serviceID_number, decodedMessage.trainID, os.time()})
+  end
+end
+
+-- Alarms
+function program.handleAlarm(alarmID)
+  if #depotAlarmIDs ~= 0 then
+		for i = 1, #depotAlarmIDs do
+			if depotAlarmIDs[i][1] == alarmID then
+				dispatch_from_depot(depotAlarmIDs[i][2],depotAlarmIDs[i][3],depotAlarmIDs[i][4])
+				table.remove(depotAlarmIDs,i)
+				break
+			end
+		end
+	end
+	
+	if #statAlarmIDs ~= 0 then
+		for i = 1, #statAlarmIDs do
+			if statAlarmIDs[i][1] == alarmID then
+				dispatch_from_station(statAlarmIDs[i][2],statAlarmIDs[i][3],statAlarmIDs[i][4])
+				table.remove(statAlarmIDs,i)
+				break
+			end
+		end
+	end
+end
+
+function program.handleRedstone()
+  if redstone.getInput(config.redstoneSide) == true then
+    os.reboot()
+  end
+end
+
+return program
