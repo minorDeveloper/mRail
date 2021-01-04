@@ -299,7 +299,7 @@ end
 -- TODO - Push file loading out to the API
 function mRail.saveData(filename, data)
 	jsonEncoded = json.json.encode(data)
-		
+  
 	local f = fs.open(filename, "w")
 	f.write(jsonEncoded)
 	
@@ -367,7 +367,7 @@ function mRail.saveConfig(filename, config_var)
   for params, vals in pairs(config_var) do
     local line = "  " .. tostring(params) .. " = "
     if type(vals) ~= "table" then
-      line = "\"" .. tostring(vals) .. "\","
+      line = line .. "\"" .. tostring(vals) .. "\","
     else
       line = line .. "{ "
       for i = 1, #vals do
