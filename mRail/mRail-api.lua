@@ -363,10 +363,18 @@ end
 
 function mRail.saveConfig(filename, config_var)
   local f = fs.open(filename, "w")
-  
   f.writeLine("return {")
   for params, vals in pairs(config_var) do
-    line = "  " .. tostring(params) .. " = \"" .. tostring(vals) .. "\","
+    local line = "  " .. tostring(params) .. " = "
+    if type(vals) ~= "table" then
+      line = "\"" .. tostring(vals) .. "\","
+    else
+      line = line .. "{ "
+      for i = 1, #vals do
+        line = line .. "\"" .. tostring(vals[i]) .. "\", "
+      end
+      line = line .." },"
+    end
     f.writeLine(line)
   end
 	f.writeLine("}")

@@ -48,7 +48,6 @@ local commandsToRun = {
 
 
 function openingScroll(mon, time)
-  
   for i = 51, (-1 * (string.len(trainASCII[1]))), -1 do 
     mon.clear()
     writeASCII(trainASCII, mon, i, 2)
@@ -118,6 +117,66 @@ function selectFromVals(listOfOptionPairs, infoString, doCentre, getInt)
   return listOfOptionArray[currentlySelectedInt][1]
 end
 
+function generateParameter(parameter, values)
+  while true do
+    local options = values[1]
+    local configVal = ""
+    local optionStrings = {}
+    for i = 1, #options do
+      local optionString = string.sub(options[i],2,-2)
+      if optionString == "%w+" then
+        optionString = "Any string"
+      elseif optionString == "%d+" then
+        optionString = "Any number"
+      end
+      optionString = string.gsub(optionString, "%%d(+)$", "#")
+      optionStrings[i] = optionString
+    end
+
+    if #options > 1 then
+      configVal = optionStrings[tonumber(selectFromVals(optionStrings, tostring(values[2]) .. ":", true, false))]
+    else
+      configVal = optionStrings[1]
+    end
+    
+    logoAndCursor()
+    local lineString = tostring(values[2]) .. ": (enter "
+    if configVal == "Any number" then
+      lineString = lineString .. " number)"
+      print(lineString)
+      configVal = tonumber(read())
+    elseif configVal == "Any string" then
+      lineString = lineString .. " string)"
+      print(lineString)
+      configVal = tonumber(read())
+    elseif string.find(configVal, "#") ~= nil then
+      lineString = lineString .. " number)"
+      print(lineString)
+      configVal = string.gsub(configVal, "#", read())
+    end
+    
+    -- Now check this matches with an option given
+    for i = 1, #options do
+      if string.match(tostring(configVal),options[i]) ~= nil then
+        log.debug("We have been successful!")
+        return tostring(configVal)
+      end
+    end
+  end
+end
+
+function generateMultiParameter(parameter, values)
+  if #values ~= 3 or values[3] == 1 then
+    return generateParameter(parameter, values)
+  end
+  
+  local tempValues = {}
+  for i = 1, #values[3] do
+    tempValues[i] = generateParameter(parameter, values)
+  end
+  return tempValues
+end
+
 function generateConfig()
   local config = {}
   local configTemplate = {}
@@ -144,72 +203,18 @@ function generateConfig()
   
   for parameter, values in pairs(configTemplate[1]) do
     print("Loaded parameter " .. tostring(parameter))
-    if tostring(parameter) == "setupName" or tostring(parameter) == "programType" then
-    else
-      local success = false
-      repeat
-        local options = values[1]
-        local configVal = ""
-        local optionStrings = {}
-        for i = 1, #options do
-          local optionString = string.sub(options[i],2,-2)
-          if optionString == "%w+" then
-            optionString = "Any string"
-          elseif optionString == "%d+" then
-            optionString = "Any number"
-          end
-          optionString = string.gsub(optionString, "%%d(+)$", "#")
-          optionStrings[i] = optionString
-        end
-
-        if #options > 1 then
-          configVal = optionStrings[tonumber(selectFromVals(optionStrings, tostring(values[2]) .. ":", true, false))]
-        else
-          configVal = optionStrings[1]
-        end
-        
-        logoAndCursor()
-        local lineString = tostring(values[2]) .. ": (enter "
-        if configVal == "Any number" then
-          lineString = lineString .. " number)"
-          print(lineString)
-          configVal = tonumber(read())
-        elseif configVal == "Any string" then
-          lineString = lineString .. " string)"
-          print(lineString)
-          configVal = tonumber(read())
-        elseif string.find(configVal, "#") ~= nil then
-          lineString = lineString .. " number)"
-          print(lineString)
-          configVal = string.gsub(configVal, "#", read())
-        end
-        
-        -- Now check this matches with an option given
-        for i = 1, #options do
-          if string.match(tostring(configVal),options[i]) ~= nil then
-            log.debug("We have been successful!")
-            config[parameter] = tostring(configVal)
-            success = true
-            break
-          end
-        end
-      until (success)
+    if tostring(parameter) ~= "setupName" and tostring(parameter) ~= "programType" then
+      config[parameter] = generateMultiParameter(parameter, values)
     end
   end
   logoAndCursor()
   mRail.checkConfig(config)
   log.info("Config generated correctly")
-  -- TODO - save config
-  log.debug("Saving user generated configuration file")
   mRail.saveConfig(mRail.configLoc, config)
 end
 
--- START OF PROGRAM
-
--- make or read config file
 
 -- Download programs
-
 for i = 1, #commandsToRun do
   shell.run(commandsToRun[i])
 end
