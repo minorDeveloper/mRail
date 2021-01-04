@@ -310,14 +310,12 @@ end
 -- TODO - Push file loading out to the API
 function mRail.loadData(filename, data)
 	if fs.exists(filename) then
-		print("Loading Data")
+		log.debug("Loading Data from " .. filename)
 		local f = fs.open(filename, "r")
 		local fileContents = f.readAll()
-		print("File contents")
-		print(fileContents)
+		log.trace("File contents " .. fileContents)
 		local jsonDecoded = json.json.decode(fileContents)
-		print("jsonDecoded")
-		print(jsonDecoded)
+		log.trace("jsonDecoded " .. jsonDecoded)
 		data = jsonDecoded
 	else
 		print("File not present - saving")
