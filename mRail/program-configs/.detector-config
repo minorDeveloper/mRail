@@ -7,6 +7,6 @@ return {
     modemSide   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
     monitor     = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},
     releaseSide = {{"^left$", "^right$"}, "Release side"},
-    relaseSideID= {{"^1$","^2$"}, "Release side ID (1 = left, 2 = right)"},
+    relaseSideID= {{"^1$","^2$", ^null$}, "Release side ID (1 = left, 2 = right)"},
   },
 }

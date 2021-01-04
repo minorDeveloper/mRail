@@ -369,11 +369,11 @@ function mRail.saveConfig(filename, config_var)
     if type(vals) ~= "table" then
       line = line .. "\"" .. tostring(vals) .. "\","
     else
-      line = line .. "{ "
+      line = line .. "{"
       for i = 1, #vals do
-        line = line .. "\"" .. tostring(vals[i]) .. "\", "
+        line = line .. "\"" .. tostring(vals[i]) .. "\","
       end
-      line = line .." },"
+      line = line .."},"
     end
     f.writeLine(line)
   end

@@ -72,7 +72,7 @@ function writeASCII(ascii, mon, x, y)
   end
 end
 
-function selectFromVals(listOfOptionPairs, infoString, doCentre, getInt)
+function selectFromVals(listOfOptionPairs, infoString, doCentre, getInt, additionalText)
   local listOfOptionArray = {}
   
   local i = 1
@@ -86,7 +86,7 @@ function selectFromVals(listOfOptionPairs, infoString, doCentre, getInt)
   repeat
     -- Print stuff
     logoAndCursor()
-    print(infoString)
+    print(infoString .. ": " .. additionalText)
     print("")
     for i = 1, #listOfOptionArray do
       local onSelected = (i == currentlySelectedInt)
@@ -117,7 +117,7 @@ function selectFromVals(listOfOptionPairs, infoString, doCentre, getInt)
   return listOfOptionArray[currentlySelectedInt][1]
 end
 
-function generateParameter(parameter, values)
+function generateParameter(parameter, values, additionalText)
   while true do
     local options = values[1]
     local configVal = ""
@@ -134,7 +134,7 @@ function generateParameter(parameter, values)
     end
 
     if #options > 1 then
-      configVal = optionStrings[tonumber(selectFromVals(optionStrings, tostring(values[2]) .. ":", true, false))]
+      configVal = optionStrings[tonumber(selectFromVals(optionStrings, tostring(values[2]) .. ":", true, false, additionalText))]
     else
       configVal = optionStrings[1]
     end
@@ -142,16 +142,16 @@ function generateParameter(parameter, values)
     logoAndCursor()
     local lineString = tostring(values[2]) .. ": (enter "
     if configVal == "Any number" then
-      lineString = lineString .. " number)"
-      print(lineString)
+      lineString = lineString .. "number) "
+      print(lineString .. additionalText)
       configVal = tonumber(read())
     elseif configVal == "Any string" then
-      lineString = lineString .. " string)"
-      print(lineString)
+      lineString = lineString .. "string) "
+      print(lineString .. additionalText)
       configVal = tonumber(read())
     elseif string.find(configVal, "#") ~= nil then
-      lineString = lineString .. " number)"
-      print(lineString)
+      lineString = lineString .. "number) "
+      print(lineString .. additionalText)
       configVal = string.gsub(configVal, "#", read())
     end
     
@@ -167,12 +167,11 @@ end
 
 function generateMultiParameter(parameter, values)
   if #values ~= 3 or values[3] == 1 then
-    return generateParameter(parameter, values)
+    return generateParameter(parameter, values, "")
   end
-  
   local tempValues = {}
-  for i = 1, #values[3] do
-    tempValues[i] = generateParameter(parameter, values)
+  for i = 1, values[3] do
+    tempValues[i] = generateParameter(parameter, values, " [" .. i .. "/" .. values[3] .. "]")
   end
   return tempValues
 end
@@ -183,7 +182,7 @@ function generateConfig()
   
   local success = false
   repeat
-    local programType = selectFromVals(mRail.aliases, "Enter the desired program type", true, false)
+    local programType = selectFromVals(mRail.aliases, "Enter the desired program type", true, false, "")
     if mRail.configs[programType] ~= nil then
       config.programType = programType
       success = true
@@ -198,7 +197,7 @@ function generateConfig()
     for i = 1, #configTemplate do
       tempArray[i] = configTemplate[i].setupName
     end
-    configID = selectFromVals(tempArray, "Choose program config", true, true)
+    configID = selectFromVals(tempArray, "Choose program config", true, true, "")
   end
   
   for parameter, values in pairs(configTemplate[1]) do
