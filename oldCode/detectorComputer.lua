@@ -6,7 +6,7 @@
 os.loadAPI("mRail.lua")
 
 -- TODO - Add support for multiple detectors and multiple release points
--- TODO - swap ids with detectorIDLeft and detectorIDRight
+-- TODO - let the config files accept an array as a config val not just a value
 
 -- Configuration
 local config = {}
@@ -16,13 +16,13 @@ config.ids = {4,5} -- put -1 for any unused sides
 config.releaseSide = "null"
 config.releaseSideID = 1
 config.name = "Hub West"
-config.modem_side = "bottom"
+config.modemSide = "bottom"
 
 config_name = ".config"
 
 -- Main Program
 
-modem = peripheral.wrap(config.modem_side)
+modem = peripheral.wrap(config.modemSide)
 mRail.loadConfig(modem,config_name,config)
 
 modem.open(mRail.channels.oneway_dispatch_confirm)
@@ -30,7 +30,7 @@ modem.open(mRail.channels.oneway_dispatch_confirm)
 term.clear()
 term.setCursorPos(1,1)
 print("Name: 		 " .. config.name)
-print("Modem Side: 	 " .. config.modem_side)
+print("Modem Side: 	 " .. config.modemSide)
 print("Release Side: " .. config.releaseSide)
 
 while true do
@@ -47,16 +47,16 @@ while true do
     -- TODO - Clean this up - remove if and have 1 and 2 correspond to a table with those things in
     --      - maybe put it in mRail if that would be useful?
 		if side == "left" then
-			detectorID = config.ids[1]
+			detectorID = tonumber(config.ids[1])
 			textMessage = "Last seen at " .. mRail.location_name[config.ids[1]]
 			if config.releaseSideID == 1 and config.releaseSide ~= "null" then
-				textMessage = "Requesting release from " .. mRail.location_name[config.ids[1]]
+				textMessage = "Requesting release from " .. mRail.location_name[tonumber(config.ids[1])]
 			end
 		elseif side == "right" then
-			detectorID = config.ids[2]
+			detectorID = tonumber(config.ids[2])
 			textMessage = "Last seen at " .. mRail.location_name[config.ids[2]]
 			if config.releaseSideID == 2 and config.releaseSide ~= "null" then
-				textMessage = "Requesting release from " .. mRail.location_name[config.ids[2]]
+				textMessage = "Requesting release from " .. mRail.location_name[tonumber(config.ids[2])]
 			end
 		end
 		print("Detection")
@@ -84,7 +84,7 @@ while true do
 		decodedMessage = {}
 		decodedMessage = json.json.decode(message)
     -- TODO - Add support for multiple detectors here
-		if decodedMessage.detectorID == config.ids[1] or decodedMessage.detectorID == config.ids[2] then
+		if decodedMessage.detectorID == tonumber(config.ids[1]) or decodedMessage.detectorID == tonumber(config.ids[2]) then
 			if config.releaseSide ~= "null" then
 				redstone.setOutput(config.releaseSide, true)
 				sleep(2)
