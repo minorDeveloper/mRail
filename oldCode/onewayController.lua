@@ -1,9 +1,6 @@
 -- mRail One-Way Controller
 -- (C) 2020 Sam Lane
 
--- TODO - Comment the whole damn thing
--- TODO - Convert to new program structure?
-
 os.loadAPI("mRail.lua")
 
 
@@ -14,13 +11,13 @@ local config = {}
 
 
 config.name = "One Way Control 1"
-config.modem_side = "bottom"
+config.modemSide = "bottom"
 
 config_name = ".config"
 
 
-local filename = "onewayData"
-local requestListFile = "requestList"
+local filename = "./mRail/program-state/onewayData"
+local requestListFile = "./mRail/program-state/requestList"
 
 -- TRUE = OCCUPIED, FALSE = EMPTY
 --Each entry represents a block:
@@ -36,57 +33,7 @@ local requestList = {}
 
 -- Functions
 
-local function saveData()
-	jsonEncoded = json.json.encode(oneWayState)
-		
-	local f = fs.open(filename, "w")
-	f.write(jsonEncoded)
-	
-	f.close()
-end
 
-local function loadData()
-	if fs.exists(filename) then
-		print("Loading Data")
-		local f = fs.open(filename, "r")
-		fileContents = f.readAll()
-		print("File contents")
-		print(fileContents)
-		jsonDecoded = json.json.decode(fileContents)
-		print("jsonDecoded")
-		print(jsonDecoded)
-		oneWayState = jsonDecoded
-	else
-		print("File not present - saving")
-		saveData()
-	end
-end
-
-local function saveRequestList()
-	jsonEncoded = json.json.encode(requestList)
-		
-	local f = fs.open(requestListFile, "w")
-	f.write(jsonEncoded)
-	
-	f.close()
-end
-
-local function loadRequestList()
-	if fs.exists(requestListFile) then
-		print("Loading Data")
-		local f = fs.open(requestListFile, "r")
-		fileContents = f.readAll()
-		print("File contents")
-		print(fileContents)
-		jsonDecoded = json.json.decode(fileContents)
-		print("jsonDecoded")
-		print(jsonDecoded)
-		requestList = jsonDecoded
-	else
-		print("File not present - saving")
-		saveRequestList()
-	end
-end
 
 
 local function updateDisplay()
@@ -110,8 +57,6 @@ local function updateDisplay()
 		monitor.setCursorPos(1,i)
 		monitor.write(oneWayState[i][2])
     
-    
-		
 		monitor.setCursorPos(27,i)
     local serviceID = oneWayState[i][7]
     if serviceID == "" or serviceID == nil then
@@ -208,8 +153,8 @@ modem.open(mRail.channels.detect_channel)
 monitor.setCursorBlink(false)
 
 -- run initial display update
-loadData()
-loadRequestList()
+mRail.loadData(filename, oneWayState)
+mRail.loadData(requestListFile, requestList)
 updateDisplay()
 
 while true do
@@ -234,12 +179,12 @@ while true do
 				mRail.oneway_confirm_dispatch(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID)
 				local textMessage = "In block " .. oneWayState[blockID][2]
 				mRail.detection_broadcast(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
-				saveData()
+				mRail.saveData(filename, oneWayState)
 			elseif oneWayState[blockID][5] == true then
 			-- if not, add the request to the request list
 				local request = {blockID, decodedMessage.detectorID, decodedMessage.trainID, decodedMessage.serviceID}
 				table.insert(requestList,request)
-				saveRequestList()
+				mRail.saveData(requestListFile, requestList)
 			end
 		end	
 	elseif senderChannel == mRail.channels.detect_channel then
@@ -268,13 +213,13 @@ while true do
 					-- remove from list
 					table.remove(requestList,trainWaitingRequestID)
 				end
-				saveData()
-				saveRequestList()
+				mRail.saveData(filename, oneWayState)
+				mRail.saveData(requestListFile, requestList)
 			end
 		end
 	end
-	saveData()
-	saveRequestList()
+	mRail.saveData(filename, oneWayState)
+	mRail.saveData(requestListFile, requestList)
 	monitor.clear()
 	monitor.setCursorPos(1,1)
 	updateDisplay()
