@@ -334,7 +334,7 @@ function mRail.loadData(filename, data)
 		data = jsonDecoded
 	else
 		print("File not present - saving")
-		saveData(filename, data)
+		mRail.saveData(filename, data)
 	end
 end
 

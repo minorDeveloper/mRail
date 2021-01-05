@@ -237,8 +237,10 @@ sleep(2)
 -- Write config file!
 
 -- Download/get additional configs (as dictated by config file type)
+log.debug("Checking if a config file already exists")
 if fs.exists(mRail.configLoc) then
   local tempConfig = {}
+  log.debug("Loading old config")
   mRail.loadConfig(mRail.configLoc, tempConfig)
   local options = {"Continue with old config file", "Create new config file"}
   
@@ -247,6 +249,7 @@ if fs.exists(mRail.configLoc) then
     generateConfig()
   end
 else
+  log.debug("Config file doesn't exist, generating new one")
   generateConfig()
 end
 
