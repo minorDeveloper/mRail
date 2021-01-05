@@ -226,11 +226,14 @@ function program.setup(config_)
   set_days_depot_alarms()
   set_days_station_alarms()
 
+  monitor.clear()
   updateDisplays()
+  updateDisplay()
 end
 
 function program.onLoop()
 	updateDisplays()
+  updateDisplay()
 end
 
 -- Modem Messages
