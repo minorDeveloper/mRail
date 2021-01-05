@@ -54,7 +54,7 @@ function program.oneway_dispatch_confirm(decodedMessage)
   -- Handle messages on the oneway dispatch confirmation channel
 end
 
-function program.station_dispatch_request(decodedMessage)
+function program.oneway_dispatch_request(decodedMessage)
   -- Handle messages on the station dispatch request channel
 end
 
