@@ -45,7 +45,7 @@ return {
   detectorExitIDMapping = {
     8,  -- 01
     50, -- 02
-    0,  -- 03
+    1,  -- 03
     4,  -- 04
     5,  -- 05
     6,  -- 06
@@ -55,7 +55,7 @@ return {
     6,  -- 10
     7,  -- 11
     11, -- 12
-    0,  -- 13
+    1,  -- 13
   },
   
   platformIDNameMapping = {
