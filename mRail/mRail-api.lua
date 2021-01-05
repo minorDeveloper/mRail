@@ -145,7 +145,7 @@ end
 -- Sends a request to the dispatch server for a given train to be dispatched
 -- from the reviever
 function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
-	log.info("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+	log.info("Requesting the " .. mRail.number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.encode({
 		['recieverID'] = recieverID,
 		['serviceID'] = serviceID,
@@ -158,7 +158,7 @@ end
 
 -- Allows dispatch to request a depot releases a train on its journey
 function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
-	log.info("Dispatching the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.encode({
 		['recieverID'] = recieverID,
 		['serviceID'] = serviceID,
