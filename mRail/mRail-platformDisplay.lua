@@ -28,9 +28,9 @@ local arrivalsDisplay
 
 -- TODO - Make this more elegant
 function updateDisplay()
-	if config.screens == 1 then
+	if tonumber(config.screens) == 1 then
 		singleDisplay()
-	elseif config.screens == 2 then
+	elseif tonumber(config.screens) == 2 then
 		arrDepDisplay()
 	end
 end
@@ -144,6 +144,7 @@ function handlePlatformUpdate(serviceID, platform)
   for i = 1, #routePlatformMapping do
     if tostring(routePlatformMapping[i][1]) == tostring(serviceID) then
       routePlatformMapping[i][2] = tostring(platform)
+      print("Platform update recieved")
     end
   end
   mRail.saveData(mappingFile, routePlatformMapping)
@@ -182,7 +183,7 @@ end
 -- Modem Messages
 function program.screen_update_channel(decodedMessage)
   -- Handle messages on the screen update channel
-  if decodedMessage.stationID == config.stationID then
+  if decodedMessage.stationID == tonumber(config.stationID) then
     print("Arr/dep update recieved")
     handleScreenUpdate(decodedMessage.arrivals, decodedMessage.departures)
   end
@@ -191,7 +192,7 @@ end
 
 function program.screen_platform_channel(decodedMessage)
   -- Handle messages on the screen platform channel
-  if decodedMessage.stationID == config.stationID then
+  if decodedMessage.stationID == tonumber(config.stationID) then
     print("Platform update recieved")
     handlePlatformUpdate(decodedMessage.serviceID, decodedMessage.platform)
   end
