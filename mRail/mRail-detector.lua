@@ -64,15 +64,14 @@ function program.handleMinecart(side, loco, locoName, primary, secondary, destin
   local textMessage = ""
   log.info("Detection on " .. side)
   
-  -- TODO - Clean this up - remove if and have 1 and 2 correspond to a table with those things in
-  --      - maybe put it in mRail if that would be useful?
   detectorID = tonumber(config.ids[idSide[side]])
-  textMessage = "Last seen at " .. mRail.location_name[config.ids[idSide[side]]]
   if side == config.releaseSideID and config.releaseSide ~= "null" then
     textMessage = "Requesting release from " .. mRail.location_name[tonumber(config.ids[idSide[side]])]
     mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
     log.info("Dispatch requested on " .. side)
   end
+  
+  textMessage = "Last seen at " .. mRail.location_name[tonumber(config.ids[idSide[side]])]
   mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
 end
 
