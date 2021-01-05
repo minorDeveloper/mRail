@@ -171,7 +171,7 @@ end
 
 -- Allows dispatch to request a station releases a train on its journey
 function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
-	log.info("Dispatching the " .. number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
+	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.encode({
 		['stationID'] = stationID,
 		['serviceID'] = serviceID,
