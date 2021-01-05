@@ -324,11 +324,11 @@ function mRail.saveData(filename, data)
 end
 
 function mRail.loadData(filename, data)
+  log.info("Load data from " .. filename)
 	if fs.exists(filename) then
-		log.debug("Loading Data from " .. filename)
+		log.debug(filename .. " exists")
 		local f = fs.open(filename, "r")
 		local fileContents = f.readAll()
-		log.trace("File contents " .. fileContents)
 		local jsonDecoded = json.decode(fileContents)
 		data = jsonDecoded
 	else
