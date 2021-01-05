@@ -315,7 +315,7 @@ end
 function mRail.saveData(filename, data)
   log.debug("Saving data to " .. filename)
   log.trace(data)
-	jsonEncoded = json.json.encode(data)
+	jsonEncoded = json.encode(data)
   
 	local f = fs.open(filename, "w")
 	f.write(jsonEncoded)
@@ -329,7 +329,7 @@ function mRail.loadData(filename, data)
 		local f = fs.open(filename, "r")
 		local fileContents = f.readAll()
 		log.trace("File contents " .. fileContents)
-		local jsonDecoded = json.json.decode(fileContents)
+		local jsonDecoded = json.decode(fileContents)
 		log.trace("jsonDecoded " .. jsonDecoded)
 		data = jsonDecoded
 	else
