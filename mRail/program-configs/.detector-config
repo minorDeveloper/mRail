@@ -7,6 +7,6 @@ return {
     modemSide   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
     monitor     = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},
     releaseSide = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^null$"}, "Release side (redstone output)"},
-    relaseSideID= {{"^left$","^right$", "^null$"}, "Detector side corresponding with release"},
+    releaseSideID= {{"^left$","^right$", "^null$"}, "Detector side corresponding with release"},
   },
 }
