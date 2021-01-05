@@ -133,7 +133,7 @@ function generateRoutePlatformMapping()
     table.insert(routePlatformMapping,temp)
   end
 
-  mRail.loadData(mappingFile, routePlatformMapping)
+  routePlatformMapping = mRail.loadData(mappingFile, routePlatformMapping)
 end
 
 -- TODO - Comment
@@ -143,6 +143,7 @@ function handlePlatformUpdate(serviceID, platform)
       routePlatformMapping[i][2] = tostring(platform)
     end
   end
+  mRail.saveData(mappingFile, routePlatformMapping)
 end
 
 -- TODO - Comment

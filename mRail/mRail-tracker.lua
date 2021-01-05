@@ -119,7 +119,7 @@ function program.setup(config_)
   modem.open(mRail.channels.location_update_channel)
   
   setupDataArray()
-  mRail.loadData(trainDataFile, trainData)
+  trainData = mRail.loadData(trainDataFile, trainData)
   updateDisplay()
 end
 

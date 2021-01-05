@@ -170,8 +170,8 @@ function program.setup(config_)
   end
   
   -- run initial display update
-  mRail.loadData(filename, oneWayState)
-  mRail.loadData(requestListFile, requestList)
+  oneWayState = mRail.loadData(filename, oneWayState)
+  requestList = mRail.loadData(requestListFile, requestList)
   updateDisplay()
 end
 
