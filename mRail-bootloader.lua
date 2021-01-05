@@ -235,7 +235,19 @@ sleep(2)
 -- Write config file!
 
 -- Download/get additional configs (as dictated by config file type)
-generateConfig()
+if fs.exists(mRail.configLoc) then
+  local tempConfig = {}
+  mRail.loadConfig(mRail.configLoc, tempConfig)
+  local options = {"Continue with old config file", "Create new config file"}
+  
+  local result = selectFromVals(options, "Config found for " .. mRail.aliases[tempConfig.programType], true, true, "")
+  if result == 2 then
+    generateConfig()
+  end
+else
+  generateConfig()
+end
+
 
 -- Pull additional configs from networked computer
 --pullConfigs()
