@@ -29,43 +29,39 @@ function set_days_depot_alarms()
 	-- clear any previous alarms remaining
 	depotAlarmIDs = {}
 	-- loop through each timetabled service
-	if #timetabledServices ~= 0 then
-		for i = 1, #timetabledServices do
-			local serviceRoute = timetabledServices[i][1]
-			local serviceDepot = routes[serviceRoute][2]
-			local depotTime = timetabledServices[i][3]
-			local serviceTrain = timetabledServices[i][2]
-			local alarmID = os.setAlarm(depotTime)
-			table.insert(depotAlarmIDs,{alarmID, serviceDepot, routes[serviceRoute][1], serviceTrain,depotTime})
-		end
-	end
+  for i = 1, #timetabledServices do
+    local serviceRoute = timetabledServices[i][1]
+    local serviceDepot = routes[serviceRoute][2]
+    local depotTime = timetabledServices[i][3]
+    local serviceTrain = timetabledServices[i][2]
+    local alarmID = os.setAlarm(depotTime)
+    table.insert(depotAlarmIDs,{alarmID, serviceDepot, routes[serviceRoute][1], serviceTrain,depotTime})
+  end
 end
 
 function set_days_station_alarms()
 	statAlarmIDs = {}
 	
-	if timetabledServices ~= 0 then
-		for i = 1, #timetabledServices do
-			local serviceID = timetabledServices[i][1]
-			local trainID = timetabledServices[i][2]
-			local startTime = timetabledServices[i][3]
-			
-			if #routes[serviceID][3] ~= 0 then
-				for j = 1, #routes[serviceID][3] do
-					--print("j " .. j)
-					local stationID = routes[serviceID][3][j][1]
-					--print("Station ID " .. stationID)
-					local offsetTime = routes[serviceID][3][j][2]
-					--print("Offset time " .. offsetTime)
-					local totalTime = startTime + offsetTime
-					totalTime = totalTime % 24.0
-					--print("Total time " .. totalTime)
-					local alarmID = os.setAlarm(totalTime)
-					table.insert(statAlarmIDs,{alarmID,stationID,routes[serviceID][1],trainID,totalTime})
-				end
-			end
-		end
-	end
+  for i = 1, #timetabledServices do
+    local serviceID = timetabledServices[i][1]
+    local trainID = timetabledServices[i][2]
+    local startTime = timetabledServices[i][3]
+    
+    if #routes[serviceID][3] ~= 0 then
+      for j = 1, #routes[serviceID][3] do
+        --print("j " .. j)
+        local stationID = routes[serviceID][3][j][1]
+        --print("Station ID " .. stationID)
+        local offsetTime = routes[serviceID][3][j][2]
+        --print("Offset time " .. offsetTime)
+        local totalTime = startTime + offsetTime
+        totalTime = totalTime % 24.0
+        --print("Total time " .. totalTime)
+        local alarmID = os.setAlarm(totalTime)
+        table.insert(statAlarmIDs,{alarmID,stationID,routes[serviceID][1],trainID,totalTime})
+      end
+    end
+  end
 end
 
 function updateDisplays()
@@ -84,60 +80,58 @@ function updateDisplays()
 		local departures = {}
 		
 		--loop through each service
-		if #timetabledServices ~= 0 then
-			for j = 1, #timetabledServices do
-				--check if the station is on the service
-				local routeData = routes[timetabledServices[j][1]][3]
-				local indexID = 0
-				local numberOfStops = #routeData
-				if numberOfStops ~= 0 then
-					for k = 1, numberOfStops do
-						if routeData[k][1] == i then
-							indexID = k
-							break
-						end
-					end
-				end
-				
-				
-				if indexID ~= 0 then
-				    --print(station_name[i] .. " station is on service " .. j .. " in pos " .. indexID)
-					-- make departures listing
-					if indexID ~= numberOfStops then
-						--then this is not the last station so there will be a departure
-						local tempDep = {}
-						--assign time of departure
-						tempDep[1] = (routeData[indexID][2] + timetabledServices[j][3]) % 24
-						--print("     there is a departure at time " .. tempDep[1])
-						local otherStations = {}
-						--print("     other stations are:")
-						for k = indexID + 1, numberOfStops do
-						  --  print("         " .. station_name[routeData[k][1]])
-							otherStations[k - indexID] = routeData[k][1]
-						end
-						tempDep[2] = otherStations
-						tempDep[3] = tostring(routes[timetabledServices[j][1]][1])
-						if (tonumber(tempDep[1]) > os.time() % 24) then
-							table.insert(departures,tempDep)
-						end
-					end
-				
-					-- make arrivals listing
-					if indexID ~= 1 then
-    					local tempArr = {}
-    					tempArr[1] = (routeData[indexID][2] + timetabledServices[j][3] - 0.5) % 24
-    					
-    					tempArr[2] = routeData[1][1]
-						tempArr[3] = tostring(routes[timetabledServices[j][1]][1])
-    					--print("     service from " .. station_name[tempArr[2]] .. " arriving at " .. tempArr[1])
-						if (tonumber(tempArr[1]) > os.time() % 24) then
-							table.insert(arrivals,tempArr)
-						end
-					end
-					--print("")
-				end
-			end
-		end
+    for j = 1, #timetabledServices do
+      --check if the station is on the service
+      local routeData = routes[timetabledServices[j][1]][3]
+      local indexID = 0
+      local numberOfStops = #routeData
+      if numberOfStops ~= 0 then
+        for k = 1, numberOfStops do
+          if routeData[k][1] == i then
+            indexID = k
+            break
+          end
+        end
+      end
+      
+      
+      if indexID ~= 0 then
+          --print(station_name[i] .. " station is on service " .. j .. " in pos " .. indexID)
+        -- make departures listing
+        if indexID ~= numberOfStops then
+          --then this is not the last station so there will be a departure
+          local tempDep = {}
+          --assign time of departure
+          tempDep[1] = (routeData[indexID][2] + timetabledServices[j][3]) % 24
+          --print("     there is a departure at time " .. tempDep[1])
+          local otherStations = {}
+          --print("     other stations are:")
+          for k = indexID + 1, numberOfStops do
+            --  print("         " .. station_name[routeData[k][1]])
+            otherStations[k - indexID] = routeData[k][1]
+          end
+          tempDep[2] = otherStations
+          tempDep[3] = tostring(routes[timetabledServices[j][1]][1])
+          if (tonumber(tempDep[1]) > os.time() % 24) then
+            table.insert(departures,tempDep)
+          end
+        end
+      
+        -- make arrivals listing
+        if indexID ~= 1 then
+            local tempArr = {}
+            tempArr[1] = (routeData[indexID][2] + timetabledServices[j][3] - 0.5) % 24
+            
+            tempArr[2] = routeData[1][1]
+          tempArr[3] = tostring(routes[timetabledServices[j][1]][1])
+            --print("     service from " .. station_name[tempArr[2]] .. " arriving at " .. tempArr[1])
+          if (tonumber(tempArr[1]) > os.time() % 24) then
+            table.insert(arrivals,tempArr)
+          end
+        end
+        --print("")
+      end
+    end
 		
 		table.sort(arrivals, function(a,b) return a[1] < b[1] end)
 		table.sort(departures, function(a,b) return a[1] < b[1] end)
@@ -259,25 +253,21 @@ end
 
 -- Alarms
 function program.handleAlarm(alarmID)
-  if #depotAlarmIDs ~= 0 then
-		for i = 1, #depotAlarmIDs do
-			if depotAlarmIDs[i][1] == alarmID then
-				dispatch_from_depot(depotAlarmIDs[i][2],depotAlarmIDs[i][3],depotAlarmIDs[i][4])
-				table.remove(depotAlarmIDs,i)
-				break
-			end
-		end
-	end
-	
-	if #statAlarmIDs ~= 0 then
-		for i = 1, #statAlarmIDs do
-			if statAlarmIDs[i][1] == alarmID then
-				dispatch_from_station(statAlarmIDs[i][2],statAlarmIDs[i][3],statAlarmIDs[i][4])
-				table.remove(statAlarmIDs,i)
-				break
-			end
-		end
-	end
+  for i = 1, #depotAlarmIDs do
+    if depotAlarmIDs[i][1] == alarmID then
+      dispatch_from_depot(depotAlarmIDs[i][2],depotAlarmIDs[i][3],depotAlarmIDs[i][4])
+      table.remove(depotAlarmIDs,i)
+      break
+    end
+  end
+
+  for i = 1, #statAlarmIDs do
+    if statAlarmIDs[i][1] == alarmID then
+      dispatch_from_station(statAlarmIDs[i][2],statAlarmIDs[i][3],statAlarmIDs[i][4])
+      table.remove(statAlarmIDs,i)
+      break
+    end
+  end
 end
 
 function program.handleRedstone()

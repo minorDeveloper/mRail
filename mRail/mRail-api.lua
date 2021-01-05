@@ -7,12 +7,14 @@
 --      - Train Tracking
 --      - Stop/Start Dispatch
 
+-- TODO - Comment all
+
 
 local mRail = {}
 
+-- Load APIs
 json = require("./mRail/json")
 log = require("./mRail/log")
-log.usecolor = true
 
 
 local col_to_num = {
@@ -33,7 +35,8 @@ local col_to_num = {
 	red = 15,
 	black = 16
 }
-	
+
+-- Converts the colour of train detected to an ID number
 local num_to_col = {
 	"white",
 	"orange",
@@ -87,6 +90,7 @@ mRail.configs = {
   ["tracker"]      = ".tracker-config",
 }
 
+-- Links config name alias to description of program
 mRail.aliases = {
   ["depotCollect"] = "Train Collection Depot", 
   ["depotRelease"] = "Train Release Depot",
@@ -138,6 +142,8 @@ end
 
 -- TODO - Comment all of these functions
 
+-- Sends a request to the dispatch server for a given train to be dispatched
+-- from the reviever
 function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
 	log.info("Requesting the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.encode({
@@ -150,7 +156,7 @@ function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
 	modem.transmit(mRail.channels.request_dispatch_channel,1,message)
 end
 
-
+-- Allows dispatch to request a depot releases a train on its journey
 function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
 	log.info("Dispatching the " .. number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
 	local message = json.encode({
@@ -163,6 +169,7 @@ function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
 	modem.transmit(mRail.channels.dispatch_channel,1,message)
 end
 
+-- Allows dispatch to request a station releases a train on its journey
 function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
 	log.info("Dispatching the " .. number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.encode({
@@ -177,6 +184,7 @@ end
 
 -- Station-Depot Comms
 
+-- Depots request permission from a station to release a train
 function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, detectorID)
 	log.info("Requesting permission from station " .. stationID .. "to dispatch train")
 	local message = json.encode({
@@ -190,6 +198,7 @@ function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, de
 	modem.transmit(mRail.channels.station_dispatch_request,1,message)
 end
 
+-- Station confirms that a given depot may release a train
 function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
 	log.info("Giving " .. recieverID .. " permission to dispatch train")
 	local message = json.encode({
@@ -202,6 +211,7 @@ function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
 	modem.transmit(mRail.channels.station_dispatch_confirm,1,message)
 end
 
+-- ADMIN function to request a specific route be assigned
 function mRail.station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
 	log.info("Requesting route")
 	local message = json.encode({
@@ -217,6 +227,8 @@ end
 
 -- Oneway-Detector Comms
 
+-- Allows a detector computer to request permission from block control to
+-- release a train
 function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	log.info("Requesting permission to dispatch train " .. trainID)
 	local message = json.encode({
@@ -229,6 +241,7 @@ function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	modem.transmit(mRail.channels.oneway_dispatch_request,1,message)
 end
 
+-- Block control gives permission for a detector computer to release a train
 function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	log.info("Giving " .. detectorID .. " permission to release train")
 	local message = json.encode({
@@ -241,6 +254,7 @@ function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	modem.transmit(mRail.channels.oneway_dispatch_confirm,1,message)
 end
 
+-- Provides information regarding the current timetable and routing of trains
 function mRail.timetable_update(modem, timetable)
 	log.info("Updating timetable for all stations")
 	local message = json.encode({
@@ -251,6 +265,8 @@ function mRail.timetable_update(modem, timetable)
 	modem.transmit(mRail.channels.timetable_updates,1,message)
 end
 
+-- Provides information to platform displays regarding the arrivals and
+-- departures still due at a given station
 function mRail.screen_update(modem, stationID, arrivals, departures)
   log.info("Sending updates to screens")
 	local message = json.encode({
@@ -263,6 +279,7 @@ function mRail.screen_update(modem, stationID, arrivals, departures)
 	modem.transmit(mRail.channels.screen_update_channel,1,message)
 end
 
+-- Allows stations to communicate platform allocations with the display screens
 function mRail.screen_platform_update(modem, stationID, serviceID, platform)
   log.info("Updating platform allocation")
 	local message = json.encode({
@@ -275,6 +292,7 @@ function mRail.screen_platform_update(modem, stationID, serviceID, platform)
 	modem.transmit(mRail.channels.screen_platform_channel,1,message)
 end
 
+-- Allows an error to be raised with a given error level
 function mRail.raise_error(modem, errMessage, errorLevel)
   log.error(errMessage)
 	local x = 0
@@ -294,20 +312,17 @@ function mRail.raise_error(modem, errMessage, errorLevel)
 end
 
 -- Files and configuration
-
--- TODO - Comment
--- TODO - Push file loading out to the API
 function mRail.saveData(filename, data)
+  log.debug("Saving data to " .. filename)
+  log.trace(data)
 	jsonEncoded = json.json.encode(data)
   
 	local f = fs.open(filename, "w")
 	f.write(jsonEncoded)
-	
+  log.debug("File write successful")
 	f.close()
 end
 
--- TODO - Comment
--- TODO - Push file loading out to the API
 function mRail.loadData(filename, data)
 	if fs.exists(filename) then
 		log.debug("Loading Data from " .. filename)
@@ -359,6 +374,7 @@ function mRail.loadConfig(file_name,config_var)
 	end
 end
 
+-- Saves a given program config in a user readable format
 function mRail.saveConfig(filename, config_var)
   local f = fs.open(filename, "w")
   f.writeLine("return {")

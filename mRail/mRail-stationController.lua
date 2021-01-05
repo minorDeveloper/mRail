@@ -46,7 +46,8 @@ function string:split( inSplitPattern )
   return outResults
 end
 
--- TODO - Comment
+-- Loops over a multidimensional array to check that
+-- a given value is not already present
 function checkUnique(array, index, comparison)
   local unique = true
   for i = 1, #array do
@@ -58,8 +59,7 @@ function checkUnique(array, index, comparison)
   return unique
 end
 
--- TODO - Comment function
--- TODO - Push this out to the API
+-- Loads a csv file into a table
 function loadStateTable()
 	local lineData = {}
 	local file = io.open("./mRail/network-configs/StateTable" .. config.stationID .. ".csv","r")
@@ -75,7 +75,8 @@ function loadStateTable()
 	end
 end
 
--- TODO - Comment function
+-- Sets the state of a given controller with the signal
+-- used for wireless control of points and release tracks
 function setControllers(controller, signal, prefix)
 	local nSignals = #controller.getSignalNames()
 	for i = 1, nSignals do
@@ -89,17 +90,14 @@ function setControllers(controller, signal, prefix)
 	end
 end
 
--- TODO - Comment function
+-- Takes the current state of switches and signals and outputs
+-- it to the various peripherals (i.e. bundled cables or digital controllers)
 function setOutputState(signalsRelease,switches)
 	if config.controlType == "wired" then
 		redstone.setBundledOutput(config.signalControl,signalsRelease)
 		redstone.setBundledOutput(config.releaseControl,signalsRelease)
-		redstone.setBundledOutput("right",switches)
+		redstone.setBundledOutput(config.switchControl,switches)
 	elseif config.controlType == "wireless" then
-		--signalController
-		--switchController
-		--releaseController
-		
 		-- set switches
 		setControllers(switchController, switches, "SW")
 		-- set signals
@@ -109,7 +107,8 @@ function setOutputState(signalsRelease,switches)
 	end
 end
 
--- TODO - Comment function
+-- Returns a table of routes from the entranceID 
+-- to the exitID
 function findRoutes(entranceID, exitID)
 	local possibleRoutes = {}
 	for i = 2, #systemRoutingData do
@@ -120,30 +119,7 @@ function findRoutes(entranceID, exitID)
 	return possibleRoutes
 end
 
--- TODO - Check this function is used!
--- TODO - Comment function
-function checkValidCombo(stateA, stateB)
-	local signalStateA 		= tonumber(systemRoutingData[stateA+1][6])
-	local signalRequiredA 	= tonumber(systemRoutingData[stateA+1][5])
-	local switchStateA 		= tonumber(systemRoutingData[stateA+1][8])
-	local switchRequiredA 	= tonumber(systemRoutingData[stateA+1][7])
-	
-	local signalStateB 		= tonumber(systemRoutingData[stateB+1][6])
-	local signalRequiredB 	= tonumber(systemRoutingData[stateB+1][5])
-	local switchStateB 		= tonumber(systemRoutingData[stateB+1][8])
-	local switchRequiredB 	= tonumber(systemRoutingData[stateB+1][7])
-	
-	local validSwitching = bit.band(bit.band(switchRequiredA,switchRequiredB),bit.bxor(switchStateA,switchStateB))
-	local validSignalling = bit.band(bit.band(signalRequiredA,signalRequiredB),bit.bxor(signalStateA,signalStateB))
-	
-	if validSignalling == 0 and validSwitching == 0 then
-		return true
-	end
-	return false
-end
-
--- TODO - Check this function is used!
--- TODO - Comment function
+-- Checks if a new state is compatible with the one currently set
 function checkNewCombo(stateA)
 	local signalStateA 		= tonumber(systemRoutingData[stateA+1][6])
 	local signalRequiredA 	= tonumber(systemRoutingData[stateA+1][5])
@@ -158,6 +134,12 @@ function checkNewCombo(stateA)
 	log.debug(currentState[1] .. " " .. currentState[2] .. " " .. currentState[3] .. " " .. currentState[4])
 	log.trace(stateA)
 	
+  -- This is the main bit of processing for the system to determine if two states are compatible
+  -- For any switch, signal, or release that is required to be set a certain way, all current states must
+  -- agree on how it is set. We do this by anding the two required states to determine any potential locations of conflit,
+  -- then identify any differing signals etc with an xor. The two values are finally anded to detect where there are conflicts
+  -- that both routes require. If there is a conflict then either validSwitching or validSignalling will be non-zero and 
+  -- so we return false
 	local validSwitching = bit.band(bit.band(switchRequiredA,switchRequiredB),bit.bxor(switchStateA,switchStateB))
 	local validSignalling =bit.band(bit.band(signalRequiredA,signalRequiredB),bit.bxor(signalStateA,signalStateB))
 	
@@ -167,9 +149,8 @@ function checkNewCombo(stateA)
 	return false
 end
 
-
-
--- TODO - Comment
+-- Attempts to remove a given state ID from the list of currently loaded states
+-- Returns true if that state existed in the list of current states
 function tryRemove(stateID)
 	if #currentLoadedStates ~= 0 then
 		for i = 1, #currentLoadedStates do
@@ -183,43 +164,44 @@ function tryRemove(stateID)
 	return false
 end
 
--- TODO - Comment
+-- Tries to add a state with an associated service and train
 function tryAdd(stateID, serviceID, trainID)
+  -- Ensure that the stateID is in numerical form
 	stateID = tonumber(stateID)
-  -- TODO - What the hell does this actually do, I didn't know there was a ninth column!!
-	-- remove any platform occupations associated with the route
+  
+	-- We start by removing any state that must be removed for this to be possible
+  -- i.e. to route a train out of a platform we must first remove the platform
+  -- allocation for our system to find a route
+  -- If this process is unsuccessful we re-apply the state at the end and try again
+  -- later
 	local platformOccupation = 0
 	if tonumber(systemRoutingData[stateID+1][9]) ~= 0 then
 		platformOccupation = tonumber(systemRoutingData[stateID+1][9])
 		tryRemove(platformOccupation)
 	end
-	-- check if it's compatible
-  -- TODO - Not sure we need to call updateState here??
-    -- I think we do as we're removing the platform occupation above so the state must be updated in all future checks
-    -- But does that actually change anything we're looking at here, or just the overall station state
-    -- If we can lose the updateState call that would speed things up
+  
+	-- Update the state so that the platform removal can take effect internally
 	updateState()
-	if checkNewCombo(stateID) == true and stateID > 0 then
-		local unique = checkUnique(currentLoadedStates, 1, tonumber(stateID))
-    
-		if unique then 
-			table.insert(currentLoadedStates,{stateID, serviceID, trainID})
-			log.debug("State added")
-			return true
-		end
-    return false
+  -- Check that the stateID is valid, and that the state itself is compatible with the current system
+	if stateID > 0 and checkNewCombo(stateID) == true and checkUnique(currentLoadedStates, 1, tonumber(stateID)) then
+    -- If compatible, then add the state to the table, and update
+    table.insert(currentLoadedStates,{stateID, serviceID, trainID})
+    log.debug("State added")
+    updateState()
+    return true
 	else
+    -- If incompatible then re-add the platform allocation and continue
 		log.debug("Requested state incompatible")
 		if platformOccupation ~= 0 then
 			tryAdd(platformOccupation, serviceID, trainID)
 		end
+    updateState()
 		return false
-	-- if not then re-add the platform occupation state
 	end
-	updateState()
 end
 
--- TODO - Comment
+-- Attempts to find a route between a given entrance and exit
+-- If a route is found, then it will be allocated
 function tryRoute(entranceID, exitID, serviceID, trainID)
 	local possibleRoutes = findRoutes(entranceID, exitID)
 	log.debug("Routes found")
@@ -233,7 +215,7 @@ function tryRoute(entranceID, exitID, serviceID, trainID)
 	return false
 end
 
--- TODO - Comment
+-- For currently incompatible routes, we add the request to the request list
 function logRequest(entryID, serviceID, trainID, detectorID,entryOrDispatch)
   local unique = checkUnique(requestList, 1, entryID) and checkUnique(requestList, 3, trainID)
 	if unique then
@@ -285,7 +267,7 @@ function processRequests()
 	end
 end
 
--- TODO - Comment function
+
 function setDepartureAlarm(serviceID, trainID)
 	--check that an alarm doesnt already exist for this
   local unique = checkUnique(alarms, 3, trainID)
@@ -297,7 +279,6 @@ function setDepartureAlarm(serviceID, trainID)
 	end
 end
 
--- TODO - Comment function
 function printColourAndRoute(serviceID, trainID, display)
   display.setBackgroundColor(math.pow(2,tonumber(trainID) - 1))
   display.write("  ")
@@ -313,8 +294,7 @@ function printColourAndRoute(serviceID, trainID, display)
   display.write(" ")
 end
 
--- TODO - Comment
--- TODO - Think this can be made shorter/more elegant
+-- Updates the currentState variable with the list of currently states loaded
 function updateState()
 	if #currentLoadedStates ~= 0 then
 		local signalState = 0
@@ -339,7 +319,6 @@ function updateState()
 	end
 end
 
--- TODO - Comment function
 -- TODO - Proper station display, so you can see what is going on!
 --      - Probably separate out to separate program where you can provide the system
 function updateDisplay(display)
@@ -410,13 +389,13 @@ function program.setup(config_)
   
   loadStateTable()
   
-  log.info("STATION: Loading station config")
+  log.info("Loading station config")
   mRail.loadConfig("./mRail/network-configs/.station-" .. tostring(config.stationID) .. "-config",stationConfig)
-  log.debug("STATION: Station config loaded")
+  log.debug("Station config loaded")
   
-  log.info("STATION: Loading routing config")
+  log.info("Loading routing config")
   stationRouting = dofile("./mRail/network-configs/.station-routing-config")
-  log.debug("STATION: Routing config loaded")
+  log.debug("Routing config loaded")
   
   if config.monitor == nil or config.monitor == "term" then
     monitor = term

@@ -1,8 +1,6 @@
 -- mRail Block Controller
 -- (C) 2020-21 Sam Lane
 
--- TODO - Comment all
--- TODO - Clean it all up
 -- TODO - Add predictions for time spent in a block, and alarms for if that limit is exceeded by a certain percentage
 --      - and then error messages...
 
