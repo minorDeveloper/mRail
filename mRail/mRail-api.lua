@@ -330,7 +330,9 @@ function mRail.loadData(filename, data)
 		local f = fs.open(filename, "r")
 		local fileContents = f.readAll()
 		local jsonDecoded = json.decode(fileContents)
-		data = jsonDecoded
+    for i = 1, #jsonDecoded do
+      data[1] = jsonDecoded[1]
+    end
 	else
 		log.debug(filename .. " not present - saving")
 		mRail.saveData(filename, data)
