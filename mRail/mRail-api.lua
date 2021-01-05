@@ -334,6 +334,7 @@ function mRail.loadData(filename, data)
 	else
 		log.debug(filename .. " not present - saving")
 		mRail.saveData(filename, data)
+    return data
 	end
 end
 
