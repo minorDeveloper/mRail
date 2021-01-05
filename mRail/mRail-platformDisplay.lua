@@ -17,6 +17,9 @@ local mappingFile = "./mRail/program-state/platformMapping"
 --Route name, Expected platform
 local routePlatformMapping = {}
 
+local stationRouting = {}
+mRail.loadConfig("./mRail/network-configs/.station-routing-config",stationRouting)
+
 local arrivals = {}
 local departures = {}
 
@@ -128,8 +131,8 @@ end
 
 -- TODO - Comment
 function generateRoutePlatformMapping()
-  for i = 1, #mRail.stationRouting do
-    local temp = {mRail.stationRouting[i][1],0}
+  for i = 1, #stationRouting do
+    local temp = {stationRouting[i][1],0}
     table.insert(routePlatformMapping,temp)
   end
 
