@@ -30,6 +30,7 @@ local logoASCII = {
 }
 
 local commandsToRun = {
+    "mv ./mRail/program-state/.config .",
     "rm /mRail",
     "rm startup.lua",
     "pastebin run p8PJVxC4",
@@ -44,6 +45,7 @@ local commandsToRun = {
     "rm /github.rom",
     "rm /github",
     "mkdir ./mRail/program-state/",
+    "mv .config ./mRail/program-state/",
 }
 
 

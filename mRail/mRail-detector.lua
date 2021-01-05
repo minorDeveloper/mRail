@@ -13,8 +13,8 @@ log = require("./mRail/log")
 local config = {}
 
 local idSide = {
-  "left" = 1,
-  "right" = 2,
+  left = 1,
+  right = 2,
 }
 
 -- From which all other programs are derived...
