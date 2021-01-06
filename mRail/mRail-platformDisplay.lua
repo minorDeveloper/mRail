@@ -40,9 +40,6 @@ function arrDepDisplay()
 	departuresDisplay.clear()
 	arrivalsDisplay.clear()
 	
-	departuresDisplay.setCursorBlink(false)
-	arrivalsDisplay.setCursorBlink(false)
-	
 	departuresDisplay.setBackgroundColor(colors.black)
 	arrivalsDisplay.setBackgroundColor(colors.black)
 	
@@ -67,6 +64,7 @@ function arrDepDisplay()
     
     local serviceID = departures[i][3]
     
+    -- TODO this can be cleaner if we rework how stuff is stored in routePlatformMapping
     for j = 1, #routePlatformMapping do
       if tostring(serviceID) == tostring(routePlatformMapping[j][1]) then
         departuresDisplay.setCursorPos(16,line)
@@ -145,9 +143,12 @@ function handlePlatformUpdate(serviceID, platform)
     if tostring(routePlatformMapping[i][1]) == tostring(serviceID) then
       routePlatformMapping[i][2] = tostring(platform)
       print("Platform update recieved")
+      print(platform)
+      read()
     end
   end
   mRail.saveData(mappingFile, routePlatformMapping)
+  log.debug(routePlatformMapping[10][1] .. routePlatformMapping[10][2])
 end
 
 -- TODO - Comment
@@ -187,16 +188,15 @@ function program.screen_update_channel(decodedMessage)
     print("Arr/dep update recieved")
     handleScreenUpdate(decodedMessage.arrivals, decodedMessage.departures)
   end
-  mRail.saveData(mappingFile, routePlatformMapping)
 end
 
 function program.screen_platform_channel(decodedMessage)
   -- Handle messages on the screen platform channel
   if decodedMessage.stationID == tonumber(config.stationID) then
     print("Platform update recieved")
+    read()
     handlePlatformUpdate(decodedMessage.serviceID, decodedMessage.platform)
   end
-  mRail.saveData(mappingFile, routePlatformMapping)
 end
 
 function program.handleRedstone()
