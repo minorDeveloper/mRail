@@ -68,6 +68,10 @@ function arrDepDisplay()
     for j = 1, #routePlatformMapping do
       if tostring(serviceID) == tostring(routePlatformMapping[j][1]) then
         departuresDisplay.setCursorPos(16,line)
+        if j == 10 then
+          print(routePlatformMapping[10][1] .. " " .. routePlatformMapping[10][2])
+          read()
+        end
         if routePlatformMapping[j][2] ~= 0 then
           departuresDisplay.write(routePlatformMapping[j][2])
         else
