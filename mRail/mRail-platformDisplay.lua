@@ -143,8 +143,6 @@ function handlePlatformUpdate(serviceID, platform)
     if tostring(routePlatformMapping[i][1]) == tostring(serviceID) then
       routePlatformMapping[i][2] = tostring(platform)
       print("Platform update recieved")
-      print(platform)
-      read()
     end
   end
   mRail.saveData(mappingFile, routePlatformMapping)
@@ -194,7 +192,6 @@ function program.screen_platform_channel(decodedMessage)
   -- Handle messages on the screen platform channel
   if decodedMessage.stationID == tonumber(config.stationID) then
     print("Platform update recieved")
-    read()
     handlePlatformUpdate(decodedMessage.serviceID, decodedMessage.platform)
   end
 end
