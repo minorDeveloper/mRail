@@ -268,7 +268,7 @@ function program.next_station_request(decodedMessage)
   
   if nextStationID == 0 then return end
   
-  mRail.next_station_request(modem, nextStationID, decodedMessage.trainID)
+  mRail.next_station_update(modem, nextStationID, decodedMessage.trainID)
 end
 
 function program.request_dispatch_channel(decodedMessage)

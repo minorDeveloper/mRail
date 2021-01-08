@@ -151,7 +151,7 @@ function mRail.next_station_request(modem, serviceID, trainID, stationID)
 end
 
 -- Provides tracking with an update regarding the next station for a given train
-function mRail.next_station_request(modem, nextStationID, trainID)
+function mRail.next_station_update(modem, nextStationID, trainID)
   log.info(trainID .. ": next station is " .. nextStationID)
   local message = json.encode({
     ["nextStationID"] = nextStationID,
