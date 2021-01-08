@@ -251,7 +251,7 @@ function program.next_station_request(decodedMessage)
   
   if routeNum == 0 then return end
   
-  local trainRoute = route[routeNum][3]
+  local trainRoute = routes[routeNum][3]
   
   for i = 1, #trainRoute do
     local stationID = trainRoute[i][1]
