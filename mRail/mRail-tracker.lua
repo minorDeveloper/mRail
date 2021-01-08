@@ -32,7 +32,7 @@ local xPos = {
 	trainID = 4,
 	serviceID = 8,
 	currentLocationID = 22,
-	nextStationID = 35,
+	nextStationID = 39,
 	msg = 50
 }
 

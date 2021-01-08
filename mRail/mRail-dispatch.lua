@@ -260,7 +260,7 @@ function program.next_station_request(decodedMessage)
       if i == #trainRoute then
         nextStationID = trainRoute[1][1]
       else
-        nextStationID = trainRoute[i][1]
+        nextStationID = trainRoute[i + 1][1]
       end
       break
     end
