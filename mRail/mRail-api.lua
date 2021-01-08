@@ -107,21 +107,23 @@ mRail.configLoc    = "./mRail/program-state/.config"
 
 -- Modem channels used by mRail
 mRail.channels = {
-	detect_channel = 2,
-	train_info = 3,
-	location_update_channel = 4,
-	dispatch_channel = 10,
+	detect_channel           = 2,
+	train_info               = 3,
+	location_update_channel  = 4,
+  next_station_request     = 5,
+  next_station_update      = 6,
+	dispatch_channel         = 10,
 	station_dispatch_confirm = 11,
 	station_dispatch_request = 12,
-	oneway_dispatch_confirm = 13,
-	oneway_dispatch_request = 14,
-	timetable_updates = 15,
-	station_route_request = 16,
+	oneway_dispatch_confirm  = 13,
+	oneway_dispatch_request  = 14,
+	timetable_updates        = 15,
+	station_route_request    = 16,
 	station_dispatch_channel = 17,
-	screen_update_channel = 18,
-	screen_platform_channel = 19,
+	screen_update_channel    = 18,
+	screen_platform_channel  = 19,
 	request_dispatch_channel = 20,
-	error_channel = 999
+	error_channel            = 999
 }
 
 
@@ -135,6 +137,27 @@ function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMe
 		["textMessage"] = textMessage
 		})
 	modem.transmit(mRail.channels.detect_channel,1,message)
+end
+
+-- Request dispatch provides tracking with the next station of a given train and service
+function mRail.next_station_request(modem, serviceID, trainID, stationID)
+  log.info("Requesting next station update for " .. serviceID)
+  local message = json.encode({
+    ["serviceID"] = serviceID,
+    ["trainID"]   = trainID,
+    ["stationID"] = stationID
+  })
+  modem.transmit(mRail.next_station_request, 1, message)
+end
+
+-- Provides tracking with an update regarding the next station for a given train
+function mRail.next_station_request(modem, nextStationID, trainID)
+  log.info(trainID .. ": next station is " .. nextStationID)
+  local message = json.encode({
+    ["nextStationID"] = nextStationID,
+    ["trainID"] = trainID
+  })
+  modem.transmit(mRail.next_station_update, 1, message)
 end
 
 -- TODO - Add ability to request next station from dispatch

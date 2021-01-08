@@ -116,7 +116,7 @@ function program.setup(config_)
 
   -- TODO - Check why we are opening two channels!
   modem.open(mRail.channels.detect_channel)
-  modem.open(mRail.channels.location_update_channel)
+  modem.open(mRail.channels.next_station_update)
   
   setupDataArray()
   trainData = mRail.loadData(trainDataFile, trainData)
@@ -141,6 +141,16 @@ function program.detect_channel(decodedMessage)
 	trainData[msgTrainID][5] = msgMsg
 	
 	-- save to file:close
+	mRail.saveData(trainDataFile, trainData)
+end
+
+function program.next_station_update(decodedMessage)
+  -- Handle messsages on the next station update channel
+  local msgTrainID = tonumber(decodedMessage.trainID)
+  
+  trainData[msgTrainID][4] = tonumber(decodedMessage.nextStationID)
+  
+  -- save to file:close
 	mRail.saveData(trainDataFile, trainData)
 end
 

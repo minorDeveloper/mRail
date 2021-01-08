@@ -222,6 +222,7 @@ function logRequest(entryID, serviceID, trainID, detectorID,entryOrDispatch)
 		if serviceID == nil then
 			serviceID = ""
 		end
+    mRail.next_station_request(modem, serviceID, trainID, tonumber(config.stationID))
 		table.insert(requestList,{entryID, serviceID, trainID, detectorID,entryOrDispatch})
 	end
 end
@@ -495,7 +496,7 @@ end
 -- TODO - Comment function
 function program.station_dispatch_channel(decodedMessage)
   -- Handle messages on the station dispatch channel
-  if tonumber(decodedMessage.stationID) == config.stationID then
+  if tonumber(decodedMessage.stationID) == tonumber(config.stationID) then
     log.info("Dispatch from Station requested")
     -- find where the train is
     local entryID = 0
@@ -516,12 +517,12 @@ function program.station_dispatch_channel(decodedMessage)
     -- request a dispatch
     if entryID ~= 0 then
       for i = 1, #alarms do
-        if alarms[i][3] == decodedMessage.trainID then
+        if tonumber(alarms[i][3]) == tonumber(decodedMessage.trainID) then
           table.remove(alarms,i)
           break
         end
       end
-      logRequest(entryID, decodedMessage.serviceID, decodedMessage.trainID, 0, 2)
+      logRequest(entryID, tostring(decodedMessage.serviceID), tonumber(decodedMessage.trainID), 0, 2)
       processRequests()
     end
   end

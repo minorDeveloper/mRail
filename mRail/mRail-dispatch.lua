@@ -216,6 +216,7 @@ function program.setup(config_)
   
   modem = peripheral.wrap(config.modemSide)
   modem.open(mRail.channels.request_dispatch_channel)
+  modem.open(mRail.channels.next_station_request)
   
   if config.monitor == nil or config.monitor == "term" then
     monitor = term
@@ -237,6 +238,39 @@ function program.onLoop()
 end
 
 -- Modem Messages
+function program.next_station_request(decodedMessage)
+  -- Handle messages on the next station request channel
+  local nextStationID = 0
+  local routeNum = 0
+  for i = 1, #routes do
+    if tostring(decodedMessage.serviceID) == tostring(routes[i][1]) then
+      routeNum = i
+      break
+    end
+  end
+  
+  if routeNum == 0 then return end
+  
+  local trainRoute = route[routeNum][3]
+  
+  for i = 1, #trainRoute do
+    local stationID = trainRoute[i][1]
+    
+    if tonumber(stationID) == tonumber(decodedMessage.stationID) then
+      if i == #trainRoute then
+        nextStationID = trainRoute[1][1]
+      else
+        nextStationID = trainRoute[i][1]
+      end
+      break
+    end
+  end
+  
+  if nextStationID == 0 then return end
+  
+  mRail.next_station_request(modem, nextStationID, decodedMessage.trainID)
+end
+
 function program.request_dispatch_channel(decodedMessage)
   -- Handle messages on the request dispatch channel
   -- dispatch the train

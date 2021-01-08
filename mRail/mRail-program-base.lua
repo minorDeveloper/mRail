@@ -34,6 +34,14 @@ function program.location_update_channel(decodedMessage)
   -- Handle messages on the location update channel
 end
 
+function program.next_station_request(decodedMessage)
+  -- Handle messages on the next station request channel
+end
+
+function program.next_station_update(decodedMessage)
+  -- Handle messsages on the next station update channel
+end
+
 function program.dispatch_channel(decodedMessage)
   -- Handle messages on the dispatch channel
 end
