@@ -147,7 +147,7 @@ function mRail.next_station_request(modem, serviceID, trainID, stationID)
     ["trainID"]   = trainID,
     ["stationID"] = stationID
   })
-  modem.transmit(mRail.next_station_request, 1, message)
+  modem.transmit(mRail.channels.next_station_request, 1, message)
 end
 
 -- Provides tracking with an update regarding the next station for a given train
@@ -157,7 +157,7 @@ function mRail.next_station_request(modem, nextStationID, trainID)
     ["nextStationID"] = nextStationID,
     ["trainID"] = trainID
   })
-  modem.transmit(mRail.next_station_update, 1, message)
+  modem.transmit(mRail.channels.next_station_update, 1, message)
 end
 
 -- TODO - Add ability to request next station from dispatch
