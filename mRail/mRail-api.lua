@@ -132,12 +132,13 @@ mRail.channels = {
 
 -- NETWORK CONTROL FUNCTIONS
 
-function mRail.ping(modem, programName, id)
+function mRail.ping(programName, id)
   log.info("Ping!")
   local message = json.encode({
     ["programName"] = programName,
     ["id"] = id
   })
+  local modem = peripheral.wrap(mRail.getModemSide())
   modem.transmit(mRail.channels.ping_channel,1,message)
 end
 
