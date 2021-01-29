@@ -44,7 +44,7 @@ local trainData = {}
 -- Used on first run of the program
 local function setupDataArray()
   for i = 1, config.numberTrains do
-    trainData[i] = {1,0,0,0,""}
+    trainData[i] = {i,0,0,0,""}
   end
 end
 
