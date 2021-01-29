@@ -111,6 +111,10 @@ function program.request_dispatch_channel(decodedMessage)
   -- Handle messages on the request dispatch channel
 end
 
+function program.control_response_channel(decodedMessage)
+  
+end
+
 function program.error_channel(decodedMessage)
   -- Handle messages on the error channel
 end

@@ -130,6 +130,7 @@ mRail.channels = {
 	screen_update_channel    = 18,
 	screen_platform_channel  = 19,
 	request_dispatch_channel = 20,
+  control_response_channel = 21,
 	error_channel            = 999
 }
 
@@ -169,6 +170,18 @@ function mRail.requestState(modem, programName, id, command)
     ["command"] = command
   })
   modem.transmit(mRail.channels.data_request_channel,1,message)
+end
+
+function mRail.response(modem, programName, id, command, success, returnMessage)
+  log.info("Responding to control message")
+  local message = json.encode({
+    ["programName"] = programName,
+    ["id"] = id,
+    ["command"] = command,
+    ["success"] = success,
+    ["message"] = returnMessage
+  })
+  modem.transmit(mRail.channels.control_response_channel,1,message)
 end
 
 -- NORMAL FUNCTION CALLS

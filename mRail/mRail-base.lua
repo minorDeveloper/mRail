@@ -62,6 +62,7 @@ handleMessages = {
   [tostring(mRail.channels.screen_update_channel)]    = program.screen_update_channel,
   [tostring(mRail.channels.screen_platform_channel)]  = program.screen_platform_channel,
   [tostring(mRail.channels.request_dispatch_channel)] = program.request_dispatch_channel,
+  [tostring(mRail.channels.control_response_channel)] = program.control_response_channel,
   [tostring(mRail.channels.error_channel)]            = program.error_channel,
 }
 
