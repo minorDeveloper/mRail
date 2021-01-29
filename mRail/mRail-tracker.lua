@@ -124,6 +124,7 @@ function program.setup(config_)
   -- TODO - Check why we are opening two channels!
   modem.open(mRail.channels.detect_channel)
   modem.open(mRail.channels.next_station_update)
+  modem.open(mRail.channels.ping_request_channel)
   
   setupDataArray()
   trainData = mRail.loadData(trainDataFile, trainData)

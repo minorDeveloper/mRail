@@ -162,6 +162,7 @@ function program.setup(config_)
   --Open modem to comms channels
   modem.open(mRail.channels.oneway_dispatch_request)
   modem.open(mRail.channels.detect_channel)
+  modem.open(mRail.channels.ping_request_channel)
   
   width, height = monitor.getSize()
   blankString = ""

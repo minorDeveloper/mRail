@@ -381,6 +381,7 @@ function program.setup(config_)
   modem.open(mRail.channels.station_route_request)
   modem.open(mRail.channels.station_dispatch_request)
   modem.open(mRail.channels.station_dispatch_channel)
+  modem.open(mRail.channels.ping_request_channel)
   
   if config.controlType == "wireless" then
     signalController = peripheral.wrap(config.signalControl)

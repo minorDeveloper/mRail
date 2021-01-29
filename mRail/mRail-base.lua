@@ -33,6 +33,7 @@ end
 
 function program.ping_request_channel(decodedMessage)
   -- Handle requests for a ping
+  log.info("Ping requested")
   program.ping()
 end
 

@@ -112,6 +112,7 @@ function program.setup(config_)
   -- Load peripherals
   sorter = peripheral.wrap(config.sorter)
   modem = peripheral.wrap(config.modemSide)
+  modem.open(mRail.channels.ping_request_channel)
 
   loco_chest = peripheral.wrap(config.loco)
   cart_chest = peripheral.wrap(config.cart)

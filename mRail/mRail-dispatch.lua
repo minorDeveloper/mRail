@@ -217,6 +217,7 @@ function program.setup(config_)
   modem = peripheral.wrap(config.modemSide)
   modem.open(mRail.channels.request_dispatch_channel)
   modem.open(mRail.channels.next_station_request)
+  modem.open(mRail.channels.ping_request_channel)
   
   if config.monitor == nil or config.monitor == "term" then
     monitor = term
