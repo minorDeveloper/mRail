@@ -85,9 +85,9 @@ local function updateDisplay()
 		idTrain = trainData[i][struct.trainID]
 		
 		if idTrain < 10 then
-			messageString = "0" .. stringify(idTrain)
+			messageString = "0" .. tostring(idTrain)
 		else
-			messageString = stringify(idTrain)
+			messageString = tostring(idTrain)
 		end
 		monitor.write(messageString)
 		
