@@ -22,6 +22,10 @@ end
 
 
 -- Modem Messages
+function program.ping_channel(decodedMessage)
+  -- Handle incoming ping
+end
+
 function program.detect_channel(decodedMessage)
   -- Handle messages on the detection channel
 end
@@ -44,6 +48,11 @@ end
 
 function program.dispatch_channel(decodedMessage)
   -- Handle messages on the dispatch channel
+end
+
+function program.ping_request_channel(decodedMessage)
+  -- Handle requests for a ping
+  program.ping()
 end
 
 function program.station_dispatch_confirm(decodedMessage)

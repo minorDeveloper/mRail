@@ -30,15 +30,24 @@ function program.ping()
   end
   mRail.ping(mRail.programs[config.programType], id)
 end
+
+function program.ping_request_channel(decodedMessage)
+  -- Handle requests for a ping
+  program.ping()
+end
+
+
 log.debug("Program loaded")
 
 handleMessages = {
+  [tostring(mRail.channels.ping_channel)]             = program.ping_channel,
   [tostring(mRail.channels.detect_channel)]           = program.detect_channel,
   [tostring(mRail.channels.train_info)]               = program.train_info,
   [tostring(mRail.channels.location_update_channel)]  = program.location_update_channel,
   [tostring(mRail.channels.next_station_request)]     = program.next_station_request,
   [tostring(mRail.channels.next_station_update)]      = program.next_station_update,
   [tostring(mRail.channels.dispatch_channel)]         = program.dispatch_channel,
+  [tostring(mRail.channels.ping_request_channel)]     = program.ping_request_channel,
   [tostring(mRail.channels.station_dispatch_confirm)] = program.station_dispatch_confirm,
   [tostring(mRail.channels.station_route_request)]    = program.station_route_request,
   [tostring(mRail.channels.station_dispatch_request)] = program.station_dispatch_request,

@@ -141,6 +141,8 @@ function program.handleMinecart(side, loco, locoName, primary, secondary, destin
 	collectTrain(destination)
 end
 
+
+
 function program.handleRedstone()
   
 end

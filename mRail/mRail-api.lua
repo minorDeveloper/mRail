@@ -116,6 +116,7 @@ mRail.channels = {
 	location_update_channel  = 4,
   next_station_request     = 5,
   next_station_update      = 6,
+  ping_request_channel     = 7,
 	dispatch_channel         = 10,
 	station_dispatch_confirm = 11,
 	station_dispatch_request = 12,
@@ -140,6 +141,11 @@ function mRail.ping(programName, id)
   })
   local modem = peripheral.wrap(mRail.getModemSide())
   modem.transmit(mRail.channels.ping_channel,1,message)
+end
+
+function mRail.requestPings(modem)
+  log.info("Requesting pings from all connected services")
+  modem.transmit(mRail.channels.ping_request_channel,1,"")
 end
 
 -- NORMAL FUNCTION CALLS
