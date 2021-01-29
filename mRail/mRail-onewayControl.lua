@@ -3,10 +3,16 @@
 
 -- TODO - Add predictions for time spent in a block, and alarms for if that limit is exceeded by a certain percentage
 --      - and then error messages...
+-- TODO - control functions for timing predictions
 
 -- TODO - If there is no onewayData file then pull info about the network's blocks from the network controller
 -- TODO - Add UI to allow blocks to be edited without hindering the whole use as a oneway control system thingy
 -- TODO - Add API interface to modify blocks
+
+-- TODO - Add logging to control functions
+-- TODO - Unit test
+
+-- TODO - Add successes and messages to control functions
 
 -- Load APIs
 mRail = require("./mRail/mRail-api")
@@ -41,11 +47,6 @@ local oneWayState = {
   {17,"Ryan S Branch",         {89,91},{90,92},false,0,""},
   {18,"Ryan S Branch Station", {93},{94},false,0,""},
 }
-
-
-
-
-
 --
 
 --format blockID, requesterDetectorID, trainID, serviceID
@@ -105,6 +106,7 @@ local function updateDisplay()
   end
 	
 end
+--
 
 function determineBlockEntr(detectorID)
 	local blockID = 0
@@ -118,6 +120,7 @@ function determineBlockEntr(detectorID)
 	end
 	return blockID
 end
+--
 
 function determineBlockExit(detectorID)
 	local blockID = 0
@@ -131,8 +134,9 @@ function determineBlockExit(detectorID)
 	end
 	return blockID
 end
+--
 
-function trainWaiting(blockID)
+local function trainWaiting(blockID)
 	local result = 0
 	for i = 1, #requestList do
 		if blockID == requestList[i][1] then
@@ -142,7 +146,172 @@ function trainWaiting(blockID)
 	end
 	return result
 end
+--
 
+local function checkForWaiting(blockID)
+  local trainWaitingRequestID = trainWaiting(blockID)
+  
+  -- check if there is a train waiting to enter the block
+  if trainWaitingRequestID == 0 then
+    return
+  end
+  oneWayState[blockID][5] = true
+  oneWayState[blockID][6] = requestList[trainWaitingRequestID][3]
+  oneWayState[blockID][7] = requestList[trainWaitingRequestID][4]
+  local textMessage = "In block " .. oneWayState[blockID][2]
+  mRail.detection_broadcast(modem, requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3], textMessage)
+  -- permit entry
+  mRail.oneway_confirm_dispatch(modem, requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3])
+  -- remove from list
+  table.remove(requestList,trainWaitingRequestID)
+end
+--
+
+local function validBlockID(blockID)
+  if blockID <= 0 or blockID > #oneWayState then
+    return false
+  end
+  return true
+end
+
+local function clearAllAllocations()
+  for i = 1, #oneWayState do
+    clearAllocation(i)
+  end
+end
+--
+
+local function clearAllocation(blockID)
+  if not validBlockID(blockID) then
+    return
+  end
+  oneWayState[blockID][5] = false
+  oneWayState[blockID][6] = 0
+  oneWayState[blockID][7] = ""
+end
+--
+
+local function clearAllocations(blockIDs)
+  if blockIDs == nil then
+    clearAllAllocations()
+    return
+  elseif type(blockIDs) ~= "table" then
+    clearAllocation(tonumber(blockIDs))
+    return
+  end
+  for i = 1, #blockIDs do
+    clearAllocation(blockIDs[i])
+  end
+end
+--
+
+
+local function clearAllRequests()
+  requestList = {}
+end
+--
+
+local function clearRequest(blockID)
+  if not validBlockID(blockID) then
+    return
+  end
+  
+  for i = 1, #requestList do
+    if tonumber(trainID) == tonumber(requestList[i][3]) then
+      table.remove(requestList,i)
+      break
+      -- TODO need to replace this with a do while loop so this doesnt break
+      -- it's not difficult, I just can't be bothered right now :(
+    end
+  end
+end
+--
+
+local function clearRequests(blockIDs)
+  if blockIDs == nil then
+    clearAllRequests()
+    return
+  elseif type(blockIDs) ~= "table" then
+    clearRequest(tonumber(blockIDs))
+    return
+  end
+  for i = 1, #blockIDs do
+    clearRequest(blockIDs[i])
+  end
+end
+--
+
+local function clearTrain(trainID)
+  for i = 1, #oneWayState do
+    if tonumber(trainID) == tonumber(oneWayState[i][6]) then
+      clearAllocation(i)
+    end
+  end
+  
+  --format blockID, requesterDetectorID, trainID, serviceID
+  local listToRemove = {}
+  for i = 1, #requestList do
+    if tonumber(trainID) == tonumber(requestList[i][3]) then
+      table.remove(requestList, i)
+    end
+  end
+end
+--
+
+local function lockAllBlocks()
+  local success = {true, "All blocks locked"}
+  for i = 1, #oneWayState do
+    if lockBlock(i)[1] == false then
+      success = {false, "Unable to lock all blocks"}
+    end
+  end
+  return success
+end
+--
+
+local function lockBlock(blockID)
+  if not validBlockID(blockID) then
+    return {false, "Invalid block ID"}
+  end
+  
+  if oneWayState[blockID][5] == false then
+    oneWayState[blockID][5] = true
+    oneWayState[blockID][6] = 0
+    oneWayState[blockID][7] = "LOCKED"
+  end
+end
+--
+
+local function unlockBlock(blockID)
+  if not validBlockID(blockID) then
+    return {false, "Invalid block ID"}
+  end
+  
+  if oneWayState[blockID][7] == "LOCKED" then
+    clearAllocation(blockID)
+  end
+  
+  return {false, "Block was not locked"}
+end
+
+local function lockBlocks(blockIDs)
+  if blockIDs == nil then
+    return lockAllBlocks()
+  end
+  
+  if type(blockIDs) == table then
+    local success = {true, "Selected blocks locked"}
+    for i = 1, #blockIDs do
+      if lockBlock(blockIDs[i])[1] == false then
+        success = {false, "Unable to lock all blocks"}
+      end
+    end
+    return success
+  else
+    return lockBlock(blockIDs)
+  end
+end
+--
 
 -- From which all other programs are derived...
 local program = {}
@@ -175,6 +344,7 @@ function program.setup(config_)
   requestList = mRail.loadData(requestListFile, requestList)
   updateDisplay()
 end
+--
 
 function program.onLoop()
   mRail.saveData(filename, oneWayState)
@@ -183,6 +353,7 @@ function program.onLoop()
 	monitor.setCursorPos(1,1)
 	updateDisplay()
 end
+--
 
 
 -- Modem Messages
@@ -197,27 +368,11 @@ function program.detect_channel(decodedMessage)
   
   if oneWayState[blockID][5] == true then
     -- free the block
-    oneWayState[blockID][5] = false
-    oneWayState[blockID][6] = 0
-    oneWayState[blockID][7] = ""
-    
-    local trainWaitingRequestID = trainWaiting(blockID)
-    
-    -- check if there is a train waiting to enter the block
-    if trainWaitingRequestID == 0 then
-      return
-    end
-    oneWayState[blockID][5] = true
-    oneWayState[blockID][6] = requestList[trainWaitingRequestID][3]
-    oneWayState[blockID][7] = requestList[trainWaitingRequestID][4]
-    local textMessage = "In block " .. oneWayState[blockID][2]
-    mRail.detection_broadcast(modem, requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3], textMessage)
-    -- permit entry
-    mRail.oneway_confirm_dispatch(modem, requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3])
-    -- remove from list
-    table.remove(requestList,trainWaitingRequestID)
+    clearAllocation(blockID)
+    checkForWaiting(blockID)
   end
 end
+--
 
 function program.oneway_dispatch_request(decodedMessage)
   -- Handle messages on the station dispatch request channel
@@ -248,16 +403,18 @@ function program.oneway_dispatch_request(decodedMessage)
     table.insert(requestList,request)
   end
 end
-
+--
 
 
 -- Alarms
 function program.handleAlarm(alarmID)
   
 end
+--
 
 function program.handleRedstone()
   
 end
+--
 
 return program
