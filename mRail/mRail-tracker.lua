@@ -48,6 +48,13 @@ local function setupDataArray()
   end
 end
 
+local function stringify(inputString)
+  if inputString == 0 or inputString == nil then
+    return ""
+  end
+  return tostring(inputString)
+end
+
 -- Writes to display (7x3)
 local function updateDisplay()
 	monitor.clear()
@@ -78,23 +85,23 @@ local function updateDisplay()
 		idTrain = trainData[i][struct.trainID]
 		
 		if idTrain < 10 then
-			messageString = "0" .. tostring(idTrain)
+			messageString = "0" .. stringify(idTrain)
 		else
-			messageString = tostring(idTrain)
+			messageString = stringify(idTrain)
 		end
 		monitor.write(messageString)
 		
 		monitor.setCursorPos(xPos.serviceID, i+1)
-		monitor.write(tostring(trainData[i][struct.serviceID]))
+		monitor.write(stringify(trainData[i][struct.serviceID]))
 		
 		monitor.setCursorPos(xPos.currentLocationID, i+1)
-		monitor.write(tostring(mRail.location_name[trainData[i][struct.currentLocationID]]))
+		monitor.write(stringify(mRail.location_name[trainData[i][struct.currentLocationID]]))
 		
 		monitor.setCursorPos(xPos.nextStationID, i+1)
-		monitor.write(tostring(mRail.station_name[trainData[i][struct.nextStationID]]))
+		monitor.write(stringify(mRail.station_name[trainData[i][struct.nextStationID]]))
 		
 		monitor.setCursorPos(xPos.msg, i+1)
-		monitor.write(tostring(trainData[i][struct.msg]))
+		monitor.write(stringify(trainData[i][struct.msg]))
 	end
 	
 	monitor.setCursorBlink(false)
