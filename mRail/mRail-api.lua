@@ -117,6 +117,8 @@ mRail.channels = {
   next_station_request     = 5,
   next_station_update      = 6,
   ping_request_channel     = 7,
+  control_channel          = 8,
+  data_request_channel     = 9,
 	dispatch_channel         = 10,
 	station_dispatch_confirm = 11,
 	station_dispatch_request = 12,
@@ -146,6 +148,27 @@ end
 function mRail.requestPings(modem)
   log.info("Requesting pings from all connected services")
   modem.transmit(mRail.channels.ping_request_channel,1,"")
+end
+
+function mRail.control(modem, programName, id, command, dataset)
+  log.info("Transmitting control message")
+  local message = json.encode({
+    ["programName"] = programName,
+    ["id"] = id,
+    ["command"] = command,
+    ["dataset"] = dataset
+  })
+  modem.transmit(mRail.channels.control_channel,1,message)
+end
+
+function mRail.requestState(modem, programName, id, command)
+  log.info("Transmitting request for data from " .. tostring(programName) .. " id: " .. tostring(id))
+  local message = json.encode({
+    ["programName"] = programName,
+    ["id"] = id,
+    ["command"] = command
+  })
+  modem.transmit(mRail.channels.data_request_channel,1,message)
 end
 
 -- NORMAL FUNCTION CALLS

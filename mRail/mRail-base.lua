@@ -49,6 +49,8 @@ handleMessages = {
   [tostring(mRail.channels.next_station_update)]      = program.next_station_update,
   [tostring(mRail.channels.dispatch_channel)]         = program.dispatch_channel,
   [tostring(mRail.channels.ping_request_channel)]     = program.ping_request_channel,
+  [tostring(mRail.channels.control_channel)]          = program.control_channel,
+  [tostring(mRail.channels.data_request_channel)]     = program.data_request_channel,
   [tostring(mRail.channels.station_dispatch_confirm)] = program.station_dispatch_confirm,
   [tostring(mRail.channels.station_route_request)]    = program.station_route_request,
   [tostring(mRail.channels.station_dispatch_request)] = program.station_dispatch_request,
@@ -77,6 +79,8 @@ while true do
 		local channel = tonumber(param2)
 		local decodedMessage = json.decode(param4)
     -- Hand off message to appropriate function based on the channel
+    -- TODO - alternative for this
+    -- program[tostring(channel)](decodedMessage)
     local func = handleMessages[tostring(channel)](decodedMessage)
     if (func) then
         func()

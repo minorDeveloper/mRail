@@ -55,6 +55,14 @@ function program.ping_request_channel(decodedMessage)
   program.ping()
 end
 
+function program.control_channel(decodedMessage)
+  
+end
+
+function program.data_request_channel(decodedMessage)
+  
+end
+
 function program.station_dispatch_confirm(decodedMessage)
   -- Handle messages on the station dispatch confirmation channel
 end
