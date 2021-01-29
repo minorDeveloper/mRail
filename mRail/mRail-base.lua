@@ -23,12 +23,12 @@ local program = require(mRail.programs[config.programType])
 
 function program.ping()
   local id = nil
-  if program.config.id ~= nil then
-    id = program.config.id
-  elseif program.config.stationID ~= nil then
-    id = program.config.stationID
+  if config.id ~= nil then
+    id = config.id
+  elseif config.stationID ~= nil then
+    id = config.stationID
   end
-  mRail.ping(program.modem, mRail.programs[config.programType], id)
+  mRail.ping(mRail.programs[config.programType], id)
 end
 log.debug("Program loaded")
 
