@@ -8,8 +8,8 @@ local config = {}
 
 -- Load APIs
 mRail = require("./mRail/mRail-api")
-json = require("./mRail/json")
-log = require("./mRail/log")
+json  = require("./mRail/json")
+log   = require("./mRail/log")
 
 -- Load config
 log.info("Loading config file")
@@ -20,6 +20,16 @@ local configState = mRail.checkConfig(config)
 -- Load appropriate program based on config file
 log.info("Loading program")
 local program = require(mRail.programs[config.programType])
+
+function program.ping()
+  local id = nil
+  if config.id ~= nil then
+    id = config.id
+  elseif config.stationID ~= nil then
+    id = config.stationID
+  end
+  mRail.ping(modem, mRail.programs[config.programType], )
+end
 log.debug("Program loaded")
 
 handleMessages = {
@@ -46,6 +56,7 @@ handleMessages = {
 -- Trigger setup of program
 log.info("Setting up program")
 program.setup(config)
+program.ping()
 log.info("Program setup")
 
 while true do

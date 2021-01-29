@@ -70,6 +70,7 @@ mRail.programs = {
   ["depotRelease"] = "mRail-release",
   ["detector"]     = "mRail-detector",
   ["dispatch"]     = "mRail-dispatch",
+  ["network"]      = "mRail-networkControl",
   ["oneway"]       = "mRail-onewayControl",
   ["platform"]     = "mRail-platformDisplay",
   ["station"]      = "mRail-stationController",
@@ -83,6 +84,7 @@ mRail.configs = {
   ["depotRelease"] = ".release-config",
   ["detector"]     = ".detector-config",
   ["dispatch"]     = ".dispatch-config",
+  ["network"]      = ".network-config",
   ["oneway"]       = ".oneway-config",
   ["platform"]     = ".platform-config",
   ["station"]      = ".station-config",
@@ -96,6 +98,7 @@ mRail.aliases = {
   ["depotRelease"] = "Train Release Depot",
   ["detector"]     = "Locomotive Detector",
   ["dispatch"]     = "Dispatch Computer",
+  ["network"]      = "Network Controller",
   ["oneway"]       = "One-way Controller",
   ["platform"]     = "Platform Display",
   ["station"]      = "Station Controller",
@@ -107,6 +110,7 @@ mRail.configLoc    = "./mRail/program-state/.config"
 
 -- Modem channels used by mRail
 mRail.channels = {
+  ping_channel             = 1,
 	detect_channel           = 2,
 	train_info               = 3,
 	location_update_channel  = 4,
@@ -126,6 +130,18 @@ mRail.channels = {
 	error_channel            = 999
 }
 
+-- NETWORK CONTROL FUNCTIONS
+
+function mRail.ping(modem, programName, id)
+  log.info("Ping!")
+  local message = json.encode({
+    ["programName"] = programName,
+    ["id"] = id
+  })
+  modem.transmit(mRail.channels.ping_channel,1,message)
+end
+
+-- NORMAL FUNCTION CALLS
 
 -- Broadcast the detection of a train at a given detector
 function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
@@ -461,6 +477,16 @@ function mRail.checkConfig(config)
   return false
 end
 
+function mRail.getModemSide()
+  local sModemSide = nil
+  for _, sSide in ipairs(rs.getSides()) do
+    if peripheral.getType(sSide) == "modem" and peripheral.call(sSide, "isWireless") then
+      sModemSide = sSide
+      break
+    end
+  end
+  return sModemSide
+end
 
 -- Conversions
 function mRail.color_to_number(color)
