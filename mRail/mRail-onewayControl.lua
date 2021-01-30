@@ -176,12 +176,7 @@ end
 --
 
 
-local function clearAllAllocations()
-  for i = 1, #oneWayState do
-    clearAllocation(i)
-  end
-end
---
+
 
 local function clearAllocation(blockID)
   if not validBlockID(blockID) then
@@ -190,6 +185,13 @@ local function clearAllocation(blockID)
   oneWayState[blockID][5] = false
   oneWayState[blockID][6] = 0
   oneWayState[blockID][7] = ""
+end
+--
+
+local function clearAllAllocations()
+  for i = 1, #oneWayState do
+    clearAllocation(i)
+  end
 end
 --
 
@@ -244,8 +246,8 @@ end
 --
 
 local function clearBoth(blockIDs)
-  clearAllocations(blockIDs)
   clearRequests(blockIDs)
+  clearAllocations(blockIDs)
 end
 --
 
