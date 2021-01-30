@@ -28,24 +28,24 @@ local requestListFile = "./mRail/program-state/requestList"
 --Each entry represents a block:
 --blockID (increasing number!), blockName, {entranceDetectors}, {exitDetectors}, occupiedState, occupyingTrainID, occupyingServiceID
 local oneWayState = {
-  {1, "01 North Mainline", {13,15},{14,16},false,0,""},
-  {2, "02 North Mainline", {17,19},{18,20},false,0,""},
-  {3, "03 Up   N Mainline",{21},{24},false,0,""},
-  {4, "03 Down N Mainline",{23},{22},false,0,""},
-  {5, "04 Up   N Mainline",{25},{28},false,0,""},
-  {6, "04 Down N Mainline",{27},{26},false,0,""},
-  {7, "05 Up   N Mainline",{29},{32},false,0,""},
-  {8, "05 Down N Mainline",{31},{30},false,0,""},
-  {9, "06 North Mainline", {33,35},{34,36},false,0,""},
-  {10,"07 North Mainline", {37,39},{38,40},false,0,""},
-  {11,"08 North Mainline", {41,43},{42,44},false,0,""},
-  {12,"01 West Branch",    {51,53},{52,54},false,0,""},
-  {13,"02 West Branch",    {55,57},{56,58},false,0,""},
-  {14,"03 West Branch",    {59,61},{60,62},false,0,""},
-  {15,"04 West Branch",    {63,65},{64,66},false,0,""},
+  {1, "01 North Mainline",     {13,15},{14,16},false,0,""},
+  {2, "02 North Mainline",     {17,19},{18,20},false,0,""},
+  {3, "03 Up   N Mainline",    {21},   {24},   false,0,""},
+  {4, "03 Down N Mainline",    {23},   {22},   false,0,""},
+  {5, "04 Up   N Mainline",    {25},   {28},   false,0,""},
+  {6, "04 Down N Mainline",    {27},   {26},   false,0,""},
+  {7, "05 Up   N Mainline",    {29},   {32},   false,0,""},
+  {8, "05 Down N Mainline",    {31},   {30},   false,0,""},
+  {9, "06 North Mainline",     {33,35},{34,36},false,0,""},
+  {10,"07 North Mainline",     {37,39},{38,40},false,0,""},
+  {11,"08 North Mainline",     {41,43},{42,44},false,0,""},
+  {12,"01 West Branch",        {51,53},{52,54},false,0,""},
+  {13,"02 West Branch",        {55,57},{56,58},false,0,""},
+  {14,"03 West Branch",        {59,61},{60,62},false,0,""},
+  {15,"04 West Branch",        {63,65},{64,66},false,0,""},
   {16,"05 West Branch",        {67,69},{68,70},false,0,""},
   {17,"Ryan S Branch",         {89,91},{90,92},false,0,""},
-  {18,"Ryan S Branch Station", {93},{94},false,0,""},
+  {18,"Ryan S Branch Station", {93},   {94},   false,0,""},
 }
 --
 
@@ -173,6 +173,8 @@ local function validBlockID(blockID)
   end
   return true
 end
+--
+
 
 local function clearAllAllocations()
   for i = 1, #oneWayState do
@@ -241,6 +243,14 @@ local function clearRequests(blockIDs)
 end
 --
 
+local function clearBoth(blockIDs)
+  clearAllocations(blockIDs)
+  clearRequests(blockIDs)
+end
+--
+
+
+
 local function clearTrain(trainID)
   for i = 1, #oneWayState do
     if tonumber(trainID) == tonumber(oneWayState[i][6]) then
@@ -258,6 +268,8 @@ local function clearTrain(trainID)
 end
 --
 
+
+
 local function lockAllBlocks()
   local success = {true, "All blocks locked"}
   for i = 1, #oneWayState do
@@ -268,6 +280,19 @@ local function lockAllBlocks()
   return success
 end
 --
+
+local function unlockAllBlocks()
+  local success = {true, "All blocks unlocked"}
+  for i = 1, #oneWayState do
+    if unlockBlock(i)[1] == false then
+      success = {false, "Unable to unlock all blocks"}
+    end
+  end
+  return success
+end
+--
+
+
 
 local function lockBlock(blockID)
   if not validBlockID(blockID) then
@@ -291,8 +316,11 @@ local function unlockBlock(blockID)
     clearAllocation(blockID)
   end
   
-  return {false, "Block was not locked"}
+  return {false, "Block was not locked, unable to unlock!"}
 end
+--
+
+
 
 local function lockBlocks(blockIDs)
   if blockIDs == nil then
@@ -303,7 +331,7 @@ local function lockBlocks(blockIDs)
     local success = {true, "Selected blocks locked"}
     for i = 1, #blockIDs do
       if lockBlock(blockIDs[i])[1] == false then
-        success = {false, "Unable to lock all blocks"}
+        success = {false, "Unable to lock all selected blocks"}
       end
     end
     return success
@@ -312,6 +340,104 @@ local function lockBlocks(blockIDs)
   end
 end
 --
+
+local function unlockBlocks(blockIDs)
+  if blockIDs == nil then
+    return unlockAllBlocks()
+  end
+  
+  if type(blockIDs) == table then
+    local success = {true, "Selected blocks unlocked"}
+    for i = 1, #blockIDs do
+      if unlockBlock(blockIDs[i])[1] == false then
+        success = {false, "Unable to unlock all selected blocks"}
+      end
+    end
+    return success
+  else
+    return unlockBlock(blockIDs)
+  end
+end
+--
+
+local function appendDetector(positionID, blockID, detector)
+  local numDetectors = #oneWayState[blockID][positionID]
+  if numDetectors == nil then
+    oneWayState[blockID][positionID] = {tonumber(detector)}
+  else
+    oneWayState[blockID][positionID][numDetectors + 1] = tonumber(detector)
+  end
+end
+--
+
+local function appendDetectors(positionID, blockID, detectors)
+  if type(detectors) == "table" then
+    for i = 1, #detectors do
+      appendDetector(positionID, blockID, detectors[i])
+    end
+  else
+    appendDetector(positionID, blockID, detectors)
+  end
+  return {true, "Append detectors"}
+end
+--
+
+local function removeDetector(positionID, blockID, detector)
+  for i = 1, #oneWayState[blockID][positionID] do
+    if tonumber(oneWayState[blockID][positionID][i]) == tonumber(detector) then
+      table.remove(oneWayState[blockID][positionID], i)
+      return {true, "Detector removed"}
+    end
+  end
+  return {false, "No detector to remove"}
+end
+--
+
+local function removeDetectors(positionID, blockID, detectors)
+  if type(detectors) == "table" then
+    for i = 1, #detectors do
+      removeDetector(positionID, blockID, detectors[i])
+    end
+  else
+    removeDetector(positionID, blockID, detectors)
+  end
+  return {true, "Detectors removed"}
+end
+--
+
+local function replaceDetectors(positionID, blockID, detectors)
+  if type(detectors) == "table" then
+    oneWayState[blockID][positionID] = detectors
+  else
+    oneWayState[blockID][positionID] = {detectors}
+  end
+  return {true, "Detectors replaced"}
+end
+--
+
+local function detectorEdit(entrance, blockID, modifier, detectors)
+  if not validBlockID(blockID) then
+    local msg = "Unable to edit detector, block does not exist"
+    log.debug(msg)
+    return {false, msg}
+  end
+  
+  local modifierTable = {
+    ["append"] = appendDetectors,
+    ["remove"] = removeDetectors,
+    ["replace"] = replaceDetectors
+  }
+  
+  local positionID = entrance and 3 or 4
+  local func = modifierTable[tostring(modifier)]
+  if (func) then
+    return func(positionID, blockID, detectors)
+  else
+    return {false, "Invalid modifier argument"}
+  end
+end
+--
+
 
 -- From which all other programs are derived...
 local program = {}
@@ -332,6 +458,7 @@ function program.setup(config_)
   modem.open(mRail.channels.oneway_dispatch_request)
   modem.open(mRail.channels.detect_channel)
   modem.open(mRail.channels.ping_request_channel)
+  modem.open(mRail.channels.control_channel)
   
   width, height = monitor.getSize()
   blankString = ""
@@ -371,6 +498,43 @@ function program.detect_channel(decodedMessage)
     clearAllocation(blockID)
     checkForWaiting(blockID)
   end
+end
+--
+
+function program.control_channel(decodedMessage)
+  if not mRail.identString(config.programType, decodedMessage.programName) then
+    return
+  end
+  
+  -- At this point the message is intended for a program of this type
+  -- Still need to check for ID (if relevant)
+  local cmd = decodedMessage.command
+  local data = decodedMessage.dataset
+  if cmd == nil then
+    return
+  end
+  
+  local response
+  
+  if cmd == "clear" then
+    response = clearBoth(data)
+  elseif cmd == "clearAllocation" then
+    response = clearAllocations(data)
+  elseif cmd == "clearRequest" then
+    response = clearRequests(data)
+  elseif cmd == "clearTrain" then
+    response = clearTrain(data)
+  elseif cmd == "lock" then
+    response = lockBlocks(data)
+  elseif cmd == "unlock" then
+    response = unlockBlocks(data)
+  elseif cmd == "entrDetector" then
+    response = detectorEdit(true, data.blockID, data.modifier, data.detectors)
+  elseif cmd == "exitDetector" then
+    response = detectorEdit(false, data.blockID, data.modifier, data.detectors)
+  end
+  
+  mRail.response(modem, decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
 end
 --
 
