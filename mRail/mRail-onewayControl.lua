@@ -270,29 +270,7 @@ end
 
 
 
-local function lockAllBlocks()
-  local success = {true, "All blocks locked"}
-  for i = 1, #oneWayState do
-    local response = lockBlock(i)
-    if response[1] == false then
-      success = {false, "Unable to lock all blocks"}
-    end
-  end
-  return success
-end
---
 
-local function unlockAllBlocks()
-  local success = {true, "All blocks unlocked"}
-  for i = 1, #oneWayState do
-    local response = unlockBlock(i)
-    if response[1] == false then
-      success = {false, "Unable to unlock all blocks"}
-    end
-  end
-  return success
-end
---
 
 
 
@@ -328,6 +306,30 @@ local function unlockBlock(blockID)
   end
   
   return {false, "Block was not locked, unable to unlock!"}
+end
+--
+
+local function lockAllBlocks()
+  local success = {true, "All blocks locked"}
+  for i = 1, #oneWayState do
+    local response = lockBlock(i)
+    if response[1] == false then
+      success = {false, "Unable to lock all blocks"}
+    end
+  end
+  return success
+end
+--
+
+local function unlockAllBlocks()
+  local success = {true, "All blocks unlocked"}
+  for i = 1, #oneWayState do
+    local response = unlockBlock(i)
+    if response[1] == false then
+      success = {false, "Unable to unlock all blocks"}
+    end
+  end
+  return success
 end
 --
 
