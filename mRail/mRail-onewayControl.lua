@@ -81,7 +81,7 @@ local function updateDisplay()
     if serviceID == "" or serviceID == nil then
       serviceID = "No Route"
     end
-    if oneWayState[i][6] ~= 0 then
+    if oneWayState[i][6] ~= 0 or oneWayState[i][7] == "LOCKED" then
       monitor.write(" ")
       monitor.write(serviceID)
       monitor.write(" ")
@@ -273,7 +273,8 @@ end
 local function lockAllBlocks()
   local success = {true, "All blocks locked"}
   for i = 1, #oneWayState do
-    if lockBlock(i)[1] == false then
+    local response = lockBlock(i)
+    if response[1] == false then
       success = {false, "Unable to lock all blocks"}
     end
   end
@@ -284,7 +285,8 @@ end
 local function unlockAllBlocks()
   local success = {true, "All blocks unlocked"}
   for i = 1, #oneWayState do
-    if unlockBlock(i)[1] == false then
+    local response = unlockBlock(i)
+    if response[1] == false then
       success = {false, "Unable to unlock all blocks"}
     end
   end
@@ -307,7 +309,7 @@ local function lockBlock(blockID)
     oneWayState[blockID][7] = "LOCKED"
     msg = "Block " .. tostring(blockID) .. " locked"
     log.debug(msg)
-    return {true, msg)
+    return {true, msg}
   end
   msg = "Block " .. tostring(blockID) .. " occupied, unable to lock"
   log.debug(msg)
@@ -322,6 +324,7 @@ local function unlockBlock(blockID)
   
   if oneWayState[blockID][7] == "LOCKED" then
     clearAllocation(blockID)
+    checkForWaiting(blockID)
   end
   
   return {false, "Block was not locked, unable to unlock!"}
