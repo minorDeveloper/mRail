@@ -531,6 +531,20 @@ function mRail.getModemSide()
   return sModemSide
 end
 
+function mRail.identString(strA, strB)
+  if tostring(strA) == tostring(strB) then
+    return true
+  end
+  return false
+end
+
+function mRail.identNum(numA, numB)
+  if tonumber(strA) == tonumber(strB) then
+    return true
+  end
+  return false
+end
+
 -- Conversions
 function mRail.color_to_number(color)
 	return col_to_num[color]
