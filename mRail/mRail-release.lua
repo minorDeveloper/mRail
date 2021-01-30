@@ -105,6 +105,7 @@ function program.setup(config_)
   modem.open(mRail.channels.dispatch_channel) -- Used to listen to the dispatch computer
   modem.open(mRail.channels.station_dispatch_confirm) -- Used to wait for dispatch confirmation from the station
   modem.open(mRail.channels.ping_request_channel)
+  modem.open(mRail.channels.control_channel)
   
   monitor.clear()
 	monitor.setCursorPos(1,1)

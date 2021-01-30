@@ -125,6 +125,7 @@ function program.setup(config_)
   modem.open(mRail.channels.detect_channel)
   modem.open(mRail.channels.next_station_update)
   modem.open(mRail.channels.ping_request_channel)
+  modem.open(mRail.channels.control_channel)
   
   setupDataArray()
   trainData = mRail.loadData(trainDataFile, trainData)

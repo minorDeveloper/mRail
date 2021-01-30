@@ -172,6 +172,7 @@ function program.setup(config_)
   modem.open(mRail.channels.screen_update_channel)
   modem.open(mRail.channels.screen_platform_channel)
   modem.open(mRail.channels.ping_request_channel)
+  modem.open(mRail.channels.control_channel)
   
   updateDisplay()
 end
