@@ -296,14 +296,22 @@ end
 
 local function lockBlock(blockID)
   if not validBlockID(blockID) then
+    log.trace("Invalid blockID provided: " .. tostring(blockID))
     return {false, "Invalid block ID"}
   end
-  
+  log.debug("Attempting to lock block " .. tostring(blockID))
+  local msg = ""
   if oneWayState[blockID][5] == false then
     oneWayState[blockID][5] = true
     oneWayState[blockID][6] = 0
     oneWayState[blockID][7] = "LOCKED"
+    msg = "Block " .. tostring(blockID) .. " locked"
+    log.debug(msg)
+    return {true, msg)
   end
+  msg = "Block " .. tostring(blockID) .. " occupied, unable to lock"
+  log.debug(msg)
+  return {false, msg}
 end
 --
 
@@ -505,16 +513,19 @@ function program.control_channel(decodedMessage)
   if not mRail.identString(config.programType, decodedMessage.programName) then
     return
   end
+  log.debug("Control message recieved")
   
   -- At this point the message is intended for a program of this type
   -- Still need to check for ID (if relevant)
   local cmd = decodedMessage.command
+  log.trace("cmd:  " .. tostring(cmd))
   local data = decodedMessage.dataset
+  log.trace("data: " .. tostring(cmd))
   if cmd == nil then
     return
   end
   
-  local response
+  local response 
   
   if cmd == "clear" then
     response = clearBoth(data)
@@ -533,7 +544,9 @@ function program.control_channel(decodedMessage)
   elseif cmd == "exitDetector" then
     response = detectorEdit(false, data.blockID, data.modifier, data.detectors)
   end
-  
+  if response == nil then
+    response = {false, "Invalid command"}
+  end
   mRail.response(modem, decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
 end
 --
