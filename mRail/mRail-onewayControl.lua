@@ -466,13 +466,40 @@ local function detectorEdit(entrance, blockID, modifier, detectors)
 end
 --
 
+local function returnDetectorTable(detectors)
+  if detectors == nil then
+    return {}
+  elseif type(detectors) == "table" then
+    return detectors
+  else
+    return {tonumber(detectors)}
+  end
+end
+--
+
+local function newBlock(name, entranceDetectors, exitDetectors)
+  local block = {#oneWayState + 1,
+                 name,
+                 returnDetectorTable(entranceDetectors),
+                 returnDetectorTable(exitDetectors),
+                 false,
+                 0,
+                 ""
+                }
+  oneWayState[#oneWayState + 1] = block
+end
+--
+
 local function blockEdit(data)
-  if data.blockID == nil or not validBlockID(data.blockID) then
-    return {false, "Invalid block ID"}
+  if data.blockID == nil then
+    newBlock(data.name, data.entranceDetectors, data.exitDetectors)
+  elseif not validBlockID(blockID) then
+    return {false, "block ID out of range"}
   end
   
+  
   if data.name ~= nil then
-    oneWayState[data.blockID][2] = tostring(block.name)
+    oneWayState[data.blockID][2] = tostring(data.name)
   end
   
   if data.entranceDetectors ~= nil then
@@ -482,6 +509,7 @@ local function blockEdit(data)
   if data.exitDetectors ~= nil then
     detectorEdit(false, data.blockID, data.modifier, data.entranceDetectors)
   end
+  return {true, "Block updated"}
 end
 --
 
