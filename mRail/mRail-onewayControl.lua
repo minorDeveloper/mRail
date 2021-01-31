@@ -169,6 +169,7 @@ end
 
 local function validBlockID(blockID)
   if blockID <= 0 or blockID > #oneWayState then
+    log.trace("Invalid blockID provided: " .. tostring(blockID))
     return false
   end
   return true
@@ -179,6 +180,7 @@ end
 
 
 local function clearAllocation(blockID)
+  log.trace("Clearing block " .. tonumber(blockID))
   if not validBlockID(blockID) then
     return
   end
@@ -189,6 +191,7 @@ end
 --
 
 local function clearAllAllocations()
+  log.trace("Clearing all allocations")
   for i = 1, #oneWayState do
     clearAllocation(i)
   end
@@ -211,6 +214,7 @@ end
 
 
 local function clearAllRequests()
+  log.trace("Clearing all requests")
   requestList = {}
 end
 --
@@ -219,7 +223,7 @@ local function clearRequest(blockID)
   if not validBlockID(blockID) then
     return
   end
-  
+  log.trace("Clearing requests for block " .. tonumber(blockID))
   for i = 1, #requestList do
     if tonumber(trainID) == tonumber(requestList[i][3]) then
       table.remove(requestList,i)
@@ -234,14 +238,15 @@ end
 local function clearRequests(blockIDs)
   if blockIDs == nil then
     clearAllRequests()
-    return
+    return {true, "All requests cleared"}
   elseif type(blockIDs) ~= "table" then
     clearRequest(tonumber(blockIDs))
-    return
+    return {true, "Request cleared"}
   end
   for i = 1, #blockIDs do
     clearRequest(blockIDs[i])
   end
+  return {true, "Requests cleared"}
 end
 --
 
@@ -271,14 +276,8 @@ end
 --
 
 
-
-
-
-
-
 local function lockBlock(blockID)
   if not validBlockID(blockID) then
-    log.trace("Invalid blockID provided: " .. tostring(blockID))
     return {false, "Invalid block ID"}
   end
   log.debug("Attempting to lock block " .. tostring(blockID))
@@ -301,13 +300,19 @@ local function unlockBlock(blockID)
   if not validBlockID(blockID) then
     return {false, "Invalid block ID"}
   end
-  
+  log.debug("Attempting to unlock block " .. tostring(blockID))
+  local msg = ""
   if oneWayState[blockID][7] == "LOCKED" then
     clearAllocation(blockID)
     checkForWaiting(blockID)
+    msg = "Block " .. tostring(blockID) .. " unlocked"
+    log.debug(msg)
+    return {true, msg}
   end
   
-  return {false, "Block was not locked, unable to unlock!"}
+  msg = "Block " .. tostring(blockID) .. " was not locked!"
+  log.debug(msg)
+  return {false, msg}
 end
 --
 
@@ -380,6 +385,12 @@ local function appendDetector(positionID, blockID, detector)
   if numDetectors == nil then
     oneWayState[blockID][positionID] = {tonumber(detector)}
   else
+    for i = 1, numDetectors do
+      if detector == #oneWayState[blockID][positionID][i] then
+        log.debug("Detector not unique, unable to append")
+        return
+      end
+    end
     oneWayState[blockID][positionID][numDetectors + 1] = tonumber(detector)
   end
 end
@@ -421,7 +432,9 @@ end
 --
 
 local function replaceDetectors(positionID, blockID, detectors)
-  if type(detectors) == "table" then
+  if detectors == nil then
+    return {false, "No detectors provided to replace"}
+  elseif type(detectors) == "table" then
     oneWayState[blockID][positionID] = detectors
   else
     oneWayState[blockID][positionID] = {detectors}
@@ -449,6 +462,25 @@ local function detectorEdit(entrance, blockID, modifier, detectors)
     return func(positionID, blockID, detectors)
   else
     return {false, "Invalid modifier argument"}
+  end
+end
+--
+
+local function blockEdit(data)
+  if data.blockID == nil or not validBlockID(blockID) then
+    return {false, "Invalid block ID"}
+  end
+  
+  if block.name ~= nil then
+    oneWayState[data.blockID][2] == tostring(block.name)
+  end
+  
+  if block.entranceDetectors ~= nil then
+    detectorEdit(true, data.blockID, data.modifier, block.entranceDetectors)
+  end
+  
+  if block.exitDetectors ~= nil then
+    detectorEdit(false, data.blockID, data.modifier, block.entranceDetectors)
   end
 end
 --
@@ -546,6 +578,8 @@ function program.control_channel(decodedMessage)
     response = lockBlocks(data)
   elseif cmd == "unlock" then
     response = unlockBlocks(data)
+  elseif cmd == "block" then
+    response = blockEdit(data)
   elseif cmd == "entrDetector" then
     response = detectorEdit(true, data.blockID, data.modifier, data.detectors)
   elseif cmd == "exitDetector" then
