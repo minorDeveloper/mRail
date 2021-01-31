@@ -168,7 +168,7 @@ end
 --
 
 local function validBlockID(blockID)
-  if blockID <= 0 or blockID > #oneWayState then
+  if blockID == nil or blockID <= 0 or blockID > #oneWayState then
     log.trace("Invalid blockID provided: " .. tostring(blockID))
     return false
   end
@@ -467,12 +467,12 @@ end
 --
 
 local function blockEdit(data)
-  if data.blockID == nil or not validBlockID(blockID) then
+  if data.blockID == nil or not validBlockID(data.blockID) then
     return {false, "Invalid block ID"}
   end
   
   if block.name ~= nil then
-    oneWayState[data.blockID][2] == tostring(block.name)
+    oneWayState[data.blockID][2] = tostring(block.name)
   end
   
   if block.entranceDetectors ~= nil then
