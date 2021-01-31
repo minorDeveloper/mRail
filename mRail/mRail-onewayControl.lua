@@ -471,16 +471,16 @@ local function blockEdit(data)
     return {false, "Invalid block ID"}
   end
   
-  if block.name ~= nil then
+  if data.name ~= nil then
     oneWayState[data.blockID][2] = tostring(block.name)
   end
   
-  if block.entranceDetectors ~= nil then
-    detectorEdit(true, data.blockID, data.modifier, block.entranceDetectors)
+  if data.entranceDetectors ~= nil then
+    detectorEdit(true, data.blockID, data.modifier, data.entranceDetectors)
   end
   
-  if block.exitDetectors ~= nil then
-    detectorEdit(false, data.blockID, data.modifier, block.entranceDetectors)
+  if data.exitDetectors ~= nil then
+    detectorEdit(false, data.blockID, data.modifier, data.entranceDetectors)
   end
 end
 --
