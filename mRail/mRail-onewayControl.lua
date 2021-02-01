@@ -198,7 +198,7 @@ local function clearAllAllocations()
 end
 --
 
-local function clearAllocations(blockIDs)
+local function program.clearAllocations(blockIDs)
   if blockIDs == nil then
     clearAllAllocations()
     return
@@ -235,7 +235,7 @@ local function clearRequest(blockID)
 end
 --
 
-local function clearRequests(blockIDs)
+function program.clearRequests(blockIDs)
   if blockIDs == nil then
     clearAllRequests()
     return {true, "All requests cleared"}
@@ -250,15 +250,15 @@ local function clearRequests(blockIDs)
 end
 --
 
-local function clearBoth(blockIDs)
-  clearRequests(blockIDs)
-  clearAllocations(blockIDs)
+function program.clearBoth(blockIDs)
+  program.clearRequests(blockIDs)
+  program.clearAllocations(blockIDs)
 end
 --
 
 
 
-local function clearTrain(trainID)
+function program.clearTrain(trainID)
   for i = 1, #oneWayState do
     if tonumber(trainID) == tonumber(oneWayState[i][6]) then
       clearAllocation(i)
@@ -342,7 +342,7 @@ end
 
 
 
-local function lockBlocks(blockIDs)
+function program.lockBlocks(blockIDs)
   if blockIDs == nil then
     return lockAllBlocks()
   end
@@ -361,7 +361,7 @@ local function lockBlocks(blockIDs)
 end
 --
 
-local function unlockBlocks(blockIDs)
+function program.unlockBlocks(blockIDs)
   if blockIDs == nil then
     return unlockAllBlocks()
   end
@@ -466,12 +466,12 @@ local function detectorEdit(entrance, blockID, modifier, detectors)
 end
 --
 
-local function editEntranceDetector(data)
+function program.editEntranceDetector(data)
   detectorEdit(true, data.blockID, data.modifier, data.detectors)
 end
 --
 
-local function editExitDetector(data)
+function program.editExitDetector(data)
   detectorEdit(false, data.blockID, data.modifier, data.detectors)
 end
 --
@@ -500,7 +500,7 @@ local function newBlock(name, entranceDetectors, exitDetectors)
 end
 --
 
-local function blockEdit(data)
+function program.blockEdit(data)
   if data.blockID == nil then
     newBlock(data.name, data.entranceDetectors, data.exitDetectors)
     return {true, "New block created"}
@@ -529,15 +529,15 @@ end
 local program = {}
 
 program.controlTable  = {
-  ["clear"]           = clearBoth,
-  ["clearAllocation"] = clearAllocations,
-  ["clearRequest"]    = clearRequests,
-  ["clearTrain"]      = clearTrain,
-  ["lock"]            = lockBlocks,
-  ["unlock"]          = unlockBlocks,
-  ["block"]           = blockEdit,
-  ["entrDetector"]    = editEntranceDetector,
-  ["exitDetector"]    = editExitDetector,
+  ["clear"]           = program.clearBoth,
+  ["clearAllocation"] = program.clearAllocations,
+  ["clearRequest"]    = program.clearRequests,
+  ["clearTrain"]      = program.clearTrain,
+  ["lock"]            = program.lockBlocks,
+  ["unlock"]          = program.unlockBlocks,
+  ["block"]           = program.blockEdit,
+  ["entrDetector"]    = program.editEntranceDetector,
+  ["exitDetector"]    = program.editExitDetector,
 }
 
 function program.checkValidID(id)
