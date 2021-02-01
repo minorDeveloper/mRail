@@ -118,11 +118,9 @@ while true do
 		local channel = tonumber(param2)
 		local decodedMessage = json.decode(param4)
     -- Hand off message to appropriate function based on the channel
-    -- TODO - alternative for this
-    -- program[tostring(channel)](decodedMessage)
     local func = handleMessages[tostring(channel)](decodedMessage)
     if (func) then
-        func()
+      func()
     end
   elseif event == "minecart" then
     program.handleMinecart(param1, param2, param3, param4, param5, param6)
