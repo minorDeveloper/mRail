@@ -20,6 +20,8 @@ json = require("./mRail/json")
 log = require("./mRail/log")
 
 local config = {}
+-- From which all other programs are derived...
+local program = {}
 
 local filename = "./mRail/program-state/onewayData"
 local requestListFile = "./mRail/program-state/requestList"
@@ -198,7 +200,7 @@ local function clearAllAllocations()
 end
 --
 
-local function program.clearAllocations(blockIDs)
+function program.clearAllocations(blockIDs)
   if blockIDs == nil then
     clearAllAllocations()
     return
@@ -525,8 +527,6 @@ end
 --
 
 
--- From which all other programs are derived...
-local program = {}
 
 program.controlTable  = {
   ["clear"]           = program.clearBoth,
