@@ -62,7 +62,7 @@ function program.control_channel(decodedMessage)
   local func = program.controlTable[tostring(cmd)](data)
   
   if (func) then
-    response = func()
+    response = func
   else
     log.debug("Invalid command provided: " .. cmd)
     response = {false, "Invalid command"}
