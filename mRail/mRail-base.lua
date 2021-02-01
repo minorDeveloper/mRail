@@ -36,7 +36,45 @@ function program.ping_request_channel(decodedMessage)
   log.info("Ping requested")
   program.ping()
 end
+--
 
+function program.control_channel(decodedMessage)
+  if not mRail.identString(config.programType, decodedMessage.programName) then
+    return
+  end
+  log.debug("Control message recieved")
+  
+  -- At this point the message is intended for a program of this type
+  -- Still need to check for ID (if relevant)
+  if not program.checkValidID(decodedMessage.id) then
+    return
+  end
+  
+  local cmd = decodedMessage.command
+  log.trace("cmd:  " .. tostring(cmd))
+  local data = decodedMessage.dataset
+  log.trace("data: " .. tostring(cmd))
+  if cmd == nil then
+    return
+  end
+  
+  local response
+  local func = program.controlTable[tostring(cmd)](data)
+  
+  if (func) then
+    response = func()
+  else
+    log.debug("Invalid command provided: " .. cmd)
+    response = {false, "Invalid command"}
+  end
+  
+  if response == nil then
+    response = {false, "Command did not emit a response"}
+  end
+  
+  mRail.response(modem, decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
+end
+--
 
 log.debug("Program loaded")
 

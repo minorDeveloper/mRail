@@ -11,6 +11,9 @@ local config = {}
 -- From which all other programs are derived...
 local program = {}
 
+program.controlTable = {}
+
+
 -- Program Functions
 function program.setup(config_)
   config = config_
@@ -19,6 +22,11 @@ end
 
 function program.onLoop()
   
+end
+--
+
+function program.checkValidID(id)
+  return true
 end
 --
 

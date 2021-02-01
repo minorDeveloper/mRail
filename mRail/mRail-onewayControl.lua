@@ -466,6 +466,16 @@ local function detectorEdit(entrance, blockID, modifier, detectors)
 end
 --
 
+local function editEntranceDetector(data)
+  detectorEdit(true, data.blockID, data.modifier, data.detectors)
+end
+--
+
+local function editExitDetector(data)
+  detectorEdit(false, data.blockID, data.modifier, data.detectors)
+end
+--
+
 local function returnDetectorTable(detectors)
   if detectors == nil then
     return {}
@@ -493,6 +503,7 @@ end
 local function blockEdit(data)
   if data.blockID == nil then
     newBlock(data.name, data.entranceDetectors, data.exitDetectors)
+    return {true, "New block created"}
   elseif not validBlockID(blockID) then
     return {false, "block ID out of range"}
   end
@@ -516,6 +527,24 @@ end
 
 -- From which all other programs are derived...
 local program = {}
+
+program.controlTable  = {
+  ["clear"]           = clearBoth,
+  ["clearAllocation"] = clearAllocations,
+  ["clearRequest"]    = clearRequests,
+  ["clearTrain"]      = clearTrain,
+  ["lock"]            = lockBlocks,
+  ["unlock"]          = unlockBlocks,
+  ["block"]           = blockEdit,
+  ["entrDetector"]    = editEntranceDetector,
+  ["exitDetector"]    = editExitDetector,
+}
+
+function program.checkValidID(id)
+  return true
+end
+--
+
 
 -- Program Functions
 function program.setup(config_)
@@ -573,50 +602,6 @@ function program.detect_channel(decodedMessage)
     clearAllocation(blockID)
     checkForWaiting(blockID)
   end
-end
---
-
-function program.control_channel(decodedMessage)
-  if not mRail.identString(config.programType, decodedMessage.programName) then
-    return
-  end
-  log.debug("Control message recieved")
-  
-  -- At this point the message is intended for a program of this type
-  -- Still need to check for ID (if relevant)
-  local cmd = decodedMessage.command
-  log.trace("cmd:  " .. tostring(cmd))
-  local data = decodedMessage.dataset
-  log.trace("data: " .. tostring(cmd))
-  if cmd == nil then
-    return
-  end
-  
-  local response 
-  
-  if cmd == "clear" then
-    response = clearBoth(data)
-  elseif cmd == "clearAllocation" then
-    response = clearAllocations(data)
-  elseif cmd == "clearRequest" then
-    response = clearRequests(data)
-  elseif cmd == "clearTrain" then
-    response = clearTrain(data)
-  elseif cmd == "lock" then
-    response = lockBlocks(data)
-  elseif cmd == "unlock" then
-    response = unlockBlocks(data)
-  elseif cmd == "block" then
-    response = blockEdit(data)
-  elseif cmd == "entrDetector" then
-    response = detectorEdit(true, data.blockID, data.modifier, data.detectors)
-  elseif cmd == "exitDetector" then
-    response = detectorEdit(false, data.blockID, data.modifier, data.detectors)
-  end
-  if response == nil then
-    response = {false, "Invalid command"}
-  end
-  mRail.response(modem, decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
 end
 --
 
