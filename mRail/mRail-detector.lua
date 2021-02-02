@@ -17,8 +17,33 @@ local idSide = {
   right = 2,
 }
 
+local function triggerRelease(detectorID)
+  if ((decodedMessage.detectorID == tonumber(config.ids[1]) and config.releaseSideID == "left")
+   or (decodedMessage.detectorID == tonumber(config.ids[2]) and config.releaseSideID == "right")) 
+   and config.releaseSide ~= "null" then
+    log.info("Releasing train from " .. config.releaseSide)
+    redstone.setOutput(config.releaseSide, true)
+    sleep(1)
+    redstone.setOutput(config.releaseSide, false)
+  end
+end
+
+local function triggerControlRelease(data)
+  --control(modem, programName, id, command, dataset)
+  triggerRelease(data.detectorID)
+end
+
 -- From which all other programs are derived...
 local program = {}
+
+program.controlTable  = {
+  ["triggerRelease"]  = triggerControlRelease,
+}
+
+function program.checkValidID(id)
+  return true
+end
+--
 
 -- Program Functions
 function program.setup(config_)
@@ -46,12 +71,7 @@ end
 function program.oneway_dispatch_confirm(decodedMessage)
   -- Handle messages on the oneway dispatch confirmation channel
   -- TODO - Add support for multiple detectors here
-  if (decodedMessage.detectorID == tonumber(config.ids[1]) or decodedMessage.detectorID == tonumber(config.ids[2])) and config.releaseSide ~= "null" then
-    log.info("Releasing train from " .. config.releaseSide)
-    redstone.setOutput(config.releaseSide, true)
-    sleep(1)
-    redstone.setOutput(config.releaseSide, false)
-  end
+  triggerRelease(decodedMessage.detectorID)
 end
 
 
@@ -64,7 +84,7 @@ function program.handleMinecart(side, loco, locoName, primary, secondary, destin
   local trainID = 16 - tonumber(secondary)
   log.debug("trainID: " .. tostring(trainID))
   local serviceID = destination
-  local detectorID = ""
+  local detectorID
   local textMessage = ""
   log.info("Detection on " .. side)
   
