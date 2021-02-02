@@ -25,12 +25,14 @@ local function triggerRelease(detectorID)
     redstone.setOutput(config.releaseSide, true)
     sleep(1)
     redstone.setOutput(config.releaseSide, false)
+    return {false, "Train released"}
   end
+  return {false, "This detector doesn't have an output side"}
 end
 
 local function triggerControlRelease(data)
   --control(modem, programName, id, command, dataset)
-  triggerRelease(data.detectorID)
+  return triggerRelease(data.detectorID)
 end
 
 -- From which all other programs are derived...
@@ -41,7 +43,10 @@ program.controlTable  = {
 }
 
 function program.checkValidID(id)
-  return true
+  if (id == tonumber(config.ids[1]) or (id == tonumber(config.ids[2]) then
+    return true
+  end
+  return false
 end
 --
 
