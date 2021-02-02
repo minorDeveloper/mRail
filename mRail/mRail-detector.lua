@@ -43,7 +43,7 @@ program.controlTable  = {
 }
 
 function program.checkValidID(id)
-  if (id == tonumber(config.ids[1]) or (id == tonumber(config.ids[2]) then
+  if id == tonumber(config.ids[1]) or id == tonumber(config.ids[2]) then
     return true
   end
   return false
