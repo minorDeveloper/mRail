@@ -18,8 +18,8 @@ local idSide = {
 }
 
 local function triggerRelease(detectorID)
-  if ((decodedMessage.detectorID == tonumber(config.ids[1]) and config.releaseSideID == "left")
-   or (decodedMessage.detectorID == tonumber(config.ids[2]) and config.releaseSideID == "right")) 
+  if ((detectorID == tonumber(config.ids[1]) and config.releaseSideID == "left")
+   or (detectorID == tonumber(config.ids[2]) and config.releaseSideID == "right")) 
    and config.releaseSide ~= "null" then
     log.info("Releasing train from " .. config.releaseSide)
     redstone.setOutput(config.releaseSide, true)
