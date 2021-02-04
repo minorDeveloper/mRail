@@ -93,7 +93,7 @@ function arrDepDisplay()
 	arrivalsDisplay.setTextColor(colors.orange)
 	arrWidth, arrHeight = arrivalsDisplay.getSize()
 	
-	local line = 2
+	line = 2
 	
 	
   for i = 1, #arrivals do
@@ -155,8 +155,48 @@ function handleScreenUpdate(newArrivals, newDepartures)
 	departures = newDepartures
 end
 
+local function setAllocation(data)
+  if data.serviceID == nil then
+    return {false, "Service ID was nil"}
+  end
+  
+  if type(data.platform) ~= "number" then
+    return {false, "Platform isn't a number!"}
+  end
+  
+  for i = 1, #routePlatformMapping do
+    if tostring(routePlatformMapping[i][1]) == tostring(data.serviceID) then
+      routePlatformMapping[i][2] = tonumber(data.platform)
+      return {true, "Platform updated for " .. data.serviceID}
+    end
+  end
+  
+  return {false, "ServiceID: " .. tostring(data.serviceID) .. " does not exist"}
+end
+
+local function clearAllocations(data)
+  for i = 1, #routePlatformMapping do
+    routePlatformMapping[i][2] = 0
+  end
+  return {true, "All platform allocations cleared"}
+end
+
 -- From which all other programs are derived...
 local program = {}
+
+program.controlTable  = {
+  ["setAllocation"]  = setAllocation,
+  ["clearAllocations"] = clearAllocations,
+}
+
+function program.checkValidID(id)
+  if id == tonumber(config.stationID) then
+    return true
+  end
+  return false
+end
+--
+
 
 -- Program Functions
 function program.setup(config_)
