@@ -68,7 +68,7 @@ end
 
 -- Checks that the requested locomotive is in the loco cart
 -- before sending release request to the parent station
-function checkExitst(trainID)
+function checkExists(trainID)
 	if loco_chest.pushItems(config.dispenser,trainID,1,1) == 1 then
 		dispenser.pushItems(config.loco,1,1,trainID)
 		return true
@@ -78,8 +78,38 @@ function checkExitst(trainID)
 	end
 end
 
+local function requestDispatch(trainID, serviceID)
+  -- Check that the train exists in the chest before asking the station for a route
+  if checkExists(decodedMessage.trainID) == true then
+    -- Request a route from the station
+    mRail.station_request_dispatch(modem, config.parentStation, decodedMessage.serviceID, decodedMessage.trainID, config.id)
+    -- Update the tracker that we are waiting for permission to dispatch
+    mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
+    return {false, "Requested the dispatch of train " .. tostring(trainID)}
+  end
+  return {false, "Unable to dispatch train " .. tostring(trainID) .. " as it doesnt exist"}
+end
+
+
+local function triggerDispatchTrain(data)
+  return requestDispatch(data.trainID, data.serviceID)
+end
+
 -- From which all other programs are derived...
 local program = {}
+
+
+program.controlTable  = {
+  ["dispatchTrain"]  = triggerDispatchTrain,
+}
+
+function program.checkValidID(id)
+  if id == tonumber(config.id) then
+    return true
+  end
+  return false
+end
+--
 
 -- Program Functions
 function program.setup(config_)
@@ -130,14 +160,7 @@ function program.dispatch_channel(decodedMessage)
   -- Check that the message was intended for this computer
   if decodedMessage.recieverID == config.id then
     log.info("Dispatch has requested a release")
-
-    -- Check that the train exists in the chest before asking the station for a route
-    if checkExitst(decodedMessage.trainID) == true then
-      -- Request a route from the station
-      mRail.station_request_dispatch(modem, config.parentStation, decodedMessage.serviceID, decodedMessage.trainID, config.id)
-      -- Update the tracker that we are waiting for permission to dispatch
-      mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
-    end
+    requestDispatch(decodedMessage.trainID, decodedMessage.serviceID)
   end
 end
 
