@@ -108,9 +108,54 @@ local function updateDisplay()
 	monitor.setCursorPos(1,1)
 end
 
+local function setTrainData(data)
+  if data.trainID > 0 and data.trainID < #trainData then
+    return {false, "Invalid trainID"}
+  end
+  local trainID = data.trainID
+  local serviceID = data.serviceID
+  local currentLocationID = data.currentID
+  local nextStationID = data.nextStationID
+  local msg = data.message
+  
+  if serviceID ~= nil then
+    trainData[trainID][struct.serviceID] = tostring(serviceID)
+  end
+  
+  if currentLocationID ~= nil then
+    trainData[trainID][struct.currentLocationID] = tonumber(currentLocationID)
+  end
+  
+  if nextStationID ~= nil then
+    trainData[trainID][struct.nextStationID] = tonumber(nextStationID)
+  end
+  
+  if msg ~= nil then
+    trainData[trainID][struct.msg] = tostring(msg)
+  end
+  
+  mRail.saveData(trainDataFile, trainData)
+end
+
+local function clearTrainData(data)
+  setupDataArray()
+  mRail.saveData(trainDataFile, trainData)
+  return {true, "Train data cleared"}
+end
+
 
 -- From which all other programs are derived...
 local program = {}
+
+program.controlTable  = {
+  ["clear"]  = clearTrainData,
+  ["setData"]  = setTrainData,
+}
+
+function program.checkValidID(id)
+  return true
+end
+--
 
 -- Program Functions
 function program.setup(config_)
