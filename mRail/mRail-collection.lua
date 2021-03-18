@@ -135,7 +135,7 @@ end
 
 function program.handleMinecart(side, loco, locoName, primary, secondary, destination)
   -- When a train is detected wait 7 seconds for the rest to be loaded into the dispenser
-	log.info("Service " .. destination .. " detected")
+	log.info("Service " .. tostring(destination) .. " detected")
 	sleep(7)
 	log.debug("Collecting")
   -- then collect the train

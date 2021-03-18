@@ -189,6 +189,7 @@ local function clearAllocation(blockID)
   oneWayState[blockID][5] = false
   oneWayState[blockID][6] = 0
   oneWayState[blockID][7] = ""
+  checkForWaiting(i)
 end
 --
 
