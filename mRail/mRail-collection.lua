@@ -24,9 +24,9 @@ local dispenser
 -- Loops through slots in cart_chest in range upperSlot
 -- to lowerSlot to find a space to insert item
 local function putAway(lowerSlot, upperSlot)
-	local success = false
+	local success = 0
 	local i = lowerSlot
-	while success == false do
+	while success == 0 do
 		success = cart_chest.pullItems(config.sorter,1,1,i)
 		log.trace("Slot " .. tostring(i) .. " " .. success)
 		i = i + 1
@@ -87,7 +87,7 @@ local function collectTrain(serviceID)
 				trainAway(trainID)
 				log.debug("TrainID: " .. trainID)
 				log.debug("ServiceID: " .. serviceID)
-				mRail.detection_broadcast(modem, config.id, serviceID, trainID, "In " .. mRail.location_name[tonumber(config.id)])
+				mRail.detection_broadcast(modem, config.id, serviceID and serviceID or "", trainID, "In " .. mRail.location_name[tonumber(config.id)])
 			elseif info.name == mRail.item_names["cart"] then
 				log.debug("Found cart")
 				cartAway(info.amount)

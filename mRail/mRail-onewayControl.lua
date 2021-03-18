@@ -598,10 +598,22 @@ function program.detect_channel(decodedMessage)
     return
   end
   
-  if oneWayState[blockID][5] == true then
+  -- Check if the train is leaving the detected block
+  if oneWayState[blockID][5] == true and oneWayState[blockID][6] == tonumber(decodedMessage.trainID) then
     -- free the block
     clearAllocation(blockID)
     checkForWaiting(blockID)
+  end
+  
+  -- Also check if it was in another block (but this should raise an error)
+  for i = 1, #oneWayState do
+    if oneWayState[i][5] == true and oneWayState[blockID][6] == tonumber(decodedMessage.trainID) then
+      clearAllocation(i)
+      checkForWaiting(i)
+      if i ~= blockID then
+        mRail.raise_error(modem, "Locomotive " .. tonumber(decodedMessage.trainID) .. " was still allocated in a differen block", 1)
+      end
+    end
   end
 end
 --
