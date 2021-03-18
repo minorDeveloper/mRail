@@ -597,17 +597,9 @@ function program.detect_channel(decodedMessage)
   if blockID == 0 then
     return
   end
-  
-  -- Check if the train is leaving the detected block
-  if oneWayState[blockID][5] == true and oneWayState[blockID][6] == tonumber(decodedMessage.trainID) then
-    -- free the block
-    clearAllocation(blockID)
-    checkForWaiting(blockID)
-  end
-  
   -- Also check if it was in another block (but this should raise an error)
   for i = 1, #oneWayState do
-    if oneWayState[i][5] == true and oneWayState[blockID][6] == tonumber(decodedMessage.trainID) then
+    if oneWayState[i][5] == true and oneWayState[i][6] == tonumber(decodedMessage.trainID) then
       clearAllocation(i)
       checkForWaiting(i)
       if i ~= blockID then
