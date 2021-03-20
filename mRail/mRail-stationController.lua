@@ -285,7 +285,7 @@ function printColourAndRoute(serviceID, trainID, display)
   display.write("  ")
   display.setBackgroundColor(32768)
   display.write(" ")
-  if serviceID == nil or serviceID == "" then
+  if serviceID == nil or serviceID == "" or serviceID == "nil" then
     serviceID = "No Route"
   end
   display.write(tostring(serviceID))
