@@ -34,7 +34,7 @@ local commandsToRun = {
     "rm /mRail",
     "rm startup.lua",
     "pastebin run p8PJVxC4",
-    "github clone minorDeveloper/mRail",
+    "github clone minorDeveloper/mRail -b main",
     "rm /mRail/LICENSE",
     "rm /mRail/README.md",
     "rm /mRail/mRail-bootloader.lua",
