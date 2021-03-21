@@ -179,8 +179,6 @@ end
 --
 
 
-
-
 local function clearAllocation(blockID)
   log.trace("Clearing block " .. tonumber(blockID))
   if not validBlockID(blockID) then

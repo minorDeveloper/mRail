@@ -554,6 +554,30 @@ function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
 
+local mRail.eventHandler = {}
+
+function mRail.setupWait(_eventHandler)
+  mRail.eventHandler = _eventHandler
+end
+
+
+-- Updated sleep functionality
+function mRail.wait(time)
+  local timer = os.startTimer(time)
+  
+  while true do
+    local event = {os.pullEvent()}
+    
+    if (event[1] == "timer" and event[2] == timer) then
+      break
+    else
+      if type(mRail.eventHandler) == "function" then
+        mRail.eventHandler(event)
+      end
+    end
+  end
+end
+
 -- Load Global Config
 local tempConfig = {}
 log.info("Loading global config")

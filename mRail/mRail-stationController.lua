@@ -450,12 +450,14 @@ function program.setup(config_)
   
   updateState()
   updateDisplay(monitor)
+  loadState()
   log.info("Program setup complete")
 end
 
 function program.onLoop()
 	updateState()
 	updateDisplay(monitor)
+  saveState()
 end
 
 
