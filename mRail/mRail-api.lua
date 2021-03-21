@@ -554,7 +554,7 @@ function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
 
-local mRail.eventHandler = {}
+mRail.eventHandler = {}
 
 function mRail.setupWait(_eventHandler)
   mRail.eventHandler = _eventHandler
