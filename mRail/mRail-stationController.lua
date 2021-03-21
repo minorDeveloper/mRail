@@ -20,7 +20,7 @@ local stationRouting = {}
 local stationConfig = {}
 local systemRoutingData = {}
 
-local filename = "./mRail/program-state/stationState"
+local stateFile = "./mRail/program-state/stationState"
 
 -- state loaded, serviceID, trainID
 local currentLoadedStates = {}
