@@ -27,7 +27,7 @@ local requestList = {}
 --sig req, sig state, swit req, swit state
 local currentState = {0,0,0,0}
 
--- alarmID, serviceID, trainID
+-- alarmID, serviceID, trainID, time
 local alarms = {}
 
 -- Functions
@@ -275,8 +275,9 @@ function setDepartureAlarm(serviceID, trainID)
 	--if no alarm then make one for an hour ahead
 	if unique then
 		local currentTime = os.time()
-		local alarmID = os.setAlarm(((currentTime + 1.1) % 24))
-		table.insert(alarms,{alarmID,serviceID,trainID})
+    local alarmTime = ((currentTime + 1.1) % 24)
+		local alarmID = os.setAlarm(alarmTime)
+		table.insert(alarms,{alarmID,serviceID,trainID,alarmTime})
 	end
 end
 
@@ -362,10 +363,51 @@ function updateDisplay(display)
 		for i = 1, #alarms do
       display.setCursorPos(1, line)
       printColourAndRoute(alarms[i][2], alarms[i][3], display)
-			display.write(tostring(alarms[i][1]))
+			display.write(textutils.formatTime(alarms[i][4]))
       line = line + 1
 		end
 	end
+end
+
+local function renewAlarms()
+  for i = 1, #alarms do
+    local alarmTime = alarms[i][4]
+    
+    -- Check that the alarm is still in the future
+    if alarmTime < os.time() then
+      alarmTime = (os.time() + 0.5) % 24
+    end
+    
+    -- Generate a new alarm and update the alarmID
+    local alarmID = os.setAlarm(alarmTime)
+		alarms[i][1] = alarmID
+  end
+end
+
+local function groupData()
+  return {currentLoadedStates, requestList, currentState, alarms}
+end
+
+local function saveState()
+  mRail.saveData(stateFile, groupData())
+end
+
+local function loadState()
+  currentState = groupData()
+  loadedState = mRail.loadData(stateFile, currentState)
+  
+  -- Check if something new was actually loaded
+  if currentState == loadedState then
+    return
+  end
+  
+  currentLoadedStates = loadedState[1]
+  requestList = loadedState[2]
+  currentState = loadedState[3]
+  alarms = loadedState[4]
+  
+  --Renew alarms (alarms are not preserved during a reset)
+  renewAlarms()
 end
 
 -- Program Stuff
