@@ -277,7 +277,7 @@ function setDepartureAlarm(serviceID, trainID)
 	--if no alarm then make one for an hour ahead
 	if unique then
 		local currentTime = os.time()
-    local alarmTime = ((currentTime + 1.1) % 24)
+    local alarmTime = ((currentTime + 0.6) % 24)
 		local alarmID = os.setAlarm(alarmTime)
 		table.insert(alarms,{alarmID,serviceID,trainID,alarmTime})
 	end
