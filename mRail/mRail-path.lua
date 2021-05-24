@@ -1,3 +1,6 @@
+--- Pathfinder
+--@module path
+
 function table.contains(tbl, e)
   for _, v in pairs(tbl) do
     if v[1] == e[1] and v[2] == e[2] then

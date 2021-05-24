@@ -1,5 +1,7 @@
--- mRail System Reboot
--- (C) 2020-21 Sam Lane
+--- Time
+-- @module time
+-- @author Sam Lane
+-- @copyright 2020-21
 
 mRail = require("./mRail/mRail-api")
 json = require("./mRail/json")
@@ -29,7 +31,6 @@ function program.setup(config_)
     sleep(5)
   end
 end
-
 
 
 function program.onLoop()

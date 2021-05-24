@@ -1,3 +1,6 @@
+--- A startup module
+-- @script startup
+
 -- mRail system startup program
 -- (C) 2020-21 Sam Lane
 
