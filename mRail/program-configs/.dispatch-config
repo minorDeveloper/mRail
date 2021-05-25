@@ -1,0 +1,9 @@
+return {
+  {
+    setupName      = "Dispatch Computer",
+    programType    = {{"^dispatch$"}, "Program type"}, 
+    modemSide      = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
+    monitor        = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},
+    redstoneSide   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$"}, "Redstone side"},
+  },
+}

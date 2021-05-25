@@ -1,0 +1,12 @@
+return {
+  {
+    setupName   = "Detector Computer",
+    programType = {{"^detector$"}, "Program type"},
+    name        = {{"^%w+$"}, "Name of detector"},
+    ids         = {{"^%d+$"}, "IDs of the detectors", 2},
+    modemSide   = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^modem_%d+$"}, "Modem side"}, 
+    monitor     = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^term$"}, "Monitor side"},
+    releaseSide = {{"^front$", "^back$", "^left$", "^right$", "^top$", "^bottom$", "^null$"}, "Release side (redstone output)"},
+    releaseSideID= {{"^left$","^right$", "^null$"}, "Detector side corresponding with release"},
+  },
+}
