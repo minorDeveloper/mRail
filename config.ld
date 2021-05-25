@@ -4,7 +4,7 @@ description='An automated minecraft train network using ComputerCraft and Railcr
 format='discount'
 backtick_references=false
 dir='./out'
-readme='readme.md'
+readme='README.md'
 not_luadoc=true
 file={'startup.lua', 'mRail-bootloader.lua', 'mRail/'}
 kind_names={topic='Manual',script='Programs'}
