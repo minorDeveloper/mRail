@@ -6,7 +6,7 @@ backtick_references=false
 dir='./out'
 readme='README.md'
 not_luadoc=true
-file={'startup.lua', 'mRail-bootloader.lua', 'mRail/'}
+file='src/'
 kind_names={topic='Manual',script='Programs'}
 examples = {
 }
