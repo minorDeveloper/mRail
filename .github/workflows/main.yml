@@ -17,7 +17,7 @@ jobs:
       - name: Setup dependencies        
         run: luarocks install penlight
       - name: Generate documentation
-        run: lua .\LDoc\ldoc.lua .
+        run: lua ./LDoc/ldoc.lua .
         
       - name: Deploy 
         uses: JamesIves/github-pages-deploy-action@4.1.3
