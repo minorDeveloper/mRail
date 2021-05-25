@@ -7,6 +7,11 @@
 
 --- @todo Comment all
 
+--- @todo Add ability to request next station from dispatch
+
+--- @todo Add ability to respond to next station request (broadcast to trainTracking)
+
+
 
 local mRail = {}
 
@@ -237,11 +242,6 @@ function mRail.next_station_update(modem, nextStationID, trainID)
   })
   modem.transmit(mRail.channels.next_station_update, 1, message)
 end
-
--- @todo Add ability to request next station from dispatch
--- @todo Add ability to respond to next station request (broadcast to trainTracking)
-
--- @todo Comment all of these functions
 
 --- Sends a request to the dispatch server for a given train to be dispatched
 -- from the reviever

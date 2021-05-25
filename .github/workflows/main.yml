@@ -4,10 +4,22 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v2.3.1
-
-      - name: Deploy 🚀
+        with:
+          submodules: 'true'
+      - name: Setup Lua
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: 5.4
+      - name: Setup Lua Rocks
+        uses: leafo/gh-actions-luarocks@v4
+      - name: Setup dependencies        
+        run: luarocks install penlight
+      - name: Generate documentation
+        run: lua ./LDoc/ldoc.lua .
+        
+      - name: Deploy 
         uses: JamesIves/github-pages-deploy-action@4.1.3
         with:
           branch: gh-pages # The branch the action should deploy to.
