@@ -4,8 +4,16 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v2.3.1
+      - name: Setup Lua
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: 5.4
+      - name: Setup Lua Rocks
+        uses: leafo/gh-actions-luarocks@v4
+      - name: Setup dependencies        
+        run: luarocks install penlight
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3
