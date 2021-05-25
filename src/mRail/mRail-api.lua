@@ -7,12 +7,6 @@
 
 --- @todo Comment all
 
---- @todo Add ability to request next station from dispatch
-
---- @todo Add ability to respond to next station request (broadcast to trainTracking)
-
-
-
 local mRail = {}
 
 -- Load APIs
@@ -20,7 +14,7 @@ json = require("./mRail/json")
 log = require("./mRail/log")
 
 
---- Colour name to number conversion
+--- Color name to number conversion
 local col_to_num = {
 	white = 1,
 	orange = 2,
@@ -40,7 +34,7 @@ local col_to_num = {
 	black = 16
 }
 
---- Converts the colour of train detected to an ID number
+--- Converts the color of train detected to an ID number
 local num_to_col = {
 	"white",
 	"orange",
@@ -62,83 +56,82 @@ local num_to_col = {
 
 --- Internal representation of trains and minecarts
 mRail.item_names = {
-	train   = "Perpetuum Locomotive",
-	e_train = "Electric Locomotive",
-	cart    = "Minecart",
-	anchor  = "Admin Worldspike Cart"
+	train   = "Perpetuum Locomotive", -- Perpetuum Locomotive
+	e_train = "Electric Locomotive", -- Electric Locomotive
+	cart    = "Minecart", -- Minecart
+	anchor  = "Admin Worldspike Cart" -- Admin Worldspike Cart
 }
 
 --- Links config name alias to program name
 mRail.programs = {
-  ["depotCollect"] = "mRail-collection", 
-  ["depotRelease"] = "mRail-release",
-  ["detector"]     = "mRail-detector",
-  ["dispatch"]     = "mRail-dispatch",
-  ["network"]      = "mRail-networkControl",
-  ["oneway"]       = "mRail-onewayControl",
-  ["platform"]     = "mRail-platformDisplay",
-  ["station"]      = "mRail-stationController",
-  ["time"]         = "mRail-time",
-  ["tracker"]      = "mRail-tracker",
+  ["depotCollect"] = "mRail-collection",        -- mRail-collection
+  ["depotRelease"] = "mRail-release",           -- mRail-release
+  ["detector"]     = "mRail-detector",          -- mRail-detector
+  ["dispatch"]     = "mRail-dispatch",          -- mRail-dispatch
+  ["network"]      = "mRail-networkControl",    -- mRail-networkControl
+  ["oneway"]       = "mRail-onewayControl",     -- mRail-onewayControl
+  ["platform"]     = "mRail-platformDisplay",   -- mRail-platformDisplay
+  ["station"]      = "mRail-stationController", -- mRail-stationController
+  ["time"]         = "mRail-time",              -- mRail-time
+  ["tracker"]      = "mRail-tracker",           -- mRail-tracker
 }
 
 --- Links config name alias to program config structure
 mRail.configs = {
-  ["depotCollect"] = ".collection-config", 
-  ["depotRelease"] = ".release-config",
-  ["detector"]     = ".detector-config",
-  ["dispatch"]     = ".dispatch-config",
-  ["network"]      = ".network-config",
-  ["oneway"]       = ".oneway-config",
-  ["platform"]     = ".platform-config",
-  ["station"]      = ".station-config",
-  ["time"]         = ".time-config",
-  ["tracker"]      = ".tracker-config",
+  ["depotCollect"] = ".collection-config",  -- .collection-config
+  ["depotRelease"] = ".release-config",     -- .release-config
+  ["detector"]     = ".detector-config",    -- .detector-config
+  ["dispatch"]     = ".dispatch-config",    -- .dispatch-config
+  ["network"]      = ".network-config",     -- .network-config
+  ["oneway"]       = ".oneway-config",      -- .oneway-config
+  ["platform"]     = ".platform-config",    -- .platform-config
+  ["station"]      = ".station-config",     -- .station-config
+  ["time"]         = ".time-config",        -- .time-config
+  ["tracker"]      = ".tracker-config",     -- .tracker-config
 }
 
 --- Links config name alias to description of program
 mRail.aliases = {
-  ["depotCollect"] = "Train Collection Depot", 
-  ["depotRelease"] = "Train Release Depot",
-  ["detector"]     = "Locomotive Detector",
-  ["dispatch"]     = "Dispatch Computer",
-  ["network"]      = "Network Controller",
-  ["oneway"]       = "One-way Controller",
-  ["platform"]     = "Platform Display",
-  ["station"]      = "Station Controller",
-  ["time"]         = "System Reboot Computer",
-  ["tracker"]      = "Train Tracker",
+  ["depotCollect"] = "Train Collection Depot",  -- Train Collection Depot
+  ["depotRelease"] = "Train Release Depot",     -- Train Release Depot
+  ["detector"]     = "Locomotive Detector",     -- Locomotive Detector
+  ["dispatch"]     = "Dispatch Computer",       -- Dispatch Computer
+  ["network"]      = "Network Controller",      -- Network Controller
+  ["oneway"]       = "One-way Controller",      -- One-way Controller
+  ["platform"]     = "Platform Display",        -- Platform Display
+  ["station"]      = "Station Controller",      -- Station Controller
+  ["time"]         = "System Reboot Computer",  -- System Reboot Computer
+  ["tracker"]      = "Train Tracker",           -- Train Tracker
 }
 
+--- Location of the loaded program's config file
 mRail.configLoc    = "./mRail/program-state/.config"
 
--- Modem channels used by mRail
+--- Modem channels used by mRail
 mRail.channels = {
-  ping_channel             = 01,
-	detect_channel           = 02,
-	train_info               = 03,
-	location_update_channel  = 04,
-  next_station_request     = 05,
-  next_station_update      = 06,
-  ping_request_channel     = 07,
-  control_channel          = 08,
-  data_request_channel     = 09,
-	dispatch_channel         = 10,
-	station_dispatch_confirm = 11,
-	station_dispatch_request = 12,
-	oneway_dispatch_confirm  = 13,
-	oneway_dispatch_request  = 14,
-	timetable_updates        = 15,
-	station_route_request    = 16,
-	station_dispatch_channel = 17,
-	screen_update_channel    = 18,
-	screen_platform_channel  = 19,
-	request_dispatch_channel = 20,
-  control_response_channel = 21,
-	error_channel            = 999
+  ping_channel             = 01, -- 01
+	detect_channel           = 02, -- 02
+	train_info               = 03, -- 03
+	location_update_channel  = 04, -- 04
+  next_station_request     = 05, -- 05
+  next_station_update      = 06, -- 06
+  ping_request_channel     = 07, -- 07
+  control_channel          = 08, -- 08
+  data_request_channel     = 09, -- 09
+	dispatch_channel         = 10, -- 10
+	station_dispatch_confirm = 11, -- 11
+	station_dispatch_request = 12, -- 12
+	oneway_dispatch_confirm  = 13, -- 13
+	oneway_dispatch_request  = 14, -- 14
+	timetable_updates        = 15, -- 15
+	station_route_request    = 16, -- 16
+	station_dispatch_channel = 17, -- 17
+	screen_update_channel    = 18, -- 18
+	screen_platform_channel  = 19, -- 19
+	request_dispatch_channel = 20, -- 20
+  control_response_channel = 21, -- 21
+	error_channel            = 999,-- 999
 }
-
--- NETWORK CONTROL FUNCTIONS
 
 --- Sends a ping from the given computer with a program name and id
 -- @param programName Name of the current running program
@@ -211,6 +204,11 @@ function mRail.response(modem, programName, id, command, success, returnMessage)
 end
 
 --- Broadcast the detection of a train at a given detector
+-- @param modem
+-- @param detectorID
+-- @param serviceID Service (string) of the detected train
+-- @param trainID ID of the detected train
+-- @param textMessage Message to be broadcast
 function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
 	log.info("Notifying Tracker and Stations of detection")
 	local message = json.encode({
@@ -222,7 +220,11 @@ function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMe
 	modem.transmit(mRail.channels.detect_channel,1,message)
 end
 
---- Request dispatch provides tracking with the next station of a given train and service
+--- Request information about the next station for a given service
+-- @param modem 
+-- @param serviceID
+-- @param trainID
+-- @param stationID
 function mRail.next_station_request(modem, serviceID, trainID, stationID)
   log.info("Requesting next station update for " .. serviceID)
   local message = json.encode({
@@ -234,6 +236,9 @@ function mRail.next_station_request(modem, serviceID, trainID, stationID)
 end
 
 --- Provides tracking with an update regarding the next station for a given train
+-- @param modem
+-- @param nextStationID
+-- @param trainID
 function mRail.next_station_update(modem, nextStationID, trainID)
   log.info(trainID .. ": next station is " .. nextStationID)
   local message = json.encode({
@@ -243,12 +248,17 @@ function mRail.next_station_update(modem, nextStationID, trainID)
   modem.transmit(mRail.channels.next_station_update, 1, message)
 end
 
---- Sends a request to the dispatch server for a given train to be dispatched
--- from the reviever
-function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
-	log.info("Requesting the " .. mRail.number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+--- Requests the dispatch server release the given train
+-- . Use this when manually triggering a train release to ensure departure boards and alarms are set correctly
+-- @param modem
+-- @param receiverID Depot ID that the service is to be released from
+-- @param serviceID
+-- @param trainID
+-- @usage mRail.request_dispatch(modem, 80, "HR Expr", 5)
+function mRail.request_dispatch(modem, receiverID, serviceID, trainID)
+	log.info("Requesting the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
-		['recieverID'] = recieverID,
+		['recieverID'] = receiverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
@@ -257,11 +267,16 @@ function mRail.request_dispatch(modem, recieverID, serviceID, trainID)
 	modem.transmit(mRail.channels.request_dispatch_channel,1,message)
 end
 
---- Allows dispatch to request a depot releases a train on its journey
-function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
-	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. recieverID .. " on route " .. serviceID)
+--- Dispatch requesting the release of a train from a depot
+-- . Not for manual use
+-- @param modem
+-- @param receiverID
+-- @param serviceID
+-- @param trainID
+function mRail.dispatch_train(modem, receiverID, serviceID, trainID)
+	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
-		['recieverID'] = recieverID,
+		['recieverID'] = receiverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
@@ -270,7 +285,11 @@ function mRail.dispatch_train(modem, recieverID, serviceID, trainID)
 	modem.transmit(mRail.channels.dispatch_channel,1,message)
 end
 
---- Allows dispatch to request a station releases a train on its journey
+--- Command to a station to release a train from its platform
+-- @param modem
+-- @param stationID
+-- @param serviceID
+-- @param trainID
 function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
 	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.encode({
@@ -285,7 +304,12 @@ end
 
 -- Station-Depot Comms
 
---- Depots request permission from a station to release a train
+--- Allows a depot to request permission to dispatch a train
+-- @param modem
+-- @param stationID
+-- @param serviceID
+-- @param trainID
+-- @param detectorID
 function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, detectorID)
 	log.info("Requesting permission from station " .. stationID .. "to dispatch train")
 	local message = json.encode({
@@ -300,10 +324,14 @@ function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, de
 end
 
 --- Station confirms that a given depot may release a train
-function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
-	log.info("Giving " .. recieverID .. " permission to dispatch train")
+-- @param modem
+-- @param receiverID
+-- @param serviceID
+-- @param trainID
+function mRail.station_confirm_dispatch(modem, receiverID, serviceID, trainID)
+	log.info("Giving " .. receiverID .. " permission to dispatch train")
 	local message = json.encode({
-		['recieverID'] = recieverID,
+		['recieverID'] = receiverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
@@ -312,7 +340,13 @@ function mRail.station_confirm_dispatch(modem, recieverID, serviceID, trainID)
 	modem.transmit(mRail.channels.station_dispatch_confirm,1,message)
 end
 
---- ADMIN function to request a specific route be assigned
+--- DEPRECATED, allows for a specific route to be requested through the given station
+-- @param modem
+-- @param stationID
+-- @param entryID
+-- @param exitID
+-- @param serviceID
+-- @param trainID
 function mRail.station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
 	log.info("Requesting route")
 	local message = json.encode({
@@ -330,6 +364,10 @@ end
 
 --- Allows a detector computer to request permission from block control to
 -- release a train
+-- @param modem
+-- @param detectorID
+-- @param serviceID
+-- @param trainID
 function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	log.info("Requesting permission to dispatch train " .. trainID)
 	local message = json.encode({
@@ -343,6 +381,10 @@ function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 end
 
 --- Block control gives permission for a detector computer to release a train
+-- @param modem
+-- @param detectorID
+-- @param serviceID
+-- @param trainID
 function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	log.info("Giving " .. detectorID .. " permission to release train")
 	local message = json.encode({
@@ -356,6 +398,8 @@ function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 end
 
 --- Provides information regarding the current timetable and routing of trains
+-- @param modem
+-- @param timetable
 function mRail.timetable_update(modem, timetable)
 	log.info("Updating timetable for all stations")
 	local message = json.encode({
@@ -368,6 +412,10 @@ end
 
 --- Provides information to platform displays regarding the arrivals and departures 
 -- still due at a given station
+-- @param modem
+-- @param stationID
+-- @param arrivals
+-- @param departures
 function mRail.screen_update(modem, stationID, arrivals, departures)
   log.info("Sending updates to screens")
 	local message = json.encode({
@@ -381,6 +429,10 @@ function mRail.screen_update(modem, stationID, arrivals, departures)
 end
 
 --- Allows stations to communicate platform allocations with the display screens
+-- @param modem
+-- @param stationID
+-- @param serviceID
+-- @param platform
 function mRail.screen_platform_update(modem, stationID, serviceID, platform)
   log.info("Updating platform allocation")
 	local message = json.encode({
@@ -394,6 +446,9 @@ function mRail.screen_platform_update(modem, stationID, serviceID, platform)
 end
 
 --- Allows an error to be raised with a given error level
+-- @param modem
+-- @param errMessage
+-- @param errorLevel
 function mRail.raise_error(modem, errMessage, errorLevel)
   log.error(errMessage)
 	local x = 0
@@ -414,6 +469,8 @@ end
 
 
 --- Saves data to a file
+-- @param filename
+-- @param data
 function mRail.saveData(filename, data)
   log.debug("Saving data to " .. filename)
   log.trace(data)
@@ -425,7 +482,9 @@ function mRail.saveData(filename, data)
 	f.close()
 end
 
---- Loads data
+--- Loads data from a given file
+-- @param filename
+-- @param data
 function mRail.loadData(filename, data)
   log.info("Load data from " .. filename)
 	if fs.exists(filename) then
@@ -442,6 +501,8 @@ function mRail.loadData(filename, data)
 end
 
 --- Executes the given file
+-- @param filename
+-- @param parameters
 local function executeFile(filename, ...)
   local ok, err = loadfile( filename )
   log.debug( "Running "..filename )
@@ -454,6 +515,9 @@ end
 
 
 --- Loads config file into variable (uses modem for error messages)
+-- @param modem
+-- @param file_name
+-- @param config_var
 function mRail.loadConfig(modem,file_name,config_var)
   log.info("Loadign config file")
   local returnVal = loadConfig(file_name,config_var)
@@ -465,6 +529,8 @@ function mRail.loadConfig(modem,file_name,config_var)
 end
 
 --- Loads config file into variable
+-- @param file_name
+-- @param config_var
 function mRail.loadConfig(file_name,config_var)
 	if fs.exists(file_name) then
 		log.debug("Loading config file...")
@@ -479,6 +545,8 @@ function mRail.loadConfig(file_name,config_var)
 end
 
 --- Saves a given program config in a user readable format
+-- @param filename
+-- @param config_var
 function mRail.saveConfig(filename, config_var)
   local f = fs.open(filename, "w")
   f.writeLine("return {")
@@ -504,6 +572,7 @@ end
 -- @todo Make this more readable
 
 --- Checks the given config
+-- @param config
 function mRail.checkConfig(config)
   local targetConfigName = "./mRail/program-configs/" .. mRail.configs[config.programType]
   local targetConfig = {}
@@ -558,6 +627,8 @@ function mRail.getModemSide()
 end
 
 --- Checks if two variables are the same string
+-- @param strA
+-- @param strB
 function mRail.identString(strA, strB)
   if tostring(strA) == tostring(strB) then
     return true
@@ -566,6 +637,8 @@ function mRail.identString(strA, strB)
 end
 
 --- Checks if two variables are the same number
+-- @param numA
+-- @param numB
 function mRail.identNum(numA, numB)
   if tonumber(strA) == tonumber(strB) then
     return true
@@ -573,12 +646,14 @@ function mRail.identNum(numA, numB)
   return false
 end
 
--- Converts a colour string to its representative number
+--- Converts a colour string to its representative number
+-- @param color
 function mRail.color_to_number(color)
 	return col_to_num[color]
 end
 
--- Converts a colour number to its representative string
+--- Converts a colour number to its representative strin
+-- @param number
 function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
@@ -592,6 +667,7 @@ end
 
 --- Custom sleep functionality 
 -- Don't remember what this does
+-- @param time
 function mRail.wait(time)
   local timer = os.startTimer(time)
   
