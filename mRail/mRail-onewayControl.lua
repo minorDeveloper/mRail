@@ -10,7 +10,7 @@
 -- TODO - Add API interface to modify blocks
 
 -- TODO - Add logging to control functions
--- TODO - Unit test
+-- TODO - Unit test (ha)
 
 -- TODO - Add successes and messages to control functions
 
