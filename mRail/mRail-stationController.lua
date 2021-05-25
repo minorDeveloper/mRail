@@ -1,3 +1,6 @@
+--- Station Controller
+--@module station
+
 -- mRail System Program Base
 -- (C) 2020-21 Sam Lane
 
