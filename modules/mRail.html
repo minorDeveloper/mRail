@@ -34,6 +34,7 @@
 <ul>
 <li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
 <li><a href="#Issues">Issues</a></li>
 </ul>
 
@@ -98,36 +99,37 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#next_station_request">next_station_request (modem, serviceID, trainID, stationID)</a></td>
-	<td class="summary">Request dispatch provides tracking with the next station of a given train and service</td>
+	<td class="summary">Request information about the next station for a given service</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#next_station_update">next_station_update (modem, nextStationID, trainID)</a></td>
 	<td class="summary">Provides tracking with an update regarding the next station for a given train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#request_dispatch">request_dispatch (modem, recieverID, serviceID, trainID)</a></td>
-	<td class="summary">Sends a request to the dispatch server for a given train to be dispatched
- from the reviever</td>
+	<td class="name" nowrap><a href="#request_dispatch">request_dispatch (modem, receiverID, serviceID, trainID)</a></td>
+	<td class="summary">Requests the dispatch server release the given train
+ .</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#dispatch_train">dispatch_train (modem, recieverID, serviceID, trainID)</a></td>
-	<td class="summary">Allows dispatch to request a depot releases a train on its journey</td>
+	<td class="name" nowrap><a href="#dispatch_train">dispatch_train (modem, receiverID, serviceID, trainID)</a></td>
+	<td class="summary">Dispatch requesting the release of a train from a depot
+ .</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#station_dispatch_train">station_dispatch_train (modem, stationID, serviceID, trainID)</a></td>
-	<td class="summary">Allows dispatch to request a station releases a train on its journey</td>
+	<td class="summary">Command to a station to release a train from its platform</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#station_request_dispatch">station_request_dispatch (modem, stationID, serviceID, trainID, detectorID)</a></td>
-	<td class="summary">Depots request permission from a station to release a train</td>
+	<td class="summary">Allows a depot to request permission to dispatch a train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#station_confirm_dispatch">station_confirm_dispatch (modem, recieverID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#station_confirm_dispatch">station_confirm_dispatch (modem, receiverID, serviceID, trainID)</a></td>
 	<td class="summary">Station confirms that a given depot may release a train</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#station_request_route">station_request_route (modem, stationID, entryID, exitID, serviceID, trainID)</a></td>
-	<td class="summary">ADMIN function to request a specific route be assigned</td>
+	<td class="summary">DEPRECATED, allows for a specific route to be requested through the given station</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#oneway_request_dispatch">oneway_request_dispatch (modem, detectorID, serviceID, trainID)</a></td>
@@ -161,7 +163,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#loadData">loadData (filename, data)</a></td>
-	<td class="summary">Loads data</td>
+	<td class="summary">Loads data from a given file</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#loadConfig">loadConfig (modem, file_name, config_var)</a></td>
@@ -192,6 +194,14 @@
 	<td class="summary">Checks if two variables are the same number</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#color_to_number">color_to_number (color)</a></td>
+	<td class="summary">Converts a colour string to its representative number</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#number_to_color">number_to_color (number)</a></td>
+	<td class="summary">Converts a colour number to its representative strin</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#wait">wait (time)</a></td>
 	<td class="summary">Custom sleep functionality
  Don't remember what this does</td>
@@ -215,6 +225,17 @@
 	<td class="name" nowrap><a href="#aliases">aliases</a></td>
 	<td class="summary">Links config name alias to description of program</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#channels">channels</a></td>
+	<td class="summary">Modem channels used by mRail</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#configLoc">configLoc</a></td>
+	<td class="summary">Location of the loaded program's config file</td>
+	</tr>
 </table>
 <h2><a href="#Issues">Issues</a></h2>
 <table class="function_list">
@@ -225,14 +246,6 @@
 	<tr>
 	<td class="name" nowrap><a href="#mRail-todo1-todo2">mRail-todo1-todo2</a></td>
 	<td class="summary">Comment all</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mRail-todo1-todo2-todo3">mRail-todo1-todo2-todo3</a></td>
-	<td class="summary">Add ability to request next station from dispatch</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mRail-todo1-todo2-todo3-todo4">mRail-todo1-todo2-todo3-todo4</a></td>
-	<td class="summary">Add ability to respond to next station request (broadcast to trainTracking)</td>
 	</tr>
 </table>
 
@@ -411,19 +424,13 @@
 
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         Service (string) of the detected train
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         ID of the detected train
         </li>
         <li><span class="parameter">textMessage</span>
-
-
-
+         Message to be broadcast
         </li>
     </ul>
 
@@ -437,7 +444,7 @@
     <strong>next_station_request (modem, serviceID, trainID, stationID)</strong>
     </dt>
     <dd>
-    Request dispatch provides tracking with the next station of a given train and service
+    Request information about the next station for a given service
 
 
     <h3>Parameters:</h3>
@@ -503,11 +510,11 @@
 </dd>
     <dt>
     <a name = "request_dispatch"></a>
-    <strong>request_dispatch (modem, recieverID, serviceID, trainID)</strong>
+    <strong>request_dispatch (modem, receiverID, serviceID, trainID)</strong>
     </dt>
     <dd>
-    Sends a request to the dispatch server for a given train to be dispatched
- from the reviever
+    Requests the dispatch server release the given train
+ .  Use this when manually triggering a train release to ensure departure boards and alarms are set correctly
 
 
     <h3>Parameters:</h3>
@@ -517,10 +524,8 @@
 
 
         </li>
-        <li><span class="parameter">recieverID</span>
-
-
-
+        <li><span class="parameter">receiverID</span>
+         Depot ID that the service is to be released from
         </li>
         <li><span class="parameter">serviceID</span>
 
@@ -537,14 +542,19 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">mRail.request_dispatch(modem, <span class="number">80</span>, <span class="string">"HR Expr"</span>, <span class="number">5</span>)</pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "dispatch_train"></a>
-    <strong>dispatch_train (modem, recieverID, serviceID, trainID)</strong>
+    <strong>dispatch_train (modem, receiverID, serviceID, trainID)</strong>
     </dt>
     <dd>
-    Allows dispatch to request a depot releases a train on its journey
+    Dispatch requesting the release of a train from a depot
+ .  Not for manual use
 
 
     <h3>Parameters:</h3>
@@ -554,7 +564,7 @@
 
 
         </li>
-        <li><span class="parameter">recieverID</span>
+        <li><span class="parameter">receiverID</span>
 
 
 
@@ -581,7 +591,7 @@
     <strong>station_dispatch_train (modem, stationID, serviceID, trainID)</strong>
     </dt>
     <dd>
-    Allows dispatch to request a station releases a train on its journey
+    Command to a station to release a train from its platform
 
 
     <h3>Parameters:</h3>
@@ -618,7 +628,7 @@
     <strong>station_request_dispatch (modem, stationID, serviceID, trainID, detectorID)</strong>
     </dt>
     <dd>
-    Depots request permission from a station to release a train
+    Allows a depot to request permission to dispatch a train
 
 
     <h3>Parameters:</h3>
@@ -657,7 +667,7 @@
 </dd>
     <dt>
     <a name = "station_confirm_dispatch"></a>
-    <strong>station_confirm_dispatch (modem, recieverID, serviceID, trainID)</strong>
+    <strong>station_confirm_dispatch (modem, receiverID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Station confirms that a given depot may release a train
@@ -670,7 +680,7 @@
 
 
         </li>
-        <li><span class="parameter">recieverID</span>
+        <li><span class="parameter">receiverID</span>
 
 
 
@@ -697,7 +707,7 @@
     <strong>station_request_route (modem, stationID, entryID, exitID, serviceID, trainID)</strong>
     </dt>
     <dd>
-    ADMIN function to request a specific route be assigned
+    DEPRECATED, allows for a specific route to be requested through the given station
 
 
     <h3>Parameters:</h3>
@@ -980,7 +990,7 @@
     <strong>loadData (filename, data)</strong>
     </dt>
     <dd>
-    Loads data
+    Loads data from a given file
 
 
     <h3>Parameters:</h3>
@@ -1179,6 +1189,50 @@
 
 </dd>
     <dt>
+    <a name = "color_to_number"></a>
+    <strong>color_to_number (color)</strong>
+    </dt>
+    <dd>
+    Converts a colour string to its representative number
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">color</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "number_to_color"></a>
+    <strong>number_to_color (number)</strong>
+    </dt>
+    <dd>
+    Converts a colour number to its representative strin
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">number</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
     <a name = "wait"></a>
     <strong>wait (time)</strong>
     </dt>
@@ -1216,24 +1270,16 @@
     <h3>Fields:</h3>
     <ul>
         <li><span class="parameter">train</span>
-
-
-
+        Perpetuum Locomotive
         </li>
         <li><span class="parameter">e_train</span>
-
-
-
+        Electric Locomotive
         </li>
         <li><span class="parameter">cart</span>
-
-
-
+        Minecart
         </li>
         <li><span class="parameter">anchor</span>
-
-
-
+        Admin Worldspike Cart
         </li>
     </ul>
 
@@ -1253,54 +1299,34 @@
     <h3>Fields:</h3>
     <ul>
         <li><span class="parameter">[depotCollect]</span>
-
-
-
+        mRail-collection
         </li>
         <li><span class="parameter">[depotRelease]</span>
-
-
-
+        mRail-release
         </li>
         <li><span class="parameter">[detector]</span>
-
-
-
+        mRail-detector
         </li>
         <li><span class="parameter">[dispatch]</span>
-
-
-
+        mRail-dispatch
         </li>
         <li><span class="parameter">[network]</span>
-
-
-
+        mRail-networkControl
         </li>
         <li><span class="parameter">[oneway]</span>
-
-
-
+        mRail-onewayControl
         </li>
         <li><span class="parameter">[platform]</span>
-
-
-
+        mRail-platformDisplay
         </li>
         <li><span class="parameter">[station]</span>
-
-
-
+        mRail-stationController
         </li>
         <li><span class="parameter">[time]</span>
-
-
-
+        mRail-time
         </li>
         <li><span class="parameter">[tracker]</span>
-
-
-
+        mRail-tracker
         </li>
     </ul>
 
@@ -1320,54 +1346,34 @@
     <h3>Fields:</h3>
     <ul>
         <li><span class="parameter">[depotCollect]</span>
-
-
-
+        .collection-config
         </li>
         <li><span class="parameter">[depotRelease]</span>
-
-
-
+        .release-config
         </li>
         <li><span class="parameter">[detector]</span>
-
-
-
+        .detector-config
         </li>
         <li><span class="parameter">[dispatch]</span>
-
-
-
+        .dispatch-config
         </li>
         <li><span class="parameter">[network]</span>
-
-
-
+        .network-config
         </li>
         <li><span class="parameter">[oneway]</span>
-
-
-
+        .oneway-config
         </li>
         <li><span class="parameter">[platform]</span>
-
-
-
+        .platform-config
         </li>
         <li><span class="parameter">[station]</span>
-
-
-
+        .station-config
         </li>
         <li><span class="parameter">[time]</span>
-
-
-
+        .time-config
         </li>
         <li><span class="parameter">[tracker]</span>
-
-
-
+        .tracker-config
         </li>
     </ul>
 
@@ -1387,56 +1393,137 @@
     <h3>Fields:</h3>
     <ul>
         <li><span class="parameter">[depotCollect]</span>
-
-
-
+        Train Collection Depot
         </li>
         <li><span class="parameter">[depotRelease]</span>
-
-
-
+        Train Release Depot
         </li>
         <li><span class="parameter">[detector]</span>
-
-
-
+        Locomotive Detector
         </li>
         <li><span class="parameter">[dispatch]</span>
-
-
-
+        Dispatch Computer
         </li>
         <li><span class="parameter">[network]</span>
-
-
-
+        Network Controller
         </li>
         <li><span class="parameter">[oneway]</span>
-
-
-
+        One-way Controller
         </li>
         <li><span class="parameter">[platform]</span>
-
-
-
+        Platform Display
         </li>
         <li><span class="parameter">[station]</span>
-
-
-
+        Station Controller
         </li>
         <li><span class="parameter">[time]</span>
-
-
-
+        System Reboot Computer
         </li>
         <li><span class="parameter">[tracker]</span>
-
-
-
+        Train Tracker
         </li>
     </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "channels"></a>
+    <strong>channels</strong>
+    </dt>
+    <dd>
+    Modem channels used by mRail
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">ping_channel</span>
+        01
+        </li>
+        <li><span class="parameter">detect_channel</span>
+        02
+        </li>
+        <li><span class="parameter">train_info</span>
+        03
+        </li>
+        <li><span class="parameter">location_update_channel</span>
+        04
+        </li>
+        <li><span class="parameter">next_station_request</span>
+        05
+        </li>
+        <li><span class="parameter">next_station_update</span>
+        06
+        </li>
+        <li><span class="parameter">ping_request_channel</span>
+        07
+        </li>
+        <li><span class="parameter">control_channel</span>
+        08
+        </li>
+        <li><span class="parameter">data_request_channel</span>
+        09
+        </li>
+        <li><span class="parameter">dispatch_channel</span>
+        10
+        </li>
+        <li><span class="parameter">station_dispatch_confirm</span>
+        11
+        </li>
+        <li><span class="parameter">station_dispatch_request</span>
+        12
+        </li>
+        <li><span class="parameter">oneway_dispatch_confirm</span>
+        13
+        </li>
+        <li><span class="parameter">oneway_dispatch_request</span>
+        14
+        </li>
+        <li><span class="parameter">timetable_updates</span>
+        15
+        </li>
+        <li><span class="parameter">station_route_request</span>
+        16
+        </li>
+        <li><span class="parameter">station_dispatch_channel</span>
+        17
+        </li>
+        <li><span class="parameter">screen_update_channel</span>
+        18
+        </li>
+        <li><span class="parameter">screen_platform_channel</span>
+        19
+        </li>
+        <li><span class="parameter">request_dispatch_channel</span>
+        20
+        </li>
+        <li><span class="parameter">control_response_channel</span>
+        21
+        </li>
+        <li><span class="parameter">error_channel</span>
+        999
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "configLoc"></a>
+    <strong>configLoc</strong>
+    </dt>
+    <dd>
+    Location of the loaded program's config file
+
+
 
 
 
@@ -1475,34 +1562,6 @@
 
 
 </dd>
-    <dt>
-    <a name = "mRail-todo1-todo2-todo3"></a>
-    <strong>mRail-todo1-todo2-todo3</strong>
-    </dt>
-    <dd>
-    Add ability to request next station from dispatch
-
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "mRail-todo1-todo2-todo3-todo4"></a>
-    <strong>mRail-todo1-todo2-todo3-todo4</strong>
-    </dt>
-    <dd>
-    Add ability to respond to next station request (broadcast to trainTracking)
-
-
-
-
-
-
-
-</dd>
 </dl>
 
 
@@ -1510,7 +1569,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-05-25 15:22:57 </i>
+<i style="float:right;">Last updated 2021-05-25 23:20:19 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
