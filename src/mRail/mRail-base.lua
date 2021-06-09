@@ -80,6 +80,8 @@ end
 
 log.debug("Program loaded")
 
+--- Converts message channels to program callbacks
+-- @todo this can be so much neater
 handleMessages = {
   [tostring(mRail.channels.ping_channel)]             = program.ping_channel,
   [tostring(mRail.channels.detect_channel)]           = program.detect_channel,
