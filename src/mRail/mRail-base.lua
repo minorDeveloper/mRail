@@ -23,12 +23,20 @@ local program = require(mRail.programs[config.programType])
 
 function program.ping()
   local id = nil
+  local name = nil
   if config.id ~= nil then
     id = config.id
   elseif config.stationID ~= nil then
     id = config.stationID
+  elseif config.ids ~= nil then
+    id = config.ids
   end
-  mRail.ping(mRail.programs[config.programType], id)
+  
+  if config.name ~= nil then
+    name = config.name
+  end
+  
+  mRail.ping(mRail.programs[config.programType], id, name)
 end
 
 function program.ping_request_channel(decodedMessage)
@@ -79,30 +87,7 @@ end
 --
 
 function program.respondIfWithin(decodedMessage)
-
-  local locX, locY, locZ = gps.locate()
-  
-  -- Calculate the difference between the provided location and our current location
-  local difX = math.abs(locX - decodedMessage.locX)
-  local difY = math.abs(locY - decodedMessage.locY)
-  local difZ = math.abs(locZ - decodedMessage.locZ)
-  
-  local radius = decodedMessage.radius
-  
-  -- Check we're within the radius (if radius = -1 then always reply)
-  local distance = math.sqrt(difX*difX + difY*difY + difZ*difZ)
-  
-  if radius == -1 or distance < radius then
-    -- Respond with program info
-    local info = nil
-    if config.id ~= nil then
-      info = config.id
-    elseif config.stationID ~= nil then
-      info = config.stationID
-    end
-    mRail.responseGPSData(config.programType, info, distance)
-  end
-  
+  program.ping()
 end
 --
 
