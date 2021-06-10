@@ -157,6 +157,8 @@ end
 
 local function receiveMessages(timeout)
   local nearbyComputers = {}
+  
+  local timeoutTimer = os.startTimer(timeout)
   while true do
     event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
     
@@ -182,9 +184,6 @@ function mRail.requestGPSData(radius, timeout)
   })
   
   mRail.transmit(mRail.channels.gps_data_request_channel,1,message)
-  
-  -- Make a 5 second timer
-  local timeoutTimer = os.startTimer(timeout)
   
   -- Keep recieving messages and put the info in a table until the time runs out
   local nearbyComputers = receiveMessages(timeout)
