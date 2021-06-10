@@ -151,6 +151,7 @@ end
 --
 
 local function checkForWaiting(blockID)
+  log.trace("Looking for a waiting train in block " .. tostring(blockID))
   local trainWaitingRequestID = trainWaiting(blockID)
   
   -- check if there is a train waiting to enter the block
@@ -180,14 +181,14 @@ end
 
 
 local function clearAllocation(blockID)
-  log.trace("Clearing block " .. tonumber(blockID))
+  log.trace("Clearing block " .. tostring(blockID))
   if not validBlockID(blockID) then
     return
   end
   oneWayState[blockID][5] = false
   oneWayState[blockID][6] = 0
   oneWayState[blockID][7] = ""
-  checkForWaiting(i)
+  checkForWaiting(blockID)
 end
 --
 
