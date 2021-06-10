@@ -78,6 +78,32 @@ function program.control_channel(decodedMessage)
 end
 --
 
+program.respondIfWithin(decodedMessage)
+
+  locX, locY, locZ = gps.locate()
+  
+  -- Calculate the difference between the provided location and our current location
+  difX = math.abs(locX - decodedMessage.locX)
+  difY = math.abs(locY - decodedMessage.locY)
+  difZ = math.abs(locZ - decodedMessage.locZ)
+  
+  -- Check we're within the radius (if radius = -1 then always reply)
+  distance = math.sqrt(difX*difX + difY*difY + difZ*difZ)
+  
+  if radius == -1 or distance < radius then
+    -- Respond with program info
+    local info = nil
+    if config.id ~= nil then
+      info = config.id
+    elseif config.stationID ~= nil then
+      info = config.stationID
+    end
+    mRail.responseGPSData(config.programType, info, distance)
+  end
+  
+end
+--
+
 log.debug("Program loaded")
 
 --- Converts message channels to program callbacks
@@ -106,6 +132,7 @@ handleMessages = {
   [tostring(mRail.channels.request_dispatch_channel)] = program.request_dispatch_channel,
   [tostring(mRail.channels.control_response_channel)] = program.control_response_channel,
   [tostring(mRail.channels.error_channel)]            = program.error_channel,
+  [tostring(mRail.channels.gps_data_request_channel)] = program.respondIfWithin,
 }
 
 -- Trigger setup of program
