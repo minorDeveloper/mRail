@@ -343,7 +343,6 @@ end
 --
 
 
-
 local function lockBlocks(blockIDs)
   if blockIDs == nil then
     return lockAllBlocks()
@@ -527,7 +526,6 @@ end
 --
 
 
-
 program.controlTable  = {
   ["clear"]           = clearBoth,
   ["clearAllocation"] = clearAllocations,
@@ -590,12 +588,12 @@ end
 -- Modem Messages
 function program.detect_channel(decodedMessage)
   -- Handle messages on the detection channel
-  
   local blockID = determineBlockExit(decodedMessage.detectorID)
   print("BlockID " .. blockID)
   if blockID == 0 then
     return
   end
+  
   -- Also check if it was in another block (but this should raise an error)
   for i = 1, #oneWayState do
     if oneWayState[i][5] == true and oneWayState[i][6] == tonumber(decodedMessage.trainID) then
@@ -613,7 +611,6 @@ function program.oneway_dispatch_request(decodedMessage)
   -- Handle messages on the station dispatch request channel
   
   
-  -- if the event is a request
   print("Dispatch has been requested")
   -- determine which block
   local blockID = determineBlockEntr(decodedMessage.detectorID)
@@ -633,6 +630,13 @@ function program.oneway_dispatch_request(decodedMessage)
     local textMessage = "In block " .. oneWayState[blockID][2]
     mRail.detection_broadcast(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
   elseif oneWayState[blockID][5] == true then
+    -- Check if this train was already allocated into the block
+    if oneWayState[blockID][6] == decodedMessage.trainID and oneWayState[blockID][7] == decodedMessage.serviceID then
+      mRail.oneway_confirm_dispatch(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID)
+      local textMessage = "In block " .. oneWayState[blockID][2]
+      mRail.detection_broadcast(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
+      return
+    end
   -- if not, add the request to the request list
     local request = {blockID, decodedMessage.detectorID, decodedMessage.trainID, decodedMessage.serviceID}
     table.insert(requestList,request)
