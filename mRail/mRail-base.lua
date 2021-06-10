@@ -78,7 +78,7 @@ function program.control_channel(decodedMessage)
 end
 --
 
-program.respondIfWithin(decodedMessage)
+function program.respondIfWithin(decodedMessage)
 
   locX, locY, locZ = gps.locate()
   
