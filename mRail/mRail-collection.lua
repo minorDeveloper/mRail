@@ -33,7 +33,7 @@ local function putAway(lowerSlot, upperSlot)
     -- If we have reached the upper slot without managing to insert a cart
     -- then bail and throw an error :(
 		if i == upperSlot then
-      mRail.raise_error(modem, "Unable to insert cart into chest", 1)
+      mRail.raise_error("Unable to insert cart into chest", 1)
       log.error("Unable to insert cart into chest")
 			success = true
 		end
@@ -50,7 +50,7 @@ local function trainAway(index)
     -- If not then there must be another train there
     local message = "Failed to insert train into slot " .. index
     log.error(message)
-    mRail.raise_error(modem, message, 1)
+    mRail.raise_error(message, 1)
   end
 end
 
@@ -87,7 +87,7 @@ local function collectTrain(serviceID)
 				trainAway(trainID)
 				log.debug("TrainID: " .. trainID)
 				log.debug("ServiceID: " .. serviceID)
-				mRail.detection_broadcast(modem, config.id, serviceID and serviceID or "", trainID, "In " .. mRail.location_name[tonumber(config.id)])
+				mRail.detection_broadcast(config.id, serviceID and serviceID or "", trainID, "In " .. mRail.location_name[tonumber(config.id)])
 			elseif info.name == mRail.item_names["cart"] then
 				log.debug("Found cart")
 				cartAway(info.amount)
@@ -95,7 +95,7 @@ local function collectTrain(serviceID)
 				log.debug("Found anchor")
 				anchorAway(info.amount)
 			else
-        mRail.rase_error(modem, "Non-sortable item found", 1)
+        mRail.rase_error("Non-sortable item found", 1)
 				log.error("Not a sortable item")
 			end
 		end

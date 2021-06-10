@@ -162,9 +162,9 @@ local function checkForWaiting(blockID)
   oneWayState[blockID][6] = requestList[trainWaitingRequestID][3]
   oneWayState[blockID][7] = requestList[trainWaitingRequestID][4]
   local textMessage = "In block " .. oneWayState[blockID][2]
-  mRail.detection_broadcast(modem, requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3], textMessage)
+  mRail.detection_broadcast(requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3], textMessage)
   -- permit entry
-  mRail.oneway_confirm_dispatch(modem, requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3])
+  mRail.oneway_confirm_dispatch(requestList[trainWaitingRequestID][2], requestList[trainWaitingRequestID][4], requestList[trainWaitingRequestID][3])
   -- remove from list
   table.remove(requestList,trainWaitingRequestID)
 end
@@ -600,7 +600,7 @@ function program.detect_channel(decodedMessage)
       clearAllocation(i)
       checkForWaiting(i)
       if i ~= blockID then
-        mRail.raise_error(modem, "Locomotive " .. tonumber(decodedMessage.trainID) .. " was still allocated in a differen block", 1)
+        mRail.raise_error("Locomotive " .. tonumber(decodedMessage.trainID) .. " was still allocated in a differen block", 1)
       end
     end
   end
@@ -626,15 +626,15 @@ function program.oneway_dispatch_request(decodedMessage)
     oneWayState[blockID][5] = true
     oneWayState[blockID][6] = decodedMessage.trainID
     oneWayState[blockID][7] = decodedMessage.serviceID
-    mRail.oneway_confirm_dispatch(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID)
+    mRail.oneway_confirm_dispatch(decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID)
     local textMessage = "In block " .. oneWayState[blockID][2]
-    mRail.detection_broadcast(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
+    mRail.detection_broadcast(decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
   elseif oneWayState[blockID][5] == true then
     -- Check if this train was already allocated into the block
     if oneWayState[blockID][6] == decodedMessage.trainID and oneWayState[blockID][7] == decodedMessage.serviceID then
-      mRail.oneway_confirm_dispatch(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID)
+      mRail.oneway_confirm_dispatch(decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID)
       local textMessage = "In block " .. oneWayState[blockID][2]
-      mRail.detection_broadcast(modem, decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
+      mRail.detection_broadcast(decodedMessage.detectorID, decodedMessage.serviceID, decodedMessage.trainID, textMessage)
       return
     end
   -- if not, add the request to the request list

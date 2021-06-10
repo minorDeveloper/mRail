@@ -227,7 +227,7 @@ function logRequest(entryID, serviceID, trainID, detectorID,entryOrDispatch)
 		if serviceID == nil then
 			serviceID = ""
 		end
-    mRail.next_station_request(modem, serviceID, trainID, tonumber(config.stationID))
+    mRail.next_station_request(serviceID, trainID, tonumber(config.stationID))
 		table.insert(requestList,{entryID, serviceID, trainID, detectorID,entryOrDispatch})
 	end
 end
@@ -246,14 +246,14 @@ function processRequests()
           log.debug("Trying route from " .. requestList[i][1] .. " to " .. routesToTry[k])
           if tryRoute(requestList[i][1], routesToTry[k], requestList[i][2], requestList[i][3]) == true then
             if tonumber(requestList[i][4]) ~= 0 then
-              mRail.station_confirm_dispatch(modem, requestList[i][4], requestList[i][2], requestList[i][3])
+              mRail.station_confirm_dispatch(requestList[i][4], requestList[i][2], requestList[i][3])
             end
             --check if it ended in a platform
             for m = 1, #stationConfig.platformIDNameMapping do
               if tonumber(routesToTry[k]) == tonumber(stationConfig.platformIDNameMapping[m][1]) then
                 local platformName = tostring(stationConfig.platformIDNameMapping[m][2])
                 local serviceID = tostring(requestList[i][2])
-                mRail.screen_platform_update(modem, config.stationID, serviceID, platformName)
+                mRail.screen_platform_update(config.stationID, serviceID, platformName)
               end
             end
             stateRemoved = true
