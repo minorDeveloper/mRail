@@ -144,23 +144,21 @@ function mRail.ping(programName, id)
     ["programName"] = programName,
     ["id"] = id
   })
-  local modem = peripheral.wrap(mRail.getModemSide())
   mRail.transmit(mRail.channels.ping_channel,1,message)
 end
 
 --- Requests all active computers retransmit pings
-function mRail.requestPings(modem)
+function mRail.requestPings()
   log.info("Requesting pings from all connected services")
   mRail.transmit(mRail.channels.ping_request_channel,1,"")
 end
 
 --- Transmits a control message to another device
--- @param modem
 -- @param programName The program type of the computer being controlled
 -- @param id The id of the computer being controlled
 -- @param command (Table) command being transmitted
 -- @param dataset Any additional data accompanying the command
-function mRail.control(modem, programName, id, command, dataset)
+function mRail.control(programName, id, command, dataset)
   log.info("Transmitting control message")
   local message = json.encode({
     ["programName"] = programName,
@@ -172,11 +170,10 @@ function mRail.control(modem, programName, id, command, dataset)
 end
 
 --- Requests information from another device
--- @param modem
 -- @param programName The program type of the receiving device
 -- @param id ID of the receiving device
 -- @param command Command being transmitted
-function mRail.requestState(modem, programName, id, command)
+function mRail.requestState(programName, id, command)
   log.info("Transmitting request for data from " .. tostring(programName) .. " id: " .. tostring(id))
   local message = json.encode({
     ["programName"] = programName,
@@ -187,13 +184,12 @@ function mRail.requestState(modem, programName, id, command)
 end
 
 --- Response to a control message
--- @param modem
 -- @param programName Program type of this device
 -- @param id The id of this device
 -- @param command Copy of the command sent
 -- @param success If the command was successfully executed
 -- @param returnMessage Human readable message describing the command executed
-function mRail.response(modem, programName, id, command, success, returnMessage)
+function mRail.response(programName, id, command, success, returnMessage)
   log.info("Responding to control message")
   local message = json.encode({
     ["programName"] = programName,
@@ -206,12 +202,11 @@ function mRail.response(modem, programName, id, command, success, returnMessage)
 end
 
 --- Broadcast the detection of a train at a given detector
--- @param modem
 -- @param detectorID
 -- @param serviceID Service (string) of the detected train
 -- @param trainID ID of the detected train
 -- @param textMessage Message to be broadcast
-function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMessage)
+function mRail.detection_broadcast(detectorID, serviceID, trainID, textMessage)
 	log.info("Notifying Tracker and Stations of detection")
 	local message = json.encode({
 		["detectorID"] = detectorID,
@@ -223,11 +218,10 @@ function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMe
 end
 
 --- Request information about the next station for a given service
--- @param modem 
 -- @param serviceID
 -- @param trainID
 -- @param stationID
-function mRail.next_station_request(modem, serviceID, trainID, stationID)
+function mRail.next_station_request(serviceID, trainID, stationID)
   log.info("Requesting next station update for " .. serviceID)
   local message = json.encode({
     ["serviceID"] = serviceID,
@@ -238,10 +232,9 @@ function mRail.next_station_request(modem, serviceID, trainID, stationID)
 end
 
 --- Provides tracking with an update regarding the next station for a given train
--- @param modem
 -- @param nextStationID
 -- @param trainID
-function mRail.next_station_update(modem, nextStationID, trainID)
+function mRail.next_station_update(nextStationID, trainID)
   log.info(trainID .. ": next station is " .. nextStationID)
   local message = json.encode({
     ["nextStationID"] = nextStationID,
@@ -252,12 +245,11 @@ end
 
 --- Requests the dispatch server release the given train
 -- . Use this when manually triggering a train release to ensure departure boards and alarms are set correctly
--- @param modem
 -- @param receiverID Depot ID that the service is to be released from
 -- @param serviceID
 -- @param trainID
--- @usage mRail.request_dispatch(modem, 80, "HR Expr", 5)
-function mRail.request_dispatch(modem, receiverID, serviceID, trainID)
+-- @usage mRail.request_dispatch(80, "HR Expr", 5)
+function mRail.request_dispatch(receiverID, serviceID, trainID)
 	log.info("Requesting the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
 		['recieverID'] = receiverID,
@@ -271,11 +263,10 @@ end
 
 --- Dispatch requesting the release of a train from a depot
 -- . Not for manual use
--- @param modem
 -- @param receiverID
 -- @param serviceID
 -- @param trainID
-function mRail.dispatch_train(modem, receiverID, serviceID, trainID)
+function mRail.dispatch_train(receiverID, serviceID, trainID)
 	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
 		['recieverID'] = receiverID,
@@ -288,11 +279,10 @@ function mRail.dispatch_train(modem, receiverID, serviceID, trainID)
 end
 
 --- Command to a station to release a train from its platform
--- @param modem
 -- @param stationID
 -- @param serviceID
 -- @param trainID
-function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
+function mRail.station_dispatch_train(stationID, serviceID, trainID)
 	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.encode({
 		['stationID'] = stationID,
@@ -307,12 +297,11 @@ end
 -- Station-Depot Comms
 
 --- Allows a depot to request permission to dispatch a train
--- @param modem
 -- @param stationID
 -- @param serviceID
 -- @param trainID
 -- @param detectorID
-function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, detectorID)
+function mRail.station_request_dispatch(stationID, serviceID, trainID, detectorID)
 	log.info("Requesting permission from station " .. stationID .. "to dispatch train")
 	local message = json.encode({
 		['stationID'] = stationID,
@@ -326,11 +315,10 @@ function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, de
 end
 
 --- Station confirms that a given depot may release a train
--- @param modem
 -- @param receiverID
 -- @param serviceID
 -- @param trainID
-function mRail.station_confirm_dispatch(modem, receiverID, serviceID, trainID)
+function mRail.station_confirm_dispatch(receiverID, serviceID, trainID)
 	log.info("Giving " .. receiverID .. " permission to dispatch train")
 	local message = json.encode({
 		['recieverID'] = receiverID,
@@ -343,13 +331,12 @@ function mRail.station_confirm_dispatch(modem, receiverID, serviceID, trainID)
 end
 
 --- DEPRECATED, allows for a specific route to be requested through the given station
--- @param modem
 -- @param stationID
 -- @param entryID
 -- @param exitID
 -- @param serviceID
 -- @param trainID
-function mRail.station_request_route(modem, stationID, entryID, exitID, serviceID, trainID)
+function mRail.station_request_route(stationID, entryID, exitID, serviceID, trainID)
 	log.info("Requesting route")
 	local message = json.encode({
 		['stationID'] = stationID,
@@ -366,11 +353,10 @@ end
 
 --- Allows a detector computer to request permission from block control to
 -- release a train
--- @param modem
 -- @param detectorID
 -- @param serviceID
 -- @param trainID
-function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
+function mRail.oneway_request_dispatch(detectorID, serviceID, trainID)
 	log.info("Requesting permission to dispatch train " .. trainID)
 	local message = json.encode({
 		['detectorID'] = detectorID,
@@ -383,11 +369,10 @@ function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 end
 
 --- Block control gives permission for a detector computer to release a train
--- @param modem
 -- @param detectorID
 -- @param serviceID
 -- @param trainID
-function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
+function mRail.oneway_confirm_dispatch(detectorID, serviceID, trainID)
 	log.info("Giving " .. detectorID .. " permission to release train")
 	local message = json.encode({
 		['detectorID'] = detectorID,
@@ -400,9 +385,8 @@ function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 end
 
 --- Provides information regarding the current timetable and routing of trains
--- @param modem
 -- @param timetable
-function mRail.timetable_update(modem, timetable)
+function mRail.timetable_update(timetable)
 	log.info("Updating timetable for all stations")
 	local message = json.encode({
 		['timetable'] = timetable
@@ -414,11 +398,10 @@ end
 
 --- Provides information to platform displays regarding the arrivals and departures 
 -- still due at a given station
--- @param modem
 -- @param stationID
 -- @param arrivals
 -- @param departures
-function mRail.screen_update(modem, stationID, arrivals, departures)
+function mRail.screen_update(stationID, arrivals, departures)
   log.info("Sending updates to screens")
 	local message = json.encode({
 		['stationID'] = stationID,
@@ -431,11 +414,10 @@ function mRail.screen_update(modem, stationID, arrivals, departures)
 end
 
 --- Allows stations to communicate platform allocations with the display screens
--- @param modem
 -- @param stationID
 -- @param serviceID
 -- @param platform
-function mRail.screen_platform_update(modem, stationID, serviceID, platform)
+function mRail.screen_platform_update(stationID, serviceID, platform)
   log.info("Updating platform allocation")
 	local message = json.encode({
 		['stationID'] = stationID,
@@ -448,10 +430,9 @@ function mRail.screen_platform_update(modem, stationID, serviceID, platform)
 end
 
 --- Allows an error to be raised with a given error level
--- @param modem
 -- @param errMessage
 -- @param errorLevel
-function mRail.raise_error(modem, errMessage, errorLevel)
+function mRail.raise_error(errMessage, errorLevel)
   log.error(errMessage)
 	local x = 0
 	local y = 0
@@ -517,10 +498,9 @@ end
 
 
 --- Loads config file into variable (uses modem for error messages)
--- @param modem
 -- @param file_name
 -- @param config_var
-function mRail.loadConfig(modem,file_name,config_var)
+function mRail.loadConfig(file_name,config_var)
   log.info("Loadign config file")
   local returnVal = loadConfig(file_name,config_var)
   
