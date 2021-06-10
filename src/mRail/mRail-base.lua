@@ -74,7 +74,7 @@ function program.control_channel(decodedMessage)
     response = {false, "Command did not emit a response"}
   end
   
-  mRail.response(modem, decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
+  mRail.response(decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
 end
 --
 

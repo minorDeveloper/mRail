@@ -136,7 +136,7 @@ function updateDisplays()
 		table.sort(arrivals, function(a,b) return a[1] < b[1] end)
 		table.sort(departures, function(a,b) return a[1] < b[1] end)
 		--print("Updating displays")
-		mRail.screen_update(modem, i, arrivals, departures)
+		mRail.screen_update(i, arrivals, departures)
 	end
 end
 
@@ -144,11 +144,11 @@ end
 
 
 function dispatch_from_depot(depotID, serviceID, trainID)
-	mRail.dispatch_train(modem, depotID, serviceID, trainID)
+	mRail.dispatch_train(depotID, serviceID, trainID)
 end
 
 function dispatch_from_station(stationID, serviceID, trainID)
-	mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
+	mRail.station_dispatch_train(stationID, serviceID, trainID)
 end
 
 function printColourAndRoute(serviceID, trainID)
@@ -270,13 +270,13 @@ function program.next_station_request(decodedMessage)
   
   if nextStationID == 0 then return end
   
-  mRail.next_station_update(modem, nextStationID, decodedMessage.trainID)
+  mRail.next_station_update(nextStationID, decodedMessage.trainID)
 end
 
 function program.request_dispatch_channel(decodedMessage)
   -- Handle messages on the request dispatch channel
   -- dispatch the train
-  mRail.dispatch_train(modem, decodedMessage.recieverID, decodedMessage.serviceID, decodedMessage.trainID)
+  mRail.dispatch_train(decodedMessage.recieverID, decodedMessage.serviceID, decodedMessage.trainID)
   -- add the train to list of non-timetabledServices
   local serviceID = decodedMessage.serviceID
   local serviceID_number = 0

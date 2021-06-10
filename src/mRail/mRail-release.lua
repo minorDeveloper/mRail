@@ -45,7 +45,7 @@ function toDispenser(trainID)
 		pushFirstItem(19,27,3)
 		return true
 	else
-		mRail.raise_error(modem,"Train not in depot", 3)
+		mRail.raise_error("Train not in depot", 3)
 		return false
 	end
 end
@@ -82,9 +82,9 @@ local function requestDispatch(trainID, serviceID)
   -- Check that the train exists in the chest before asking the station for a route
   if checkExists(decodedMessage.trainID) == true then
     -- Request a route from the station
-    mRail.station_request_dispatch(modem, config.parentStation, decodedMessage.serviceID, decodedMessage.trainID, config.id)
+    mRail.station_request_dispatch(config.parentStation, decodedMessage.serviceID, decodedMessage.trainID, config.id)
     -- Update the tracker that we are waiting for permission to dispatch
-    mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
+    mRail.detection_broadcast(config.id, decodedMessage.serviceID, decodedMessage.trainID, "Pending dispatch from " .. mRail.location_name[tonumber(config.id)])
     return {false, "Requested the dispatch of train " .. tostring(trainID)}
   end
   return {false, "Unable to dispatch train " .. tostring(trainID) .. " as it doesnt exist"}
@@ -170,11 +170,11 @@ function program.station_dispatch_confirm(decodedMessage)
   if decodedMessage.recieverID == config.id then
     log.info("Station has authorised the release")
     if dispatchTrain(decodedMessage.trainID, tostring(decodedMessage.serviceID)) == true then
-      mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, "Dispatched from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parentStation)])
+      mRail.detection_broadcast(config.id, decodedMessage.serviceID, decodedMessage.trainID, "Dispatched from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parentStation)])
     else
       local message = "Dispatched failed from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parentStation)]
-      mRail.detection_broadcast(modem, config.id, decodedMessage.serviceID, decodedMessage.trainID, message)
-      mRail.raise_error(modem, message, 1)
+      mRail.detection_broadcast(config.id, decodedMessage.serviceID, decodedMessage.trainID, message)
+      mRail.raise_error(message, 1)
       log.error(message)
     end
   end
