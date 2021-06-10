@@ -190,9 +190,16 @@ function mRail.requestGPSData(radius, timeout)
   -- Print that to a screen
   for i = 1, #nearbyComputers do
     local idText = ""
-    for j = 1, #nearbyComputers[i][3] do
-      idText = idText .. tostring(nearbyComputers[i][3][j]) .. " "
+    if nearbyComputers[i][3] ~= nil then
+      if type(nearbyComputers[i][3]) == "table" then
+        for j = 1, #nearbyComputers[i][3] do
+          idText = idText .. tostring(nearbyComputers[i][3][j]) .. " "
+        end
+      else
+        idText = nearbyComputers[i][3]
+      end
     end
+    
     print(nearbyComputers[i][4] .. ": " .. nearbyComputers[i][1] .. "-ID: " .. idText)
   end
 end
