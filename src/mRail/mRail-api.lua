@@ -13,6 +13,8 @@ local mRail = {}
 json = require("./mRail/json")
 log = require("./mRail/log")
 
+mRail.modem = nil
+
 
 --- Color name to number conversion
 local col_to_num = {
@@ -143,13 +145,13 @@ function mRail.ping(programName, id)
     ["id"] = id
   })
   local modem = peripheral.wrap(mRail.getModemSide())
-  modem.transmit(mRail.channels.ping_channel,1,message)
+  mRail.transmit(mRail.channels.ping_channel,1,message)
 end
 
 --- Requests all active computers retransmit pings
 function mRail.requestPings(modem)
   log.info("Requesting pings from all connected services")
-  modem.transmit(mRail.channels.ping_request_channel,1,"")
+  mRail.transmit(mRail.channels.ping_request_channel,1,"")
 end
 
 --- Transmits a control message to another device
@@ -166,7 +168,7 @@ function mRail.control(modem, programName, id, command, dataset)
     ["command"] = command,
     ["dataset"] = dataset
   })
-  modem.transmit(mRail.channels.control_channel,1,message)
+  mRail.transmit(mRail.channels.control_channel,1,message)
 end
 
 --- Requests information from another device
@@ -181,7 +183,7 @@ function mRail.requestState(modem, programName, id, command)
     ["id"] = id,
     ["command"] = command
   })
-  modem.transmit(mRail.channels.data_request_channel,1,message)
+  mRail.transmit(mRail.channels.data_request_channel,1,message)
 end
 
 --- Response to a control message
@@ -200,7 +202,7 @@ function mRail.response(modem, programName, id, command, success, returnMessage)
     ["success"] = success,
     ["message"] = returnMessage
   })
-  modem.transmit(mRail.channels.control_response_channel,1,message)
+  mRail.transmit(mRail.channels.control_response_channel,1,message)
 end
 
 --- Broadcast the detection of a train at a given detector
@@ -217,7 +219,7 @@ function mRail.detection_broadcast(modem, detectorID, serviceID, trainID, textMe
 		["trainID"] = trainID,
 		["textMessage"] = textMessage
 		})
-	modem.transmit(mRail.channels.detect_channel,1,message)
+	mRail.transmit(mRail.channels.detect_channel,1,message)
 end
 
 --- Request information about the next station for a given service
@@ -232,7 +234,7 @@ function mRail.next_station_request(modem, serviceID, trainID, stationID)
     ["trainID"]   = trainID,
     ["stationID"] = stationID
   })
-  modem.transmit(mRail.channels.next_station_request, 1, message)
+  mRail.transmit(mRail.channels.next_station_request, 1, message)
 end
 
 --- Provides tracking with an update regarding the next station for a given train
@@ -245,7 +247,7 @@ function mRail.next_station_update(modem, nextStationID, trainID)
     ["nextStationID"] = nextStationID,
     ["trainID"] = trainID
   })
-  modem.transmit(mRail.channels.next_station_update, 1, message)
+  mRail.transmit(mRail.channels.next_station_update, 1, message)
 end
 
 --- Requests the dispatch server release the given train
@@ -264,7 +266,7 @@ function mRail.request_dispatch(modem, receiverID, serviceID, trainID)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.request_dispatch_channel,1,message)
+	mRail.transmit(mRail.channels.request_dispatch_channel,1,message)
 end
 
 --- Dispatch requesting the release of a train from a depot
@@ -282,7 +284,7 @@ function mRail.dispatch_train(modem, receiverID, serviceID, trainID)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.dispatch_channel,1,message)
+	mRail.transmit(mRail.channels.dispatch_channel,1,message)
 end
 
 --- Command to a station to release a train from its platform
@@ -299,7 +301,7 @@ function mRail.station_dispatch_train(modem, stationID, serviceID, trainID)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.station_dispatch_channel,1,message)
+	mRail.transmit(mRail.channels.station_dispatch_channel,1,message)
 end
 
 -- Station-Depot Comms
@@ -320,7 +322,7 @@ function mRail.station_request_dispatch(modem, stationID, serviceID, trainID, de
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.station_dispatch_request,1,message)
+	mRail.transmit(mRail.channels.station_dispatch_request,1,message)
 end
 
 --- Station confirms that a given depot may release a train
@@ -337,7 +339,7 @@ function mRail.station_confirm_dispatch(modem, receiverID, serviceID, trainID)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.station_dispatch_confirm,1,message)
+	mRail.transmit(mRail.channels.station_dispatch_confirm,1,message)
 end
 
 --- DEPRECATED, allows for a specific route to be requested through the given station
@@ -356,7 +358,7 @@ function mRail.station_request_route(modem, stationID, entryID, exitID, serviceI
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
-	modem.transmit(mRail.channels.station_route_request,1,message)
+	mRail.transmit(mRail.channels.station_route_request,1,message)
 end
 
 
@@ -377,7 +379,7 @@ function mRail.oneway_request_dispatch(modem, detectorID, serviceID, trainID)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.oneway_dispatch_request,1,message)
+	mRail.transmit(mRail.channels.oneway_dispatch_request,1,message)
 end
 
 --- Block control gives permission for a detector computer to release a train
@@ -394,7 +396,7 @@ function mRail.oneway_confirm_dispatch(modem, detectorID, serviceID, trainID)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.oneway_dispatch_confirm,1,message)
+	mRail.transmit(mRail.channels.oneway_dispatch_confirm,1,message)
 end
 
 --- Provides information regarding the current timetable and routing of trains
@@ -407,7 +409,7 @@ function mRail.timetable_update(modem, timetable)
 	})
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.timetable_updates,1,message)
+	mRail.transmit(mRail.channels.timetable_updates,1,message)
 end
 
 --- Provides information to platform displays regarding the arrivals and departures 
@@ -425,7 +427,7 @@ function mRail.screen_update(modem, stationID, arrivals, departures)
   })
   log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.screen_update_channel,1,message)
+	mRail.transmit(mRail.channels.screen_update_channel,1,message)
 end
 
 --- Allows stations to communicate platform allocations with the display screens
@@ -442,7 +444,7 @@ function mRail.screen_platform_update(modem, stationID, serviceID, platform)
   })
   log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.screen_platform_channel,1,message)
+	mRail.transmit(mRail.channels.screen_platform_channel,1,message)
 end
 
 --- Allows an error to be raised with a given error level
@@ -464,7 +466,7 @@ function mRail.raise_error(modem, errMessage, errorLevel)
 })
 	log.debug("Message transmitted")
 	log.trace(message)
-	modem.transmit(mRail.channels.error_channel,1,message)
+	mRail.transmit(mRail.channels.error_channel,1,message)
 end
 
 
@@ -624,6 +626,22 @@ function mRail.getModemSide()
     end
   end
   return sModemSide
+end
+
+function mRail.wrapModem()
+  local modemSide = mRail.getModemSide()
+  if modemSide ~= nil then
+    mRail.modem = peripheral.wrap(modemSide)
+    return true
+  end
+  return false
+end
+
+function mRail.transmit(channel, returnChannel, message)
+  if mRail.modem == nil and mRail.wrapModem() == false then
+    return
+  end
+  mRail.transmit(channel,returnChannel,message)
 end
 
 --- Checks if two variables are the same string
