@@ -79,83 +79,83 @@
 	<td class="summary">Sends a ping from the given computer with a program name and id</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#requestPings">requestPings (modem)</a></td>
+	<td class="name" nowrap><a href="#requestPings">requestPings ()</a></td>
 	<td class="summary">Requests all active computers retransmit pings</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#control">control (modem, programName, id, command, dataset)</a></td>
+	<td class="name" nowrap><a href="#control">control (programName, id, command, dataset)</a></td>
 	<td class="summary">Transmits a control message to another device</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#requestState">requestState (modem, programName, id, command)</a></td>
+	<td class="name" nowrap><a href="#requestState">requestState (programName, id, command)</a></td>
 	<td class="summary">Requests information from another device</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#response">response (modem, programName, id, command, success, returnMessage)</a></td>
+	<td class="name" nowrap><a href="#response">response (programName, id, command, success, returnMessage)</a></td>
 	<td class="summary">Response to a control message</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#detection_broadcast">detection_broadcast (modem, detectorID, serviceID, trainID, textMessage)</a></td>
+	<td class="name" nowrap><a href="#detection_broadcast">detection_broadcast (detectorID, serviceID, trainID, textMessage)</a></td>
 	<td class="summary">Broadcast the detection of a train at a given detector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#next_station_request">next_station_request (modem, serviceID, trainID, stationID)</a></td>
+	<td class="name" nowrap><a href="#next_station_request">next_station_request (serviceID, trainID, stationID)</a></td>
 	<td class="summary">Request information about the next station for a given service</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#next_station_update">next_station_update (modem, nextStationID, trainID)</a></td>
+	<td class="name" nowrap><a href="#next_station_update">next_station_update (nextStationID, trainID)</a></td>
 	<td class="summary">Provides tracking with an update regarding the next station for a given train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#request_dispatch">request_dispatch (modem, receiverID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#request_dispatch">request_dispatch (receiverID, serviceID, trainID)</a></td>
 	<td class="summary">Requests the dispatch server release the given train
  .</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#dispatch_train">dispatch_train (modem, receiverID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#dispatch_train">dispatch_train (receiverID, serviceID, trainID)</a></td>
 	<td class="summary">Dispatch requesting the release of a train from a depot
  .</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#station_dispatch_train">station_dispatch_train (modem, stationID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#station_dispatch_train">station_dispatch_train (stationID, serviceID, trainID)</a></td>
 	<td class="summary">Command to a station to release a train from its platform</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#station_request_dispatch">station_request_dispatch (modem, stationID, serviceID, trainID, detectorID)</a></td>
+	<td class="name" nowrap><a href="#station_request_dispatch">station_request_dispatch (stationID, serviceID, trainID, detectorID)</a></td>
 	<td class="summary">Allows a depot to request permission to dispatch a train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#station_confirm_dispatch">station_confirm_dispatch (modem, receiverID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#station_confirm_dispatch">station_confirm_dispatch (receiverID, serviceID, trainID)</a></td>
 	<td class="summary">Station confirms that a given depot may release a train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#station_request_route">station_request_route (modem, stationID, entryID, exitID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#station_request_route">station_request_route (stationID, entryID, exitID, serviceID, trainID)</a></td>
 	<td class="summary">DEPRECATED, allows for a specific route to be requested through the given station</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#oneway_request_dispatch">oneway_request_dispatch (modem, detectorID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#oneway_request_dispatch">oneway_request_dispatch (detectorID, serviceID, trainID)</a></td>
 	<td class="summary">Allows a detector computer to request permission from block control to
  release a train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#oneway_confirm_dispatch">oneway_confirm_dispatch (modem, detectorID, serviceID, trainID)</a></td>
+	<td class="name" nowrap><a href="#oneway_confirm_dispatch">oneway_confirm_dispatch (detectorID, serviceID, trainID)</a></td>
 	<td class="summary">Block control gives permission for a detector computer to release a train</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#timetable_update">timetable_update (modem, timetable)</a></td>
+	<td class="name" nowrap><a href="#timetable_update">timetable_update (timetable)</a></td>
 	<td class="summary">Provides information regarding the current timetable and routing of trains</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#screen_update">screen_update (modem, stationID, arrivals, departures)</a></td>
+	<td class="name" nowrap><a href="#screen_update">screen_update (stationID, arrivals, departures)</a></td>
 	<td class="summary">Provides information to platform displays regarding the arrivals and departures
  still due at a given station</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#screen_platform_update">screen_platform_update (modem, stationID, serviceID, platform)</a></td>
+	<td class="name" nowrap><a href="#screen_platform_update">screen_platform_update (stationID, serviceID, platform)</a></td>
 	<td class="summary">Allows stations to communicate platform allocations with the display screens</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#raise_error">raise_error (modem, errMessage, errorLevel)</a></td>
+	<td class="name" nowrap><a href="#raise_error">raise_error (errMessage, errorLevel)</a></td>
 	<td class="summary">Allows an error to be raised with a given error level</td>
 	</tr>
 	<tr>
@@ -167,7 +167,7 @@
 	<td class="summary">Loads data from a given file</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#loadConfig">loadConfig (modem, file_name, config_var)</a></td>
+	<td class="name" nowrap><a href="#loadConfig">loadConfig (file_name, config_var)</a></td>
 	<td class="summary">Loads config file into variable (uses modem for error messages)</td>
 	</tr>
 	<tr>
@@ -282,20 +282,12 @@
 </dd>
     <dt>
     <a name = "requestPings"></a>
-    <strong>requestPings (modem)</strong>
+    <strong>requestPings ()</strong>
     </dt>
     <dd>
     Requests all active computers retransmit pings
 
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
-    </ul>
 
 
 
@@ -304,7 +296,7 @@
 </dd>
     <dt>
     <a name = "control"></a>
-    <strong>control (modem, programName, id, command, dataset)</strong>
+    <strong>control (programName, id, command, dataset)</strong>
     </dt>
     <dd>
     Transmits a control message to another device
@@ -312,11 +304,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">programName</span>
          The program type of the computer being controlled
         </li>
@@ -338,7 +325,7 @@
 </dd>
     <dt>
     <a name = "requestState"></a>
-    <strong>requestState (modem, programName, id, command)</strong>
+    <strong>requestState (programName, id, command)</strong>
     </dt>
     <dd>
     Requests information from another device
@@ -346,11 +333,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">programName</span>
          The program type of the receiving device
         </li>
@@ -369,7 +351,7 @@
 </dd>
     <dt>
     <a name = "response"></a>
-    <strong>response (modem, programName, id, command, success, returnMessage)</strong>
+    <strong>response (programName, id, command, success, returnMessage)</strong>
     </dt>
     <dd>
     Response to a control message
@@ -377,11 +359,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">programName</span>
          Program type of this device
         </li>
@@ -406,7 +383,7 @@
 </dd>
     <dt>
     <a name = "detection_broadcast"></a>
-    <strong>detection_broadcast (modem, detectorID, serviceID, trainID, textMessage)</strong>
+    <strong>detection_broadcast (detectorID, serviceID, trainID, textMessage)</strong>
     </dt>
     <dd>
     Broadcast the detection of a train at a given detector
@@ -414,11 +391,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">detectorID</span>
 
 
@@ -442,7 +414,7 @@
 </dd>
     <dt>
     <a name = "next_station_request"></a>
-    <strong>next_station_request (modem, serviceID, trainID, stationID)</strong>
+    <strong>next_station_request (serviceID, trainID, stationID)</strong>
     </dt>
     <dd>
     Request information about the next station for a given service
@@ -450,11 +422,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">serviceID</span>
 
 
@@ -479,7 +446,7 @@
 </dd>
     <dt>
     <a name = "next_station_update"></a>
-    <strong>next_station_update (modem, nextStationID, trainID)</strong>
+    <strong>next_station_update (nextStationID, trainID)</strong>
     </dt>
     <dd>
     Provides tracking with an update regarding the next station for a given train
@@ -487,11 +454,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">nextStationID</span>
 
 
@@ -511,7 +473,7 @@
 </dd>
     <dt>
     <a name = "request_dispatch"></a>
-    <strong>request_dispatch (modem, receiverID, serviceID, trainID)</strong>
+    <strong>request_dispatch (receiverID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Requests the dispatch server release the given train
@@ -520,11 +482,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">receiverID</span>
          Depot ID that the service is to be released from
         </li>
@@ -545,13 +502,13 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">mRail.request_dispatch(modem, <span class="number">80</span>, <span class="string">"HR Expr"</span>, <span class="number">5</span>)</pre>
+        <pre class="example">mRail.request_dispatch(<span class="number">80</span>, <span class="string">"HR Expr"</span>, <span class="number">5</span>)</pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "dispatch_train"></a>
-    <strong>dispatch_train (modem, receiverID, serviceID, trainID)</strong>
+    <strong>dispatch_train (receiverID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Dispatch requesting the release of a train from a depot
@@ -560,11 +517,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">receiverID</span>
 
 
@@ -589,7 +541,7 @@
 </dd>
     <dt>
     <a name = "station_dispatch_train"></a>
-    <strong>station_dispatch_train (modem, stationID, serviceID, trainID)</strong>
+    <strong>station_dispatch_train (stationID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Command to a station to release a train from its platform
@@ -597,11 +549,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">stationID</span>
 
 
@@ -626,7 +573,7 @@
 </dd>
     <dt>
     <a name = "station_request_dispatch"></a>
-    <strong>station_request_dispatch (modem, stationID, serviceID, trainID, detectorID)</strong>
+    <strong>station_request_dispatch (stationID, serviceID, trainID, detectorID)</strong>
     </dt>
     <dd>
     Allows a depot to request permission to dispatch a train
@@ -634,11 +581,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">stationID</span>
 
 
@@ -668,7 +610,7 @@
 </dd>
     <dt>
     <a name = "station_confirm_dispatch"></a>
-    <strong>station_confirm_dispatch (modem, receiverID, serviceID, trainID)</strong>
+    <strong>station_confirm_dispatch (receiverID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Station confirms that a given depot may release a train
@@ -676,11 +618,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">receiverID</span>
 
 
@@ -705,7 +642,7 @@
 </dd>
     <dt>
     <a name = "station_request_route"></a>
-    <strong>station_request_route (modem, stationID, entryID, exitID, serviceID, trainID)</strong>
+    <strong>station_request_route (stationID, entryID, exitID, serviceID, trainID)</strong>
     </dt>
     <dd>
     DEPRECATED, allows for a specific route to be requested through the given station
@@ -713,11 +650,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">stationID</span>
 
 
@@ -752,7 +684,7 @@
 </dd>
     <dt>
     <a name = "oneway_request_dispatch"></a>
-    <strong>oneway_request_dispatch (modem, detectorID, serviceID, trainID)</strong>
+    <strong>oneway_request_dispatch (detectorID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Allows a detector computer to request permission from block control to
@@ -761,11 +693,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">detectorID</span>
 
 
@@ -790,7 +717,7 @@
 </dd>
     <dt>
     <a name = "oneway_confirm_dispatch"></a>
-    <strong>oneway_confirm_dispatch (modem, detectorID, serviceID, trainID)</strong>
+    <strong>oneway_confirm_dispatch (detectorID, serviceID, trainID)</strong>
     </dt>
     <dd>
     Block control gives permission for a detector computer to release a train
@@ -798,11 +725,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">detectorID</span>
 
 
@@ -827,7 +749,7 @@
 </dd>
     <dt>
     <a name = "timetable_update"></a>
-    <strong>timetable_update (modem, timetable)</strong>
+    <strong>timetable_update (timetable)</strong>
     </dt>
     <dd>
     Provides information regarding the current timetable and routing of trains
@@ -835,11 +757,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">timetable</span>
 
 
@@ -854,7 +771,7 @@
 </dd>
     <dt>
     <a name = "screen_update"></a>
-    <strong>screen_update (modem, stationID, arrivals, departures)</strong>
+    <strong>screen_update (stationID, arrivals, departures)</strong>
     </dt>
     <dd>
     Provides information to platform displays regarding the arrivals and departures
@@ -863,11 +780,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">stationID</span>
 
 
@@ -892,7 +804,7 @@
 </dd>
     <dt>
     <a name = "screen_platform_update"></a>
-    <strong>screen_platform_update (modem, stationID, serviceID, platform)</strong>
+    <strong>screen_platform_update (stationID, serviceID, platform)</strong>
     </dt>
     <dd>
     Allows stations to communicate platform allocations with the display screens
@@ -900,11 +812,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">stationID</span>
 
 
@@ -929,7 +836,7 @@
 </dd>
     <dt>
     <a name = "raise_error"></a>
-    <strong>raise_error (modem, errMessage, errorLevel)</strong>
+    <strong>raise_error (errMessage, errorLevel)</strong>
     </dt>
     <dd>
     Allows an error to be raised with a given error level
@@ -937,11 +844,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">errMessage</span>
 
 
@@ -1015,7 +917,7 @@
 </dd>
     <dt>
     <a name = "loadConfig"></a>
-    <strong>loadConfig (modem, file_name, config_var)</strong>
+    <strong>loadConfig (file_name, config_var)</strong>
     </dt>
     <dd>
     Loads config file into variable (uses modem for error messages)
@@ -1023,11 +925,6 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">modem</span>
-
-
-
-        </li>
         <li><span class="parameter">file_name</span>
 
 
@@ -1570,7 +1467,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-06-10 10:14:04 </i>
+<i style="float:right;">Last updated 2021-06-10 10:31:04 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
