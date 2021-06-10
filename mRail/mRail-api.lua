@@ -641,7 +641,7 @@ function mRail.transmit(channel, returnChannel, message)
   if mRail.modem == nil and mRail.wrapModem() == false then
     return
   end
-  mRail.transmit(channel,returnChannel,message)
+  mRail.modem.transmit(channel,returnChannel,message)
 end
 
 --- Checks if two variables are the same string
