@@ -134,18 +134,20 @@ mRail.channels = {
 	request_dispatch_channel = 20, -- 20
   control_response_channel = 21, -- 21
   gps_data_request_channel = 22, -- 22
-  gps_data_response_channel= 23, -- 23
+  gps_data_response_channel= 23, -- 23 DEPRECATE
 	error_channel            = 999,-- 999
 }
 
 --- Sends a ping from the given computer with a program name and id
 -- @param programName Name of the current running program
 -- @param id Id of the computer
-function mRail.ping(programName, id)
+-- @param name of the computer (not all program types require a name yet)
+function mRail.ping(programName, id, name)
   log.info("Ping!")
   local message = json.encode({
     ["programName"] = programName,
-    ["id"] = id
+    ["id"] = id,
+    ["name"] = name
   })
   mRail.transmit(mRail.channels.ping_channel,1,message)
 end
@@ -156,18 +158,17 @@ function mRail.requestPings()
   mRail.transmit(mRail.channels.ping_request_channel,1,"")
 end
 
-local function receiveMessages(timeout)
+local function receiveMessages(radius, timeout)
   local nearbyComputers = {}
   
   local timeoutTimer = os.startTimer(timeout)
   while true do
     event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
-    print(event, param1, param2, param3, param4, param5, param6)
     if event == "timer" and mRail.identNum(param1, timeoutTime) then
       return nearbyComputers
-    elseif event == "modem_message" and param2 == gps_data_response_channel then
+    elseif event == "modem_message" and param2 == mRail.channels.ping_channel then
       local decodedMessage = json.decode(param4)
-      table.insert(nearbyComputers, {decodedMessage.computerType, decodedMessage.info, decodedMessage.distance})
+      table.insert(nearbyComputers, {decodedMessage.programName, decodedMessage.name, decodedMessage.id, param5})
     end
   end
 end
@@ -178,28 +179,20 @@ function mRail.requestGPSData(radius, timeout)
   
   local locX, locY, locZ = gps.locate()
   
-  local message = json.encode({
-    ["locX"] = locX,
-    ["locY"] = locY,
-    ["locZ"] = locZ,
-    ["radius"] = radius
-  })
-  
-  mRail.transmit(mRail.channels.gps_data_request_channel,1,message)
-  mRail.modem.open(mRail.channels.gps_data_response_channel)
+  mRail.modem.open(mRail.channels.ping_channel)
+  mRail.requestPings()
   -- Keep recieving messages and put the info in a table until the time runs out
-  local nearbyComputers = receiveMessages(timeout)
+  local nearbyComputers = receiveMessages(radius, timeout)
   
   -- Sort the table in order of distance
-  table.sort(nearbyComputers, function(a,b) return a[3] < b[3] end)
+  table.sort(nearbyComputers, function(a,b) return a[4] < b[4] end)
   
   -- Print that to a screen
   for i = 1, #nearbyComputers do
-    print(nearbyComputers[1] .. ": " .. nearbyComputers[2] .. "-ID: " .. nearbyComputers[3])
+    print(nearbyComputers[4] .. ": " .. nearbyComputers[1] .. "-ID: " .. nearbyComputers[3])
   end
 end
-
-
+--
 
 function mRail.responseGPSData(computerType, info, distance)
   local message = json.encode({
