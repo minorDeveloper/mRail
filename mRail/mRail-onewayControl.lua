@@ -128,7 +128,7 @@ function determineBlockExit(detectorID)
 	local blockID = 0
 	for i = 1, #oneWayState do
 		for j = 1,#oneWayState[i][4] do
-			if oneWayState[i][4][j] == detectorID then
+			if oneWayState[i][4][j] == tonumber(detectorID) then
 				blockID = i
 				return blockID
 			end
