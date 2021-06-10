@@ -155,6 +155,20 @@ function mRail.requestPings()
   mRail.transmit(mRail.channels.ping_request_channel,1,"")
 end
 
+local function receiveMessages(timeout)
+  local nearbyComputers = {}
+  while true do
+    event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
+    
+    if event == "timer" and param1 == timeoutTime then
+      return nearbyComputers
+    elseif event == "modem_message" and param2 == gps_data_response_channel then
+      local decodedMessage = json.decode(param4)
+      table.insert(nearbyComputers, {decodedMessage.computerType, decodedMessage.info, decodedMessage.distance})
+    end
+  end
+end
+
 function mRail.requestGPSData(radius, timeout)
   log.info("Requesting computers within " .. radius .. " blocks respond with info")
   
@@ -184,19 +198,6 @@ function mRail.requestGPSData(radius, timeout)
   end
 end
 
-local function receiveMessages(timeout)
-  local nearbyComputers = {}
-  while true do
-    event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
-    
-    if event == "timer" and param1 == timeoutTime then
-      return nearbyComputers
-    elseif event == "modem_message" and param2 == gps_data_response_channel then
-      local decodedMessage = json.decode(param4)
-      table.insert(nearbyComputers, {decodedMessage.computerType, decodedMessage.info, decodedMessage.distance})
-    end
-  end
-end
 
 
 function mRail.responseGPSData(computerType, info, distance)
