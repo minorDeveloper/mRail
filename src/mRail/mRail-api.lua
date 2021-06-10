@@ -132,6 +132,8 @@ mRail.channels = {
 	screen_platform_channel  = 19, -- 19
 	request_dispatch_channel = 20, -- 20
   control_response_channel = 21, -- 21
+  gps_data_request_channel = 22, -- 22
+  gps_data_response_channel= 23, -- 23
 	error_channel            = 999,-- 999
 }
 
@@ -151,6 +153,60 @@ end
 function mRail.requestPings()
   log.info("Requesting pings from all connected services")
   mRail.transmit(mRail.channels.ping_request_channel,1,"")
+end
+
+function mRail.requestGPSData(radius, timeout)
+  log.info("Requesting computers within " .. radius .. " blocks respond with info")
+  
+  local locX, locY, locZ = gps.locate()
+  
+  local message = json.encode({
+    ["locX"] = locX,
+    ["locY"] = locY,
+    ["locZ"] = locZ,
+    ["radius"] = id
+  })
+  
+  mRail.transmit(mRail.gps_data_request_channel,1,message)
+  
+  -- Make a 5 second timer
+  local timeoutTimer = os.startTimer(timeout)
+  
+  -- Keep recieving messages and put the info in a table until the time runs out
+  local nearbyComputers = receiveMessages(timeout)
+  
+  -- Sort the table in order of distance
+  table.sort(nearbyComputers, function(a,b) return a[3] < b[3] end)
+  
+  -- Print that to a screen
+  for i = 1, #nearbyComputers do
+    print(nearbyComputers[1] .. ": " .. nearbyComputers[2] .. "-ID: " .. nearbyComputers[3])
+  end
+end
+
+local function receiveMessages(timeout)
+  local nearbyComputers = {}
+  while true do
+    event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
+    
+    if event == "timer" and param1 = timeoutTime then
+      return nearbyComputers
+    elseif event == "modem_message" and param2 == gps_data_response_channel then
+      local decodedMessage = json.decode(param4)
+      table.insert(nearbyComputers, {decodedMessage.computerType, decodedMessage.info, decodedMessage.distance})
+    end
+  end
+end
+
+
+function mRail.responseGPSData(computerType, info, distance)
+  local message = json.encode({
+    ["computerType"] = computerType,
+    ["info"] = info,
+    ["distance"] = distance
+  })
+  
+  mRail.transmit(mRail.gps_data_response_channel,1,message)
 end
 
 --- Transmits a control message to another device
