@@ -167,7 +167,7 @@ function mRail.requestGPSData(radius, timeout)
     ["radius"] = id
   })
   
-  mRail.transmit(mRail.gps_data_request_channel,1,message)
+  mRail.transmit(mRail.channels.gps_data_request_channel,1,message)
   
   -- Make a 5 second timer
   local timeoutTimer = os.startTimer(timeout)
@@ -206,7 +206,7 @@ function mRail.responseGPSData(computerType, info, distance)
     ["distance"] = distance
   })
   
-  mRail.transmit(mRail.gps_data_response_channel,1,message)
+  mRail.transmit(mRail.channels.gps_data_response_channel,1,message)
 end
 
 --- Transmits a control message to another device
