@@ -80,15 +80,17 @@ end
 
 function program.respondIfWithin(decodedMessage)
 
-  locX, locY, locZ = gps.locate()
+  local locX, locY, locZ = gps.locate()
   
   -- Calculate the difference between the provided location and our current location
-  difX = math.abs(locX - decodedMessage.locX)
-  difY = math.abs(locY - decodedMessage.locY)
-  difZ = math.abs(locZ - decodedMessage.locZ)
+  local difX = math.abs(locX - decodedMessage.locX)
+  local difY = math.abs(locY - decodedMessage.locY)
+  local difZ = math.abs(locZ - decodedMessage.locZ)
+  
+  local radius = decodedMessage.radius
   
   -- Check we're within the radius (if radius = -1 then always reply)
-  distance = math.sqrt(difX*difX + difY*difY + difZ*difZ)
+  local distance = math.sqrt(difX*difX + difY*difY + difZ*difZ)
   
   if radius == -1 or distance < radius then
     -- Respond with program info
