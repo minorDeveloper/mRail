@@ -59,6 +59,7 @@ function program.setup(config_)
   modem.open(mRail.channels.oneway_dispatch_confirm)
   modem.open(mRail.channels.ping_request_channel)
   modem.open(mRail.channels.control_channel)
+  modem.open(mRail.channels.gps_data_request_channel)
 
   term.clear()
   term.setCursorPos(1,1)
