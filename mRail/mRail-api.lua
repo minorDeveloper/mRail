@@ -16,6 +16,7 @@ log = require("./mRail/log")
 mRail.modem = nil
 
 
+
 --- Color name to number conversion
 local col_to_num = {
 	white = 1,
@@ -171,6 +172,7 @@ local function receiveMessages(timeout)
   end
 end
 
+--- Requests all computers return data about themselves if they are withing a given radius
 function mRail.requestGPSData(radius, timeout)
   log.info("Requesting computers within " .. radius .. " blocks respond with info")
   
