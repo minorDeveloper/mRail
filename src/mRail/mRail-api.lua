@@ -189,7 +189,7 @@ local function receiveMessages(timeout)
   while true do
     event, param1, param2, param3, param4, param5, param6 = os.pullEvent()
     
-    if event == "timer" and param1 = timeoutTime then
+    if event == "timer" and param1 == timeoutTime then
       return nearbyComputers
     elseif event == "modem_message" and param2 == gps_data_response_channel then
       local decodedMessage = json.decode(param4)
