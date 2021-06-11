@@ -155,10 +155,10 @@ end
 
 -- Modem Messages
 
--- Handle messages recieved from dispatch
+-- Handle messages received from dispatch
 function program.dispatch_channel(decodedMessage)
   -- Check that the message was intended for this computer
-  if decodedMessage.recieverID == config.id then
+  if decodedMessage.receiverID == config.id then
     log.info("Dispatch has requested a release")
     requestDispatch(decodedMessage.trainID, decodedMessage.serviceID)
   end
@@ -167,7 +167,7 @@ end
 -- Handles confirmation messages from the station
 function program.station_dispatch_confirm(decodedMessage)
   -- Check that the messsage was intended for this computer
-  if decodedMessage.recieverID == config.id then
+  if decodedMessage.receiverID == config.id then
     log.info("Station has authorised the release")
     if dispatchTrain(decodedMessage.trainID, tostring(decodedMessage.serviceID)) == true then
       mRail.detection_broadcast(config.id, decodedMessage.serviceID, decodedMessage.trainID, "Dispatched from " .. mRail.location_name[tonumber(config.id)] .. " to " .. mRail.station_name[tonumber(config.parentStation)])
