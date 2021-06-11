@@ -315,7 +315,7 @@ end
 function mRail.request_dispatch(receiverID, serviceID, trainID)
 	log.info("Requesting the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
-		['recieverID'] = receiverID,
+		['receiverID'] = receiverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
@@ -332,7 +332,7 @@ end
 function mRail.dispatch_train(receiverID, serviceID, trainID)
 	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
-		['recieverID'] = receiverID,
+		['receiverID'] = receiverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
@@ -384,7 +384,7 @@ end
 function mRail.station_confirm_dispatch(receiverID, serviceID, trainID)
 	log.info("Giving " .. receiverID .. " permission to dispatch train")
 	local message = json.encode({
-		['recieverID'] = receiverID,
+		['receiverID'] = receiverID,
 		['serviceID'] = serviceID,
 		['trainID'] = trainID
 	})
