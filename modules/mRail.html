@@ -80,15 +80,11 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#requestPings">requestPings ()</a></td>
-	<td class="summary">Requests all active computers retransmit pings</td>
+	<td class="summary">Requests all active computers transmit pings</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#requestGPSData">requestGPSData (radius, timeout)</a></td>
 	<td class="summary">Requests all computers return data about themselves if they are withing a given radius</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#responseGPSData">responseGPSData (computerType, info, distance)</a></td>
-	<td class="summary">Deprecated</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#control">control (programName, id, command, dataset)</a></td>
@@ -142,8 +138,8 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#oneway_request_dispatch">oneway_request_dispatch (detectorID, serviceID, trainID)</a></td>
-	<td class="summary">Allows a detector computer to request permission from block control to
- release a train</td>
+	<td class="summary">Allows a detector computer to request permission from block control
+ to release a train</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#oneway_confirm_dispatch">oneway_confirm_dispatch (detectorID, serviceID, trainID)</a></td>
@@ -193,6 +189,14 @@
 	<tr>
 	<td class="name" nowrap><a href="#getModemSide">getModemSide ()</a></td>
 	<td class="summary">Gets a side where a modem is attached</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#wrapModem">wrapModem ()</a></td>
+	<td class="summary">Detects what side a modem is and wraps mRail.modem</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#transmit">transmit (channel, returnChannel, message)</a></td>
+	<td class="summary">Wrapper for modem.transmit that checks there is a wrapped modem in mRail.modem</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#identString">identString (strA, strB)</a></td>
@@ -296,7 +300,7 @@
     <strong>requestPings ()</strong>
     </dt>
     <dd>
-    Requests all active computers retransmit pings
+    Requests all active computers transmit pings
 
 
 
@@ -316,46 +320,10 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">radius</span>
-
-
-
+         Only return gps data from computers within a given radius
         </li>
         <li><span class="parameter">timeout</span>
-
-
-
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "responseGPSData"></a>
-    <strong>responseGPSData (computerType, info, distance)</strong>
-    </dt>
-    <dd>
-    Deprecated
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">computerType</span>
-
-
-
-        </li>
-        <li><span class="parameter">info</span>
-
-
-
-        </li>
-        <li><span class="parameter">distance</span>
-
-
-
+         Blocks for this number of seconds
         </li>
     </ul>
 
@@ -462,9 +430,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">detectorID</span>
-
-
-
+         Numerical ID of the detector
         </li>
         <li><span class="parameter">serviceID</span>
          Service (string) of the detected train
@@ -493,19 +459,13 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String for the service name
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
         <li><span class="parameter">stationID</span>
-
-
-
+         Numerical station ID
         </li>
     </ul>
 
@@ -525,14 +485,10 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">nextStationID</span>
-
-
-
+         Numerical station ID
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
     </ul>
 
@@ -556,14 +512,10 @@
          Depot ID that the service is to be released from
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String for the service name
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
     </ul>
 
@@ -588,19 +540,13 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">receiverID</span>
-
-
-
+         Numerical ID of the depot
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String for the service name
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
     </ul>
 
@@ -620,19 +566,13 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">stationID</span>
-
-
-
+         Numerical station ID
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String for the service name
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
     </ul>
 
@@ -652,24 +592,16 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">stationID</span>
-
-
-
+         Numerical station ID to dispatch to
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String for the service name to dispatch
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
         <li><span class="parameter">detectorID</span>
-
-
-
+         Numerical depot ID to dispatch from
         </li>
     </ul>
 
@@ -689,19 +621,13 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">receiverID</span>
-
-
-
+         Depot ID that has permission to dispatch
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String service ID to be dispatched
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID to dispatch
         </li>
     </ul>
 
@@ -757,26 +683,20 @@
     <strong>oneway_request_dispatch (detectorID, serviceID, trainID)</strong>
     </dt>
     <dd>
-    Allows a detector computer to request permission from block control to
- release a train
+    Allows a detector computer to request permission from block control
+ to release a train
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">detectorID</span>
-
-
-
+         Detector ID of where the train was detected
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String service ID
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
     </ul>
 
@@ -796,19 +716,13 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">detectorID</span>
-
-
-
+         Detector ID to release from
         </li>
         <li><span class="parameter">serviceID</span>
-
-
-
+         String service ID
         </li>
         <li><span class="parameter">trainID</span>
-
-
-
+         Numerical train ID
         </li>
     </ul>
 
@@ -1097,6 +1011,67 @@
 
 
 
+    <h3>Returns:</h3>
+    <ol>
+
+        The side of the first attached modem
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "wrapModem"></a>
+    <strong>wrapModem ()</strong>
+    </dt>
+    <dd>
+    Detects what side a modem is and wraps mRail.modem
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Boolean for successful wrapping of a modem
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "transmit"></a>
+    <strong>transmit (channel, returnChannel, message)</strong>
+    </dt>
+    <dd>
+    Wrapper for modem.transmit that checks there is a wrapped modem in mRail.modem
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">channel</span>
+
+
+
+        </li>
+        <li><span class="parameter">returnChannel</span>
+
+
+
+        </li>
+        <li><span class="parameter">message</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Boolean for succesful transmission
+    </ol>
 
 
 
@@ -1124,6 +1099,11 @@
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+        Boolean matching strings
+    </ol>
 
 
 
@@ -1151,6 +1131,11 @@
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+        Boolean matching numbers
+    </ol>
 
 
 
@@ -1173,6 +1158,11 @@
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+        Numerical value represting the colour
+    </ol>
 
 
 
@@ -1195,6 +1185,11 @@
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+        String representation of the colour number value
+    </ol>
 
 
 
@@ -1543,7 +1538,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-06-11 23:07:56 </i>
+<i style="float:right;">Last updated 2021-06-13 18:29:55 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
