@@ -152,13 +152,17 @@ function mRail.ping(programName, id, name)
   mRail.transmit(mRail.channels.ping_channel,1,message)
 end
 
---- Requests all active computers retransmit pings
+--- Requests all active computers transmit pings
 function mRail.requestPings()
   log.info("Requesting pings from all connected services")
   mRail.transmit(mRail.channels.ping_request_channel,1,"")
 end
 
-local function receiveMessages(radius, timeout)
+--- Blocking internal function to 
+-- @param radius Only return ping responses that are within the given radius (radius = -1 will return responses at any distance)
+-- @param timeout Blocks for this number of seconds
+-- @return Returns a table of detected computers, name, id(s), and distance
+local function receivePingResponse(radius, timeout)
   local nearbyComputers = {}
   
   local timeoutTimer = os.startTimer(timeout)
@@ -174,6 +178,8 @@ local function receiveMessages(radius, timeout)
 end
 
 --- Requests all computers return data about themselves if they are withing a given radius
+-- @param radius Only return gps data from computers within a given radius
+-- @param timeout Blocks for this number of seconds
 function mRail.requestGPSData(radius, timeout)
   log.info("Requesting computers within " .. radius .. " blocks respond with info")
   
@@ -182,7 +188,7 @@ function mRail.requestGPSData(radius, timeout)
   mRail.requestPings()
   mRail.modem.open(mRail.channels.ping_channel)
   -- Keep recieving messages and put the info in a table until the time runs out
-  local nearbyComputers = receiveMessages(radius, timeout)
+  local nearbyComputers = receivePingResponse(radius, timeout)
   
   -- Sort the table in order of distance
   table.sort(nearbyComputers, function(a,b) return a[4] < b[4] end)
@@ -204,17 +210,6 @@ function mRail.requestGPSData(radius, timeout)
   end
 end
 --
-
---- Deprecated
-function mRail.responseGPSData(computerType, info, distance)
-  local message = json.encode({
-    ["computerType"] = computerType,
-    ["info"] = info,
-    ["distance"] = distance
-  })
-  
-  mRail.transmit(mRail.channels.gps_data_response_channel,1,message)
-end
 
 --- Transmits a control message to another device
 -- @param programName The program type of the computer being controlled
@@ -265,7 +260,7 @@ function mRail.response(programName, id, command, success, returnMessage)
 end
 
 --- Broadcast the detection of a train at a given detector
--- @param detectorID
+-- @param detectorID Numerical ID of the detector
 -- @param serviceID Service (string) of the detected train
 -- @param trainID ID of the detected train
 -- @param textMessage Message to be broadcast
@@ -281,9 +276,9 @@ function mRail.detection_broadcast(detectorID, serviceID, trainID, textMessage)
 end
 
 --- Request information about the next station for a given service
--- @param serviceID
--- @param trainID
--- @param stationID
+-- @param serviceID String for the service name
+-- @param trainID Numerical train ID
+-- @param stationID Numerical station ID
 function mRail.next_station_request(serviceID, trainID, stationID)
   log.info("Requesting next station update for " .. serviceID)
   local message = json.encode({
@@ -295,8 +290,8 @@ function mRail.next_station_request(serviceID, trainID, stationID)
 end
 
 --- Provides tracking with an update regarding the next station for a given train
--- @param nextStationID
--- @param trainID
+-- @param nextStationID Numerical station ID
+-- @param trainID Numerical train ID
 function mRail.next_station_update(nextStationID, trainID)
   log.info(trainID .. ": next station is " .. nextStationID)
   local message = json.encode({
@@ -309,8 +304,8 @@ end
 --- Requests the dispatch server release the given train
 -- . Use this when manually triggering a train release to ensure departure boards and alarms are set correctly
 -- @param receiverID Depot ID that the service is to be released from
--- @param serviceID
--- @param trainID
+-- @param serviceID String for the service name
+-- @param trainID Numerical train ID
 -- @usage mRail.request_dispatch(80, "HR Expr", 5)
 function mRail.request_dispatch(receiverID, serviceID, trainID)
 	log.info("Requesting the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
@@ -326,9 +321,9 @@ end
 
 --- Dispatch requesting the release of a train from a depot
 -- . Not for manual use
--- @param receiverID
--- @param serviceID
--- @param trainID
+-- @param receiverID Numerical ID of the depot
+-- @param serviceID String for the service name
+-- @param trainID Numerical train ID
 function mRail.dispatch_train(receiverID, serviceID, trainID)
 	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. receiverID .. " on route " .. serviceID)
 	local message = json.encode({
@@ -342,9 +337,9 @@ function mRail.dispatch_train(receiverID, serviceID, trainID)
 end
 
 --- Command to a station to release a train from its platform
--- @param stationID
--- @param serviceID
--- @param trainID
+-- @param stationID Numerical station ID
+-- @param serviceID String for the service name
+-- @param trainID Numerical train ID
 function mRail.station_dispatch_train(stationID, serviceID, trainID)
 	log.info("Dispatching the " .. mRail.number_to_color(trainID) .. " train from " .. stationID .. " on route " .. serviceID)
 	local message = json.encode({
@@ -360,10 +355,10 @@ end
 -- Station-Depot Comms
 
 --- Allows a depot to request permission to dispatch a train
--- @param stationID
--- @param serviceID
--- @param trainID
--- @param detectorID
+-- @param stationID Numerical station ID to dispatch to
+-- @param serviceID String for the service name to dispatch
+-- @param trainID Numerical train ID
+-- @param detectorID Numerical depot ID to dispatch from
 function mRail.station_request_dispatch(stationID, serviceID, trainID, detectorID)
 	log.info("Requesting permission from station " .. stationID .. "to dispatch train")
 	local message = json.encode({
@@ -378,9 +373,9 @@ function mRail.station_request_dispatch(stationID, serviceID, trainID, detectorI
 end
 
 --- Station confirms that a given depot may release a train
--- @param receiverID
--- @param serviceID
--- @param trainID
+-- @param receiverID Depot ID that has permission to dispatch
+-- @param serviceID String service ID to be dispatched
+-- @param trainID Numerical train ID to dispatch
 function mRail.station_confirm_dispatch(receiverID, serviceID, trainID)
 	log.info("Giving " .. receiverID .. " permission to dispatch train")
 	local message = json.encode({
@@ -414,11 +409,11 @@ end
 
 -- Oneway-Detector Comms
 
---- Allows a detector computer to request permission from block control to
--- release a train
--- @param detectorID
--- @param serviceID
--- @param trainID
+--- Allows a detector computer to request permission from block control 
+-- to release a train
+-- @param detectorID Detector ID of where the train was detected
+-- @param serviceID String service ID 
+-- @param trainID Numerical train ID
 function mRail.oneway_request_dispatch(detectorID, serviceID, trainID)
 	log.info("Requesting permission to dispatch train " .. trainID)
 	local message = json.encode({
@@ -432,9 +427,9 @@ function mRail.oneway_request_dispatch(detectorID, serviceID, trainID)
 end
 
 --- Block control gives permission for a detector computer to release a train
--- @param detectorID
--- @param serviceID
--- @param trainID
+-- @param detectorID Detector ID to release from
+-- @param serviceID String service ID 
+-- @param trainID Numerical train ID
 function mRail.oneway_confirm_dispatch(detectorID, serviceID, trainID)
 	log.info("Giving " .. detectorID .. " permission to release train")
 	local message = json.encode({
@@ -660,6 +655,7 @@ function mRail.checkConfig(config)
 end
 
 --- Gets a side where a modem is attached
+-- @return The side of the first attached modem
 function mRail.getModemSide()
   local sModemSide = nil
   for _, sSide in ipairs(rs.getSides()) do
@@ -671,6 +667,8 @@ function mRail.getModemSide()
   return sModemSide
 end
 
+--- Detects what side a modem is and wraps mRail.modem
+-- @return Boolean for successful wrapping of a modem
 function mRail.wrapModem()
   local modemSide = mRail.getModemSide()
   if modemSide ~= nil then
@@ -680,16 +678,20 @@ function mRail.wrapModem()
   return false
 end
 
+--- Wrapper for modem.transmit that checks there is a wrapped modem in mRail.modem
+-- @return Boolean for succesful transmission
 function mRail.transmit(channel, returnChannel, message)
   if mRail.modem == nil and mRail.wrapModem() == false then
-    return
+    return false
   end
   mRail.modem.transmit(channel,returnChannel,message)
+  return true
 end
 
 --- Checks if two variables are the same string
 -- @param strA
 -- @param strB
+-- @return Boolean matching strings
 function mRail.identString(strA, strB)
   if tostring(strA) == tostring(strB) then
     return true
@@ -700,6 +702,7 @@ end
 --- Checks if two variables are the same number
 -- @param numA
 -- @param numB
+-- @return Boolean matching numbers
 function mRail.identNum(numA, numB)
   if tonumber(strA) == tonumber(strB) then
     return true
@@ -709,12 +712,14 @@ end
 
 --- Converts a colour string to its representative number
 -- @param color
+-- @return Numerical value represting the colour
 function mRail.color_to_number(color)
 	return col_to_num[color]
 end
 
 --- Converts a colour number to its representative strin
 -- @param number
+-- @return String representation of the colour number value
 function mRail.number_to_color(number)
 	return  num_to_col[number]
 end
