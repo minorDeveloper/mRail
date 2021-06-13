@@ -132,8 +132,6 @@ mRail.channels = {
 	screen_platform_channel  = 19, -- 19
 	request_dispatch_channel = 20, -- 20
   control_response_channel = 21, -- 21
-  gps_data_request_channel = 22, -- 22
-  gps_data_response_channel= 23, -- 23 DEPRECATE
 	error_channel            = 999,-- 999
 }
 
