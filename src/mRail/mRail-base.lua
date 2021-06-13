@@ -23,6 +23,7 @@ local configState = mRail.checkConfig(config)
 log.info("Loading program")
 local program = require(mRail.programs[config.programType])
 
+--- Packages the program id and name and transmits a ping
 function program.ping()
   local id = nil
   local name = nil
@@ -41,6 +42,7 @@ function program.ping()
   mRail.ping(mRail.programs[config.programType], id, name)
 end
 
+--- Implementation of the ping request response
 function program.ping_request_channel(decodedMessage)
   -- Handle requests for a ping
   log.info("Ping requested")
@@ -48,14 +50,15 @@ function program.ping_request_channel(decodedMessage)
 end
 --
 
+--- Implementation of the control channel message
 function program.control_channel(decodedMessage)
+  -- Ensure that the control message was intended for a program of this type
   if not mRail.identString(config.programType, decodedMessage.programName) then
     return
   end
   log.debug("Control message recieved")
   
-  -- At this point the message is intended for a program of this type
-  -- Still need to check for ID (if relevant)
+  -- Confirm that the control message has the correct ID
   if not program.checkValidID(decodedMessage.id) then
     return
   end
@@ -63,7 +66,7 @@ function program.control_channel(decodedMessage)
   local cmd = decodedMessage.command
   log.trace("cmd:  " .. tostring(cmd))
   local data = decodedMessage.dataset
-  log.trace("data: " .. tostring(cmd))
+  log.trace("data: " .. tostring(data))
   if cmd == nil then
     return
   end
@@ -85,11 +88,6 @@ function program.control_channel(decodedMessage)
   end
   
   mRail.response(decodedMessage.programName, decodedMessage.id, decodedMessage.command, response[1], response[2])
-end
---
-
-function program.respondIfWithin(decodedMessage)
-  program.ping()
 end
 --
 
@@ -121,7 +119,6 @@ handleMessages = {
   [tostring(mRail.channels.request_dispatch_channel)] = program.request_dispatch_channel,
   [tostring(mRail.channels.control_response_channel)] = program.control_response_channel,
   [tostring(mRail.channels.error_channel)]            = program.error_channel,
-  [tostring(mRail.channels.gps_data_request_channel)] = program.respondIfWithin,
 }
 
 -- Trigger setup of program

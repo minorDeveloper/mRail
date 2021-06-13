@@ -33,7 +33,7 @@ local function putAway(lowerSlot, upperSlot)
 		log.trace("Slot " .. tostring(i) .. " " .. success)
 		i = i + 1
     -- If we have reached the upper slot without managing to insert a cart
-    -- then bail and throw an error :(
+    -- then bail and throw an error
 		if i == upperSlot then
       mRail.raise_error("Unable to insert cart into chest", 1)
       log.error("Unable to insert cart into chest")
@@ -143,8 +143,6 @@ function program.handleMinecart(side, loco, locoName, primary, secondary, destin
   -- then collect the train
 	collectTrain(destination)
 end
-
-
 
 function program.handleRedstone()
   
