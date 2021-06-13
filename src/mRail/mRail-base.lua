@@ -1,7 +1,9 @@
--- mRail System Base Program
--- (C) 2020-21 Sam Lane
+--- System Base Program
+-- Program where all mRail systems are launched from
+-- @module base-program
+-- @author Sam Lane
+-- @copyright 2020-21
 
--- Base program where all mRail systems are launched from
 
 -- Configuration
 local config = {}

@@ -1,5 +1,7 @@
--- mRail System Program Base
--- (C) 2020-21 Sam Lane
+--- Train Collection Depot
+-- @module depot-collection
+-- @author Sam Lane
+-- @copyright 2020-21
 
 -- Load APIs
 mRail = require("./mRail/mRail-api")

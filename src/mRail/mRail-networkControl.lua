@@ -1,0 +1,4 @@
+--- Network Controller
+-- @module network-controller
+-- @author Sam Lane
+-- @copyright 2020-21
