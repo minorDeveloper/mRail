@@ -1,5 +1,7 @@
 --- Pathfinder
---@module path
+-- @module pathfinder
+-- @author Sam Lane
+-- @copyright 2020-21
 
 function table.contains(tbl, e)
   for _, v in pairs(tbl) do

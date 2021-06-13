@@ -1,5 +1,7 @@
--- mRail System Program Base
--- (C) 2020-21 Sam Lane
+--- Platform Display
+-- @module platform-display
+-- @author Sam Lane
+-- @copyright 2020-21
 
 -- TODO - Comment all
 -- TODO - Have Dispatch tell platform display what trains are currently in use

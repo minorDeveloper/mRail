@@ -1,5 +1,7 @@
--- mRail System Program Base
--- (C) 2020-21 Sam Lane
+--- Train Release Depot
+-- @module depot-release
+-- @author Sam Lane
+-- @copyright 2020-21
 
 -- TODO - Add more error checking (i.e. if there are enough things available)
 -- TODO - Add support for more train types

@@ -1,12 +1,11 @@
--- mRail Train Tracker and Display
--- (C) 2020-21 Sam Lane
+--- Train Tracker
+-- @module tracker
+-- @author Sam Lane
+-- @copyright 2020-21
 
--- TODO - Add support for more trains (not sure how yet!)
+-- @todo Add support for more trains (not sure how yet!)
 
--- TODO - Get next station information from dispatch (add channel to request this and recieve update)
---      - Will need to go out to mRail for this
-
--- TODO - Support for scrolling and variable size displays
+-- @todo Support for scrolling and variable size displays
 
 -- Load APIs
 mRail = require("./mRail/mRail-api")

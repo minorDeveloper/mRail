@@ -13,9 +13,8 @@ local mRail = {}
 json = require("./mRail/json")
 log = require("./mRail/log")
 
+--- Internal representation of a modem for communications
 mRail.modem = nil
-
-
 
 --- Color name to number conversion
 local col_to_num = {
@@ -686,6 +685,17 @@ function mRail.transmit(channel, returnChannel, message)
   end
   mRail.modem.transmit(channel,returnChannel,message)
   return true
+end
+
+--- Wrapper for modem.open
+-- @param channel The channel to open
+-- @return Boolean for succesful opening of a channel
+function mRail.modemOpen(channel)
+  if mRail.modem == nil and mRail.wrapModem() == false then
+    return false
+  end
+  mRail.modem.open(channel)
+  return false
 end
 
 --- Checks if two variables are the same string

@@ -1,5 +1,7 @@
--- mRail System Program Base
--- (C) 2020-21 Sam Lane
+--- Example program base
+-- @module base-program-example
+-- @author Sam Lane
+-- @copyright 2020-21
 
 mRail = require("./mRail/mRail-api")
 json  = require("./mRail/json")

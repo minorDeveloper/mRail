@@ -1,5 +1,7 @@
--- mRail Detector Computer
--- (C) 2020-21 Sam Lane
+--- Detector Computer
+-- @module detector
+-- @author Sam Lane
+-- @copyright 2020-21
 
 -- TODO - Add support for multiple detectors and multiple release points
 -- TODO - let the config files accept an array as a config val not just a value

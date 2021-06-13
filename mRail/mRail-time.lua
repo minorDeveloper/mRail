@@ -1,5 +1,5 @@
 --- Time
--- @module time
+-- @module time-tracker
 -- @author Sam Lane
 -- @copyright 2020-21
 

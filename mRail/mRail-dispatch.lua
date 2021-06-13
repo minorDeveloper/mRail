@@ -1,5 +1,7 @@
--- mRail Dispatch
--- (C) 2020-21 Sam Lane
+--- Dispatch Controller
+-- @module dispatch-controller
+-- @author Sam Lane
+-- @copyright 2020-21
 
 -- TODO - Comment all
 -- TODO - Add logging
